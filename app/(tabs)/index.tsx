@@ -1,12 +1,61 @@
-import { Image, StyleSheet, Platform } from 'react-native';
-
+import { Image, StyleSheet, View, Text, TextInput, Button, Alert} from 'react-native';
+import { useState } from 'react';
 import { HelloWave } from '@/components/HelloWave';
 import ParallaxScrollView from '@/components/ParallaxScrollView';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 
 export default function HomeScreen() {
+  const[name,setName] = useState();
+  const[age,setAge] = useState();
+  const[email,setEmail] = useState();
+  const[phone,setPhone] = useState();
+  const[address,setAddress] = useState();
+  const handleSubmit = async () => {
+    if (!name || !age || !email || !phone || !address) {
+      Alert.alert("Error", "All fields are required!");
+      return;
+    }
+
+    try {
+      const response = await fetch("http://localhost:5000/submit", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ name, age, email, phone, address }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        Alert.alert("Success", data.message);
+        setName("");
+        setAge("");
+        setEmail("");
+        setPhone("");
+        setAddress("");
+      } else {
+        Alert.alert("Error", data.error || "Something went wrong!");
+      }
+    } catch (error) {
+      Alert.alert("Error", "Failed to connect to the server.");
+    }
+  };
+
   return (
+    <>
+    <View style={{ padding: 20 }}>
+      <Text style={{ fontSize: 18, fontWeight: "bold" }}>Enter Your Details</Text>
+
+      <TextInput placeholder="Name" value={name} onChangeText={setName} style={{ borderBottomWidth: 1, marginBottom: 10 }} />
+      <TextInput placeholder="Age" value={age} onChangeText={setAge} keyboardType="numeric" style={{ borderBottomWidth: 1, marginBottom: 10 }} />
+      <TextInput placeholder="Email" value={email} onChangeText={setEmail} keyboardType="email-address" style={{ borderBottomWidth: 1, marginBottom: 10 }} />
+      <TextInput placeholder="Phone" value={phone} onChangeText={setPhone} keyboardType="phone-pad" style={{ borderBottomWidth: 1, marginBottom: 10 }} />
+      <TextInput placeholder="Address" value={address} onChangeText={setAddress} style={{ borderBottomWidth: 1, marginBottom: 10 }} />
+
+      <Button title="Submit" onPress={handleSubmit} />
+    </View>
     <ParallaxScrollView
       headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
       headerImage={
@@ -16,41 +65,14 @@ export default function HomeScreen() {
         />
       }>
       <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">Welcome!</ThemedText>
+        <ThemedText type="title">Welcome to MedFam</ThemedText>
         <HelloWave />
       </ThemedView>
       <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 1: Try it</ThemedText>
-        <ThemedText>
-          Edit <ThemedText type="defaultSemiBold">app/(tabs)/index.tsx</ThemedText> to see changes.
-          Press{' '}
-          <ThemedText type="defaultSemiBold">
-            {Platform.select({
-              ios: 'cmd + d',
-              android: 'cmd + m',
-              web: 'F12'
-            })}
-          </ThemedText>{' '}
-          to open developer tools.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 2: Explore</ThemedText>
-        <ThemedText>
-          Tap the Explore tab to learn more about what's included in this starter app.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 3: Get a fresh start</ThemedText>
-        <ThemedText>
-          When you're ready, run{' '}
-          <ThemedText type="defaultSemiBold">npm run reset-project</ThemedText> to get a fresh{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> directory. This will move the current{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> to{' '}
-          <ThemedText type="defaultSemiBold">app-example</ThemedText>.
-        </ThemedText>
-      </ThemedView>
+        <ThemedText type="subtitle">Our app is under development😅</ThemedText>
+       </ThemedView>
     </ParallaxScrollView>
+    </>
   );
 }
 
