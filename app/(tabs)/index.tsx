@@ -6,11 +6,11 @@ import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 
 export default function HomeScreen() {
-  const[name,setName] = useState();
-  const[age,setAge] = useState();
-  const[email,setEmail] = useState();
-  const[phone,setPhone] = useState();
-  const[address,setAddress] = useState();
+  const[name,setName] = useState("");
+  const[age,setAge] = useState("");
+  const[email,setEmail] = useState("");
+  const[phone,setPhone] = useState("");
+  const[address,setAddress] = useState("");
   const handleSubmit = async () => {
     if (!name || !age || !email || !phone || !address) {
       Alert.alert("Error", "All fields are required!");
