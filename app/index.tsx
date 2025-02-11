@@ -11,7 +11,6 @@ export default function Index() {
       <Text>
         <Link href="/homepage" style={styles.button}>Go to Homepage</Link>
       </Text>
-      <Button title="Press Me" onPress={() => alert("Button Pressed!")} />
     </View>
   );
 }
