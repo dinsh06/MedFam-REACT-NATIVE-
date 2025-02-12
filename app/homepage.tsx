@@ -1,5 +1,5 @@
 import { Text, View, StyleSheet, Button, Dimensions, TouchableOpacity } from "react-native"; 
-import { Link, useRouter } from "expo-router";
+import { useRouter } from "expo-router";
 import React from "react";
 import Slider from "@/components/Slider";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
@@ -11,24 +11,34 @@ export default function HomePage() {
 
   return (
     <View style={styles.container}>
-      {/* Profile Icon Button */}
+      {/* Profile Icon */}
       <View style={styles.profileContainer}>
         <TouchableOpacity onPress={() => router.push("/profile")}>
           <Icon name="account-circle" size={50} color="black" />
         </TouchableOpacity>
       </View>
 
-
-      {/* White Box containing Buttons */}
+      {/* Grid Box */}
       <View style={styles.boxContainer}>
-        <View style={styles.table}>
+        <View style={styles.grid}>
+          {/* First Row */}
           <View style={styles.row}>
-            <Button title="Medicines" onPress={() => alert("Medicines pressed")} />
-            <Button title="Cart" onPress={() => alert("Cart pressed")} />
+            <View style={[styles.cell, styles.rightBorder, styles.bottomBorder]}>
+              <Button title="Medicines" onPress={() => alert("Medicines pressed")} />
+            </View>
+            <View style={[styles.cell, styles.bottomBorder]}>
+              <Button title="Cart" onPress={() => alert("Cart pressed")} />
+            </View>
           </View>
+
+          {/* Second Row */}
           <View style={styles.row}>
-            <Button title="Offers" onPress={() => alert("Offers pressed")} />
-            <Button title="Profile" onPress={() => router.push("/profile")} />
+            <View style={[styles.cell, styles.rightBorder]}>
+              <Button title="Offers" onPress={() => alert("Offers pressed")} />
+            </View>
+            <View style={styles.cell}>
+              <Button title="Profile" onPress={() => router.push("/profile")} />
+            </View>
           </View>
         </View>
       </View>
@@ -49,27 +59,28 @@ const styles = StyleSheet.create({
     alignItems: "center",
     paddingBottom: 20,
   },
-  text: {
-    fontSize: 24,
-    fontWeight: "bold",
-    color: "white",
-    marginBottom: 20,
-  },
-  table: {
-    width: "100%",
+  grid: {
+    width: "80%",
+    borderWidth: 0, // Remove outer border
   },
   row: {
     flexDirection: "row",
-    justifyContent: "space-around",
-    marginVertical: 20,
   },
-  carouselContainer: {
-    height: height * 0.3,
-    width: "100%",
-    justifyContent: "center",
+  cell: {
+    flex: 1,
+    padding: 10,
+    margin: 2,
     alignItems: "center",
-    marginTop: 20,
-    borderRadius: 10,
+    justifyContent: "center",
+    height: 70, // Adjust height for buttons
+  },
+  rightBorder: {
+    borderRightWidth: 1,
+    borderColor: "black",
+  },
+  bottomBorder: {
+    borderBottomWidth: 1,
+    borderColor: "black",
   },
   boxContainer: {
     backgroundColor: "white",
@@ -89,6 +100,14 @@ const styles = StyleSheet.create({
     alignItems: "center",
     alignSelf: "flex-end",
     gap: 10,
-    margin: 20, // Added margin to prevent it from sticking to the top right
+    margin: 20,
+  },
+  carouselContainer: {
+    height: height * 0.3,
+    width: "100%",
+    justifyContent: "center",
+    alignItems: "center",
+    marginTop: 20,
+    borderRadius: 10,
   },
 });
