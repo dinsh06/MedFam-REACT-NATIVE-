@@ -1,4 +1,5 @@
-import { Text, View, StyleSheet, Button, Dimensions } from "react-native";
+import { Text, View, StyleSheet, Button, Dimensions, TouchableOpacity } from "react-native"; 
+import { Link, useRouter } from "expo-router";
 import React from "react";
 import Slider from "@/components/Slider";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
@@ -6,13 +7,17 @@ import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 const { height } = Dimensions.get("window");
 
 export default function HomePage() {
+  const router = useRouter(); 
+
   return (
     <View style={styles.container}>
-      {/* Profile Icon + Button */}
+      {/* Profile Icon Button */}
       <View style={styles.profileContainer}>
-        <Icon name="account-circle" size={50} color="black" />
-        <Button title="Profile" onPress={() => alert("Profile Pressed")} />
+        <TouchableOpacity onPress={() => router.push("/profile")}>
+          <Icon name="account-circle" size={50} color="black" />
+        </TouchableOpacity>
       </View>
+
 
       {/* White Box containing Buttons */}
       <View style={styles.boxContainer}>
@@ -23,7 +28,7 @@ export default function HomePage() {
           </View>
           <View style={styles.row}>
             <Button title="Offers" onPress={() => alert("Offers pressed")} />
-            <Button title="Profile" onPress={() => alert("Profile pressed")} />
+            <Button title="Profile" onPress={() => router.push("/profile")} />
           </View>
         </View>
       </View>
@@ -68,7 +73,7 @@ const styles = StyleSheet.create({
   },
   boxContainer: {
     backgroundColor: "white",
-    padding: 20,               // Adds space inside the box
+    padding: 20,
     borderRadius: 10,
     width: "80%",
     alignItems: "center",
@@ -84,6 +89,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     alignSelf: "flex-end",
     gap: 10,
-    margin: 20,   // Added margin to prevent it from sticking to the top right
+    margin: 20, // Added margin to prevent it from sticking to the top right
   },
 });
