@@ -1,5 +1,6 @@
 import { Text, View, StyleSheet, Button, Dimensions, TouchableOpacity } from "react-native"; 
 import { useRouter } from "expo-router";
+import {Link} from "expo-router";
 import React from "react";
 import Slider from "@/components/Slider";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
@@ -13,9 +14,14 @@ export default function HomePage() {
     <View style={styles.container}>
       {/* Profile Icon */}
       <View style={styles.profileContainer}>
-        <TouchableOpacity onPress={() => router.push("/profile")}>
-          <Icon name="account-circle" size={50} color="black" />
+        <Icon name="cart" size={50} color="white" />
+      <TouchableOpacity onPress={() => alert("Search bar clicked")}>
+          <Icon name="magnify" size={50} color="white" />
         </TouchableOpacity>
+      <Link href="/profile">
+  <Icon name="account-circle" size={50} color="white" />
+</Link>
+        
       </View>
 
       {/* Grid Box */}

@@ -13,7 +13,7 @@ const Slider = () => {
         keyExtractor={(item, index) => index.toString()}
         horizontal
         pagingEnabled
-        showsHorizontalScrollIndicator={false}
+        showsHorizontalScrollIndicator={true}
         contentContainerStyle={styles.carouselContainer}
       />
     </View>
