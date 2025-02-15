@@ -1,9 +1,12 @@
-import { Text, View, StyleSheet, Button, Dimensions, TouchableOpacity } from "react-native"; 
+import { Text, View,  Button, Dimensions, TouchableOpacity } from "react-native"; 
+import {StyleSheet} from "react-native";
 import { useRouter } from "expo-router";
 import {Link} from "expo-router";
-import React from "react";
+import * as React from "react";
 import Slider from "@/components/Slider";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
+
+
 
 const { height } = Dimensions.get("window");
 
@@ -21,34 +24,51 @@ export default function HomePage() {
       <Link href="/profile">
   <Icon name="account-circle" size={50} color="white" />
 </Link>
-        
-      </View>
+</View>
 
       {/* Grid Box */}
       <View style={styles.boxContainer}>
         <View style={styles.grid}>
           {/* First Row */}
           <View style={styles.row}>
-            <View style={[styles.cell, styles.rightBorder, styles.bottomBorder]}>
-              <Button title="Medicines" onPress={() => alert("Medicines pressed")} />
-            </View>
-            <View style={[styles.cell, styles.bottomBorder]}>
-              <Button title="Cart" onPress={() => alert("Cart pressed")} />
-            </View>
+          <View style={[styles.cell, styles.rightBorder, styles.bottomBorder]}>
+          <TouchableOpacity style={styles.button} onPress={() => alert("Emergency Call Initiated")}>
+        <Icon name="phone" size={50} color="red" />
+        <Icon name="ambulance" size={50} color="red" />
+      </TouchableOpacity>
           </View>
+            <View style={[styles.cell, styles.bottomBorder]}>
+              <Button title="MedFam +" onPress={() => alert("Medicines pressed")} />
+            </View>
+            <View style={[styles.cell, styles.leftBorder,styles.bottomBorder]}>
+              <Icon name="pill" size={50} onPress={()=>alert(" caps")}/>
+            </View>
+ 
+      {/* Emergency Call Icon */}
 
+            
+</View>
           {/* Second Row */}
           <View style={styles.row}>
             <View style={[styles.cell, styles.rightBorder]}>
-              <Button title="Offers" onPress={() => alert("Offers pressed")} />
+            <Icon name="account-plus-outline" size={50} color="black"/>
             </View>
-            <View style={styles.cell}>
-              <Button title="Profile" onPress={() => router.push("/profile")} />
+            <View style={[styles.cell]}>
+              
+            <Icon name="account-group-outline" size={50} color="black" />
+
+  </View>
+  <View style={[styles.cell, styles.leftBorder]}>
+              <Icon name="account-minus-outline" size={50} color="black"/>
             </View>
           </View>
         </View>
       </View>
+      <View >
+        <Text>Offers</Text>
+        <Icon name="sale" size={50} color="black" />
 
+      </View>
       {/* Slider Component */}
       <View style={styles.carouselContainer}>
         <Slider />
@@ -84,6 +104,10 @@ const styles = StyleSheet.create({
     borderRightWidth: 1,
     borderColor: "black",
   },
+  leftBorder:{
+    borderLeftWidth: 1,
+    borderColor: "black",
+  },
   bottomBorder: {
     borderBottomWidth: 1,
     borderColor: "black",
@@ -115,5 +139,18 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginTop: 20,
     borderRadius: 10,
+  },
+  container2: {
+    justifyContent: "center",
+    alignItems: "center",
+    padding: 20,
+  },
+  button: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    backgroundColor: "green", // Green for emergency
+    padding: 10,
+    borderRadius: 8,
   },
 });

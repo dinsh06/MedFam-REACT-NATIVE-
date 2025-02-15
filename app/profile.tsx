@@ -1,4 +1,4 @@
-import React from 'react';
+import * as React from "react";
 import { View, Text, TouchableOpacity, ScrollView } from 'react-native';
 import {Link} from 'expo-router';
 import { useNavigation } from '@react-navigation/native';

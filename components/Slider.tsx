@@ -1,5 +1,5 @@
 import { FlatList, StyleSheet, View, Dimensions } from "react-native";
-import React from "react";
+import * as React from "react";
 import { ImageSlider } from "@/data/SliderData"; // Ensure this is a named export
 import SliderItem from "./SliderItem";
 
