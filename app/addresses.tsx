@@ -25,7 +25,7 @@ export default function Profile() {
 
   return (
     <ScrollView style={styles.container}>
-      <Text style={styles.header}>Profile</Text>
+      
 
       {/* Address Form */}
       <Text style={styles.label}>Deliver To</Text>
