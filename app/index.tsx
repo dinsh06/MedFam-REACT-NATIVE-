@@ -13,20 +13,28 @@ export default function Index() {
 
   return (
     <View style={styles.container}>
-      {/* Profile Icon */}
+      {/* Profile, Search & Cart Icons */}
       <View style={styles.profileContainer}>
         <TouchableOpacity onPress={() => alert("Search bar clicked")}>
-          <Icon name="magnify" size={50} color="white" />
-          <Text style={styles.iconLabel2}>Search</Text>
+          <View style={styles.iconWrapper}>
+            <Icon name="magnify" size={30} color="white" />
+            <Text style={styles.iconLabel2}>Search</Text>
+          </View>
         </TouchableOpacity>
+
         <TouchableOpacity onPress={() => alert("Cart clicked")}>
-          <Icon name="cart" size={50} color="white" />
-          <Text style={styles.iconLabel2}>Cart</Text>
+          <View style={styles.iconWrapper}>
+            <Icon name="cart" size={30} color="white" />
+            <Text style={styles.iconLabel2}>Cart</Text>
+          </View>
         </TouchableOpacity>
-        <Link href="/profile">
-          <Icon name="account-circle" size={50} color="white" />
-          <Text style={styles.iconLabel2}>Profile</Text>
-        </Link>
+
+        <TouchableOpacity onPress={() => router.push("/profile")}>
+  <View style={styles.iconWrapper}>
+    <Icon name="account-circle" size={30} color="white" />
+    <Text style={styles.iconLabel2}>Profile</Text>
+  </View>
+</TouchableOpacity>
       </View>
 
       {/* Grid Box */}
@@ -34,36 +42,42 @@ export default function Index() {
         <View style={styles.grid}>
           {/* First Row */}
           <View style={styles.row}>
-          <View style={[styles.cell, styles.rightBorder, styles.bottomBorder]}>
-  <TouchableOpacity onPress={() => alert("Emergency Call Initiated")} style={styles.emergencyButton}>
-    <View style={styles.iconRow}>
-      <Icon name="ambulance" size={50} color="red" />
-      <Icon name="phone" size={50} color="red" />
-    </View>
-    <Text style={styles.iconLabel}>Emergency Call</Text>
-  </TouchableOpacity>
-</View>
-<View style={[styles.cell, styles.bottomBorder]}>
-  <Button title="MedFam +" color="gold" onPress={() => alert("Medicines pressed")} />
-</View>
-<View style={[styles.cell, styles.leftBorder, styles.bottomBorder]}>
-  <Icon name="pill" size={50} color="green" onPress={() => alert("caps")} />
-  <Text style={styles.iconLabel}>Medicine</Text>
-</View>
+            <View style={[styles.cell, styles.rightBorder, styles.bottomBorder]}>
+              <TouchableOpacity onPress={() => alert("Emergency Call Initiated")} style={styles.emergencyButton}>
+                <View style={styles.iconRow}>
+                  <Icon name="ambulance" size={30} color="red" />
+                  <Icon name="phone" size={30} color="red" />
+                </View>
+                <Text style={styles.iconLabel}>Emergency Call</Text>
+              </TouchableOpacity>
+            </View>
+          
+            <View style={[styles.cell, styles.bottomBorder]}>
+              <Button title="Med+" color="gold" onPress={() => alert("Medicines pressed")} />
+            </View>
+
+            <View style={[styles.cell, styles.leftBorder, styles.bottomBorder]}>
+              <TouchableOpacity onPress={() => alert("caps")}>
+                <Icon name="pill" size={30} color="green" />
+                <Text style={styles.iconLabel}>Medicine</Text>
+              </TouchableOpacity>
+            </View>
           </View>
 
           {/* Second Row */}
           <View style={styles.row}>
             <View style={[styles.cell, styles.rightBorder]}>
-              <Icon name="account-plus-outline" size={50} color="black" />
+              <Icon name="account-plus-outline" size={30} color="black" />
               <Text style={styles.iconLabel}>Add User</Text>
             </View>
+
             <View style={styles.cell}>
-              <Icon name="account-group-outline" size={50} color="black" />
+              <Icon name="account-group-outline" size={30} color="black" />
               <Text style={styles.iconLabel}>Templates</Text>
             </View>
+
             <View style={[styles.cell, styles.leftBorder]}>
-              <Icon name="account-minus-outline" size={50} color="black" />
+              <Icon name="account-minus-outline" size={30} color="black" />
               <Text style={styles.iconLabel}>Remove User</Text>
             </View>
           </View>
@@ -74,7 +88,6 @@ export default function Index() {
       <View style={styles.container3}>
         <Text style={styles.text}>Offers</Text>
         <Icon name="sale" size={50} color="green" />
-        <Text style={styles.iconLabel}>Discounts</Text>
       </View>
 
       {/* Slider Component */}
@@ -93,9 +106,23 @@ const styles = StyleSheet.create({
     alignItems: "center",
     paddingBottom: 20,
   },
+  profileContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    alignSelf: "flex-end",
+    gap: 10,
+    margin: 20,
+  },
+  iconWrapper: {
+    alignItems: "center", // Ensures text stays below the icon
+  },
+  iconLabel2: {
+    fontSize: 12,
+    color: "white",
+    marginTop: 4,
+  },
   grid: {
     width: "80%",
-    borderWidth: 0,
   },
   row: {
     flexDirection: "row",
@@ -133,21 +160,6 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     elevation: 5,
   },
-  profileContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    alignSelf: "flex-end",
-    gap: 10,
-    margin: 20,
-  },
-  carouselContainer: {
-    height: height * 0.3,
-    width: "100%",
-    justifyContent: "center",
-    alignItems: "center",
-    marginTop: 20,
-    borderRadius: 10,
-  },
   container3: {
     flexDirection: "row",
     alignItems: "center",
@@ -158,17 +170,11 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: "bold",
     color: "black",
-    textAlign: "left",
   },
   iconLabel: {
-    fontSize: 12,
+    fontSize: 10,
     color: "black",
     textAlign: "center",
-    marginTop: 5,
-  },
-  iconLabel2:{
-    fontSize: 12,
-    color: "white",
     marginTop: 5,
   },
   emergencyButton: {
@@ -176,10 +182,17 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   iconRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    alignItems: 'center',
-    marginBottom: 5,  // Optional: Adds some space between icons and label
+    flexDirection: "row",
+    justifyContent: "space-around",
+    alignItems: "center",
+    marginBottom: 5,
   },
-  
+  carouselContainer: {
+    height: height * 0.3,
+    width: "100%",
+    justifyContent: "center",
+    alignItems: "center",
+    marginTop: 20,
+    borderRadius: 10,
+  },
 });

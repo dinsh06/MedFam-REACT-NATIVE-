@@ -8,7 +8,7 @@ export default function Profile() {
     <ScrollView style={styles.container}>
       {/* My Addresses */}
       <View style={styles.row}>
-        <Text style={styles.text}>My Addresses</Text>
+        <Link href="/addresses"><Text style={styles.text}>My Addresses</Text></Link>       
         <TouchableOpacity>
           <Icon name="map-marker" size={30} color="black" />
         </TouchableOpacity>
@@ -37,7 +37,7 @@ export default function Profile() {
       <View style={styles.row}>
         <Text style={styles.text}>Settings</Text>
         <TouchableOpacity>
-          <Icon name="settings" size={30} color="black" />
+          <Icon name="cog" size={30} color="black" />
         </TouchableOpacity>
       </View>
       <View style={styles.separator} />
@@ -57,7 +57,7 @@ export default function Profile() {
 const styles = StyleSheet.create({
   container: {
     padding: 20,
-    backgroundColor: "#f8f8f8",
+    backgroundColor: "#F88B88",
   },
   row: {
     flexDirection: "row",
