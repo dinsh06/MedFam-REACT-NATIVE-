@@ -32,7 +32,7 @@ export default function Login() {
         return;
       }
       Alert.alert("Login successfull");
-      router.push("/profile")
+      router.replace("/profile")
     }
     else{
       

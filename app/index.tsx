@@ -1,40 +1,44 @@
-import { Text, View, Button, Dimensions, TouchableOpacity } from "react-native"; 
-import { StyleSheet } from "react-native"; 
-import { useRouter } from "expo-router"; 
-import * as React from "react"; 
+import { Text, View, Button, Dimensions, TouchableOpacity } from "react-native";
+import { StyleSheet } from "react-native";
+import { useRouter, useFocusEffect } from "expo-router"; // <-- Import useFocusEffect
+import * as React from "react";
 import Slider from "@react-native-community/slider";
-import Icon from "react-native-vector-icons/MaterialCommunityIcons"; 
-import { useEffect, useState } from "react";
+import Icon from "react-native-vector-icons/MaterialCommunityIcons";
+import { useCallback, useState } from "react";
 import * as SecureStore from 'expo-secure-store';
 
 const { height } = Dimensions.get("window");
 
 export default function Index() {
-  const router = useRouter(); 
+  const router = useRouter();
   const [isLoggedIn, setIsLoggedIn] = useState<boolean | null>(null);
 
-  useEffect(() => {
-    const checkToken = async () => {
-      try {
-        const token = await SecureStore.getItemAsync("jwt");
-        setIsLoggedIn(!!token); // Set true if token exists, false otherwise
-      } catch (error) {
-        console.error("Error fetching token:", error);
-        setIsLoggedIn(false);
-      }
-    };
+  // Runs every time the screen is focused
+  useFocusEffect(
+    useCallback(() => {
+      const checkToken = async () => {
+        try {
+          const token = await SecureStore.getItemAsync("jwt");
+         
+          setIsLoggedIn(!!token); // Set true if token exists, false otherwise
+        } catch (error) {
+          console.error("Error fetching token:", error);
+          setIsLoggedIn(false);
+        }
+      };
 
-    checkToken(); // Call checkToken when component mounts
-  }, []); // Empty dependency array ensures it runs only once on mount
+      checkToken();
+    }, []) // Runs only when the screen is focused
+  );
 
-  // Render a loading state while checking token
   if (isLoggedIn === null) {
     return (
-    <View>
-      <Text>Loading...</Text>
-    </View>
-  );
-}
+      <View>
+        <Text>Loading...</Text>
+      </View>
+    );
+  }
+
   return (
     <View style={styles.container}>
       {/* Profile, Search & Cart Icons */}
@@ -54,11 +58,11 @@ export default function Index() {
         </TouchableOpacity>
 
         <TouchableOpacity onPress={() => router.push(isLoggedIn ? "/profile" : "/login")}>
-  <View style={styles.iconWrapper}>
-    <Icon name="account-circle" size={30} color="white" />
-    <Text style={styles.iconLabel2}>{isLoggedIn ? "Profile" : "Login"}</Text>
-  </View>
-</TouchableOpacity>
+          <View style={styles.iconWrapper}>
+            <Icon name="account-circle" size={30} color="white" />
+            <Text style={styles.iconLabel2}>{isLoggedIn ? "Profile" : "Login"}</Text>
+          </View>
+        </TouchableOpacity>
       </View>
 
       {/* Grid Box */}
@@ -75,7 +79,7 @@ export default function Index() {
                 <Text style={styles.iconLabel}>Emergency Call</Text>
               </TouchableOpacity>
             </View>
-          
+
             <View style={[styles.cell, styles.bottomBorder]}>
               <Button title="Med+" color="gold" onPress={() => alert("Medicines pressed")} />
             </View>
@@ -138,7 +142,7 @@ const styles = StyleSheet.create({
     margin: 20,
   },
   iconWrapper: {
-    alignItems: "center", // Ensures text stays below the icon
+    alignItems: "center",
   },
   iconLabel2: {
     fontSize: 12,
