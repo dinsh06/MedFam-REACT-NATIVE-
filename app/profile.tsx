@@ -8,7 +8,7 @@ export default function Profile() {
   const router = useRouter();
   const handlelogout = async()=> {
     await SecureStore.deleteItemAsync("jwt");
-    router.push("/");
+    router.replace("/");
   }
   return (
     <ScrollView style={styles.container}>
