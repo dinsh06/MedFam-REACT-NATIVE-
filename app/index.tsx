@@ -1,16 +1,40 @@
 import { Text, View, Button, Dimensions, TouchableOpacity } from "react-native"; 
 import { StyleSheet } from "react-native"; 
 import { useRouter } from "expo-router"; 
-import { Link } from "expo-router"; 
 import * as React from "react"; 
 import Slider from "@react-native-community/slider";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons"; 
+import { useEffect, useState } from "react";
+import * as SecureStore from 'expo-secure-store';
 
 const { height } = Dimensions.get("window");
 
 export default function Index() {
   const router = useRouter(); 
+  const [isLoggedIn, setIsLoggedIn] = useState<boolean | null>(null);
 
+  useEffect(() => {
+    const checkToken = async () => {
+      try {
+        const token = await SecureStore.getItemAsync("jwt");
+        setIsLoggedIn(!!token); // Set true if token exists, false otherwise
+      } catch (error) {
+        console.error("Error fetching token:", error);
+        setIsLoggedIn(false);
+      }
+    };
+
+    checkToken(); // Call checkToken when component mounts
+  }, []); // Empty dependency array ensures it runs only once on mount
+
+  // Render a loading state while checking token
+  if (isLoggedIn === null) {
+    return (
+    <View>
+      <Text>Loading...</Text>
+    </View>
+  );
+}
   return (
     <View style={styles.container}>
       {/* Profile, Search & Cart Icons */}
@@ -29,10 +53,10 @@ export default function Index() {
           </View>
         </TouchableOpacity>
 
-        <TouchableOpacity onPress={() => router.push("/login")}>
+        <TouchableOpacity onPress={() => router.push(isLoggedIn ? "/profile" : "/login")}>
   <View style={styles.iconWrapper}>
     <Icon name="account-circle" size={30} color="white" />
-    <Text style={styles.iconLabel2}>Profile</Text>
+    <Text style={styles.iconLabel2}>{isLoggedIn ? "Profile" : "Login"}</Text>
   </View>
 </TouchableOpacity>
       </View>
