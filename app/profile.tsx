@@ -6,10 +6,12 @@ import * as SecureStore from 'expo-secure-store';
 
 export default function Profile() {
   const router = useRouter();
-  const handlelogout = async()=> {
+
+  const handlelogout = async () => {
     await SecureStore.deleteItemAsync("jwt");
-    router.replace("/");
-  }
+    router.replace("/login");  // Redirect to the index page after logout
+  };
+
   return (
     <ScrollView style={styles.container}>
       {/* My Addresses */}
