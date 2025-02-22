@@ -1,9 +1,17 @@
 import * as React from "react";
 import { View, Text, TouchableOpacity, ScrollView, StyleSheet } from "react-native";
-import { Link } from "expo-router";
+import { Link, useRouter } from "expo-router";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
+import * as SecureStore from 'expo-secure-store';
 
 export default function Profile() {
+  const router = useRouter();
+
+  const handlelogout = async () => {
+    await SecureStore.deleteItemAsync("jwt");
+    router.replace("/login");  // Redirect to the index page after logout
+  };
+
   return (
     <ScrollView style={styles.container}>
       {/* My Addresses */}
@@ -45,7 +53,7 @@ export default function Profile() {
       {/* Logout */}
       <View style={styles.row}>
         <Text style={styles.text}>Logout</Text>
-        <TouchableOpacity>
+        <TouchableOpacity onPress={handlelogout}>
           <Icon name="logout" size={30} color="black" />
         </TouchableOpacity>
       </View>

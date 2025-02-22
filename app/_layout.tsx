@@ -16,10 +16,6 @@ export default function RootLayout() {
         options={{ headerTitle: "Homepage" }} 
       />
       <Stack.Screen 
-        name="profile" 
-        options={{ headerTitle: "Profile" }} 
-      />
-      <Stack.Screen 
         name="addresses" 
         options={{ headerTitle: "Addresses" }} 
       />

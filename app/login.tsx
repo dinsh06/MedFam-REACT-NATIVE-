@@ -1,16 +1,50 @@
 import * as React from "react";
-import {
-  View,
-  StyleSheet,
-  Text,
-  TextInput,
-  TouchableOpacity,
-} from "react-native";
-
+import { View, StyleSheet, Text, TextInput, TouchableOpacity, Alert } from "react-native";
+import { useState } from 'react';
+import { useRouter } from "expo-router";
+import * as SecureStore from 'expo-secure-store';
+ // For storing JWT token
 export default function Login() {
-  const [email, setEmail] = React.useState("");
-  const [password, setPassword] = React.useState("");
-
+  const router = useRouter();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const handlesubmit = async() =>{
+    if(!email||!password){
+      Alert.alert("Enter all the fields");
+      return;
+    }
+  try{
+    const response = await fetch("http://192.168.0.106:5000/login",{
+      method: "POST",
+      headers:{
+        "Content-type":"application/json",
+      },
+      body: JSON.stringify({email,password}),
+    });
+    const data = await response.json();
+    if(response.ok){
+      const {token} = data; //user's token for the session
+      try {
+        await SecureStore.setItemAsync("jwt", token); // Store token securely
+      } catch (storeError) {
+        console.log("Error storing token:", storeError);
+        Alert.alert("Failed to store token securely");
+        return;
+      }
+      Alert.alert("Login successfull");
+      router.replace("/profile")
+    }
+    else{
+      
+      console.log("Login failed");
+      Alert.alert("LOGIN FAILED");
+    }
+  }  
+  catch(error){
+     console.log("Error occured",error);
+     Alert.alert("login failed");
+  }
+  };
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Login</Text>
@@ -39,7 +73,7 @@ export default function Login() {
       />
 
       {/* Login Button */}
-      <TouchableOpacity style={styles.button} onPress={() => alert("Login Pressed")}>
+      <TouchableOpacity style={styles.button} onPress={handlesubmit}>
         <Text style={styles.buttonText}>Login</Text>
       </TouchableOpacity>
     </View>
@@ -90,4 +124,3 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
 });
-
