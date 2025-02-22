@@ -14,7 +14,7 @@ export default function Login() {
       return;
     }
   try{
-    const response = await fetch("http://192.168.0.106:5000/login",{
+    const response = await fetch("http://192.168.0.102:5000/login",{
       method: "POST",
       headers:{
         "Content-type":"application/json",
@@ -31,18 +31,18 @@ export default function Login() {
         Alert.alert("Failed to store token securely");
         return;
       }
-      Alert.alert("Login successfull");
-      router.replace("/profile")
+      Alert.alert("Login successful");
+      router.replace("/homepage")
     }
     else{
       
       console.log("Login failed");
-      Alert.alert("LOGIN FAILED");
+      Alert.alert("Login failed");
     }
   }  
   catch(error){
      console.log("Error occured",error);
-     Alert.alert("login failed");
+     Alert.alert("Login failed");
   }
   };
   return (

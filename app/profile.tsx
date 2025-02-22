@@ -34,7 +34,7 @@ export default function Profile() {
 
       {/* My Templates */}
       <View style={styles.row}>
-        <Text style={styles.text}>My Templates</Text>
+      <Link href="/templates"><Text style={styles.text}>My Templates</Text></Link>       
         <TouchableOpacity>
           <Icon name="file-outline" size={30} color="black" />
         </TouchableOpacity>
@@ -52,8 +52,8 @@ export default function Profile() {
 
       {/* Logout */}
       <View style={styles.row}>
-        <Text style={styles.text}>Logout</Text>
-        <TouchableOpacity onPress={handlelogout}>
+      <Text style={styles.text}>Logout</Text>
+        <TouchableOpacity>
           <Icon name="logout" size={30} color="black" />
         </TouchableOpacity>
       </View>
