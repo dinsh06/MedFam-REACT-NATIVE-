@@ -9,9 +9,7 @@ import {
   Alert,
 } from "react-native";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
-// import DocumentPicker from "react-native-document-picker";
-import * as DocumentPicker from 'expo-document-picker';
-
+import * as DocumentPicker from "expo-document-picker";
 
 export default function Templates() {
   const [planName, setPlanName] = useState("");
@@ -19,31 +17,33 @@ export default function Templates() {
   const [address, setAddress] = useState("");
   const [phone, setPhone] = useState("");
   const [email, setEmail] = useState("");
+  const [medicines, setMedicines] = useState<string[]>([""]);
   const [isFormVisible, setIsFormVisible] = useState(false);
-  // const [selectedFile, setSelectedFile] = useState<Awaited<ReturnType<typeof DocumentPicker.pickSingle>> | null>(null);
 
+  // Function to add a new medicine input
+  const addMedicine = () => {
+    setMedicines([...medicines, ""]);
+  };
 
+  // Function to remove a medicine input
+  const removeMedicine = (index: number) => {
+    if (medicines.length > 1) {
+      const updatedMedicines = medicines.filter((_, i) => i !== index);
+      setMedicines(updatedMedicines);
+    }
+  };
 
+  // Function to update the medicine name at a specific index
+  const updateMedicine = (index: number, value: string) => {
+    const updatedMedicines = medicines.map((medicine, i) =>
+      i === index ? value : medicine
+    );
+    setMedicines(updatedMedicines);
+  };
 
-
-  // const pickDocument = async () => {
-  //   try {
-  //     const res = await DocumentPicker.pickSingle({
-  //       type: [DocumentPicker.types.pdf],
-  //     });
-  //     setSelectedFile(res);
-  //     console.log("PDF Selected:", res);
-  //   } catch (err) {
-  //     if (DocumentPicker.isCancel(err)) {
-  //       console.log("User cancelled the picker");
-  //     } else {
-  //       console.error("Error picking document:", err);
-  //     }
-  //   }
-  // }  
   const handleSubmit = () => {
-    if (!planName || !name || !address || !phone || !email) {
-      Alert.alert("Please fill all fields");
+    if (!planName || !name || !address || !phone || !email || medicines.some(med => !med)) {
+      Alert.alert("Please fill all fields and medicine names");
       return;
     }
     Alert.alert("Template submitted successfully");
@@ -53,13 +53,11 @@ export default function Templates() {
     setAddress("");
     setPhone("");
     setEmail("");
+    setMedicines([""]);
   };
 
   return (
-    <ScrollView
-      style={styles.container}
-      contentContainerStyle={styles.scrollViewContent}
-    >
+    <ScrollView style={styles.container} contentContainerStyle={styles.scrollViewContent}>
       <Text style={styles.header}>Templates</Text>
 
       {/* Add Template Button */}
@@ -129,6 +127,29 @@ export default function Templates() {
             />
           </View>
 
+          {/* Medicine List */}
+          <Text style={styles.label}>Medicines</Text>
+          {medicines.map((medicine, index) => (
+            <View key={index} style={styles.row}>
+              <TextInput
+                style={styles.input}
+                value={medicine}
+                onChangeText={(text) => updateMedicine(index, text)}
+                placeholder="Enter medicine name"
+              />
+              <View style={styles.buttonContainer}>
+                <TouchableOpacity onPress={addMedicine} style={styles.addButton}>
+                  <Icon name="plus" size={24} color="white" />
+                </TouchableOpacity>
+                {medicines.length > 1 && (
+                  <TouchableOpacity onPress={() => removeMedicine(index)} style={styles.removeButton}>
+                    <Icon name="minus" size={24} color="white" />
+                  </TouchableOpacity>
+                )}
+              </View>
+            </View>
+          ))}
+
           {/* Submit Button */}
           <TouchableOpacity style={styles.button} onPress={handleSubmit}>
             <Text style={styles.buttonText}>Submit</Text>
@@ -146,8 +167,8 @@ const styles = StyleSheet.create({
     padding: 20,
   },
   scrollViewContent: {
-    alignItems: "center", // Center everything inside
-    justifyContent: "center", // Center vertically
+    alignItems: "center",
+    justifyContent: "center",
   },
   header: {
     fontSize: 28,
@@ -167,7 +188,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     padding: 5,
     marginBottom: 15,
-    elevation: 3, // Add shadow to make it look like a box
+    elevation: 3,
   },
   input: {
     width: "100%",
@@ -193,20 +214,32 @@ const styles = StyleSheet.create({
   },
   addButton: {
     backgroundColor: "#4CAF50",
-    width: 80,
-    height: 80,
-    borderRadius: 40,
-    justifyContent: "center",
+    padding: 8,
+    borderRadius: 5,
+  },
+  removeButton: {
+    backgroundColor: "#F44336",
+    padding: 8,
+    borderRadius: 5,
+    marginLeft: 10,
+  },
+  buttonContainer: {
+    flexDirection: "row",
     alignItems: "center",
-    marginBottom: 20,
-    alignSelf: "center",
+    marginLeft: 10, // Add space between buttons and text input
+  },
+  row: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: 10,
+    justifyContent: "space-between", // Distribute buttons properly
   },
   formContainer: {
     padding: 20,
     backgroundColor: "white",
     borderRadius: 8,
     elevation: 5,
-    width: '100%', // Ensure the form takes the full width
-    maxWidth: 400, // Optional: set a max width for the form
+    width: '100%',
+    maxWidth: 400,
   },
 });
