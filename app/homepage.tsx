@@ -1,4 +1,4 @@
-import { Text, View, Button, Dimensions, TouchableOpacity } from "react-native";
+import { Text, View, Button, Dimensions, TouchableOpacity ,Linking,Image} from "react-native";
 import { StyleSheet } from "react-native";
 import { useRouter } from "expo-router"; 
 import * as React from "react";
@@ -7,13 +7,14 @@ import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import { useState, useEffect } from "react";
 import * as SecureStore from "expo-secure-store";
 import { BackHandler } from "react-native";
+import { TextInput } from "react-native-paper";
 
 const { height } = Dimensions.get("window");
 
 export default function Index() {
   const router = useRouter();
   const [isLoggedIn, setIsLoggedIn] = useState<boolean | null>(null);
-
+  const [showSearch, setShowSearch] = useState(false);
   useEffect(() => {
     const checkToken = async () => {
       try {
@@ -43,6 +44,7 @@ useEffect(() => {
   return () => backHandler.remove();
 }, []);
 
+
   // Show a loading screen while checking token
   if (isLoggedIn === null) {
     return (
@@ -52,11 +54,30 @@ useEffect(() => {
     );
   }
 
+const handleCall=async()=>{
+  const phoneNumber="tel:8681040528";
+  try{
+    const supported= await Linking.canOpenURL(phoneNumber);
+    if(supported){
+      Linking.openURL(phoneNumber);
+    }
+    else{
+      alert("Unable to make a call");
+    }
+  } catch(err){
+    console.error("An error occured",err);
+    alert("Error occured while placing the call");
+  }
+};
   return (
     <View style={styles.container}>
+      <View style={styles.container4}>
+        <Image source={require("../assets/images/Logo.png")} style={styles.image} />
+        <Text style={styles.container4}>MedFam</Text>
+      </View>
       {/* Profile, Search & Cart Icons */}
       <View style={styles.profileContainer}>
-        <TouchableOpacity onPress={() => alert("Search bar clicked")}>
+        <TouchableOpacity onPress={() => setShowSearch(!showSearch)}>
           <View style={styles.iconWrapper}>
             <Icon name="magnify" size={30} color="white" />
             <Text style={styles.iconLabel2}>Search</Text>
@@ -77,6 +98,17 @@ useEffect(() => {
           </View>
         </TouchableOpacity>
       </View>
+      {/* Search Bar (Only visible when showSearch is true) */}
+{showSearch && (
+  <TextInput
+    style={styles.searchInput}
+    placeholder="Search your medicine..."
+    placeholderTextColor="gray"
+    onChangeText={(text) => console.log(text)}
+  />
+)}
+
+
 
       {/* Grid Box */}
       <View style={styles.boxContainer}>
@@ -84,7 +116,7 @@ useEffect(() => {
           {/* First Row */}
           <View style={styles.row}>
             <View style={[styles.cell, styles.rightBorder, styles.bottomBorder]}>
-              <TouchableOpacity onPress={() => alert("Emergency Call Initiated")} style={styles.emergencyButton}>
+              <TouchableOpacity onPress={handleCall} style={styles.emergencyButton}>
                 <View style={styles.iconRow}>
                   <Icon name="ambulance" size={30} color="red" />
                   <Icon name="phone" size={30} color="red" />
@@ -110,11 +142,10 @@ useEffect(() => {
               <Icon name="account-plus-outline" size={30} color="black" />
               <Text style={styles.iconLabel}>Add User</Text>
             </View>
-
-            <View style={styles.cell}>
+          <TouchableOpacity style={styles.cell} onPress={()=>router.push("/templates")}> 
               <Icon name="account-group-outline" size={30} color="black" />
               <Text style={styles.iconLabel}>Templates</Text>
-            </View>
+          </TouchableOpacity>
 
             <View style={[styles.cell, styles.leftBorder]}>
               <Icon name="account-minus-outline" size={30} color="black" />
@@ -124,11 +155,12 @@ useEffect(() => {
         </View>
       </View>
 
-      {/* Offers Section */}
       <View style={styles.container3}>
-        <Text style={styles.text}>Offers</Text>
-        <Icon name="sale" size={50} color="green" />
-      </View>
+  <View style={styles.offersContainer}>
+    <Icon name="account-group-outline" size={30} color="green" />
+    <Text style={styles.text}>Templates</Text>
+  </View>
+</View>
 
       {/* Slider Component */}
       <View style={styles.carouselContainer}>
@@ -144,7 +176,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    paddingBottom: 20,
+    paddingBottom:20,
   },
   loadingContainer: {
     flex: 1,
@@ -165,6 +197,8 @@ const styles = StyleSheet.create({
   },
   iconWrapper: {
     alignItems: "center",
+    right:22,
+    top:-10,
   },
   iconLabel2: {
     fontSize: 12,
@@ -211,15 +245,21 @@ const styles = StyleSheet.create({
     elevation: 5,
   },
   container3: {
+    padding: 10,
     flexDirection: "row",
     alignItems: "center",
-    gap: 10,
-    marginTop: 20,
+    justifyContent: "flex-start", // Ensures left alignment
+  },
+  offersContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8, // Adds spacing between icon & text
   },
   text: {
     fontSize: 20,
     fontWeight: "bold",
-    color: "black",
+    color: "white",
+    marginLeft: 8, // Ensures space between icon & text
   },
   iconLabel: {
     fontSize: 10,
@@ -245,4 +285,34 @@ const styles = StyleSheet.create({
     marginTop: 20,
     borderRadius: 10,
   },
+  image:{
+    width:100,
+    height:100,
+    resizeMode:"contain",
+    alignItems:"flex-start", 
+     },
+     container4:{
+      position:"absolute",
+      top:80,
+      left:20,
+      zIndex:10,
+      flexDirection:"row",
+      alignItems:"center",
+      padding:10,
+      color:"green",
+      fontWeight:"bold",
+      marginLeft:0,
+     },
+     searchInput:{
+      height:30,
+      width:"70%",
+      borderColor: "gray",
+      borderRadius:10,
+      borderWidth:1,
+      paddingHorizontal:10,
+      marginHorizontal:10,
+      marginBottom:10,
+      backgroundColor:"white",
+      alignSelf:"center",
+     },
 });

@@ -172,7 +172,7 @@ const styles = StyleSheet.create({
   },
   formContainer: {
     padding: 20,
-    backgroundColor: "white",
+    backgroundColor: "pink",
     borderRadius: 8,
     elevation: 5,
     width: '100%', // Ensure the form takes the full width

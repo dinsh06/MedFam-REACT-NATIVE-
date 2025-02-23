@@ -1,16 +1,38 @@
 import * as React from "react";
-import { View, Text, TouchableOpacity, ScrollView, StyleSheet } from "react-native";
+import { View, Text, TouchableOpacity, ScrollView, StyleSheet, ActivityIndicator } from "react-native";
 import { Link, useRouter } from "expo-router";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
-import * as SecureStore from 'expo-secure-store';
+import * as SecureStore from "expo-secure-store";
 
 export default function Profile() {
   const router = useRouter();
+  const [isAuthenticated, setIsAuthenticated] = React.useState<boolean | null>(null);
 
-  const handlelogout = async () => {
+  // Check if the user is logged in
+  React.useEffect(() => {
+    const checkAuth = async () => {
+      const token = await SecureStore.getItemAsync("jwt");
+      if (!token) {
+        router.replace("/login");  // Redirect to login if not authenticated
+      } else {
+        setIsAuthenticated(true);
+      }
+    };
+    checkAuth();
+  }, []);
+
+  const handleLogout = async () => {
     await SecureStore.deleteItemAsync("jwt");
-    router.replace("/login");  // Redirect to the index page after logout
+    router.replace("/login"); // Redirect to login after logout
   };
+
+  if (isAuthenticated === null) {
+    return (
+      <View style={styles.loadingContainer}>
+        <ActivityIndicator size="large" color="#000" />
+      </View>
+    );
+  }
 
   return (
     <ScrollView style={styles.container}>
@@ -34,7 +56,7 @@ export default function Profile() {
 
       {/* My Templates */}
       <View style={styles.row}>
-      <Link href="/templates"><Text style={styles.text}>My Templates</Text></Link>       
+        <Link href="/templates"><Text style={styles.text}>My Templates</Text></Link>       
         <TouchableOpacity>
           <Icon name="file-outline" size={30} color="black" />
         </TouchableOpacity>
@@ -51,12 +73,10 @@ export default function Profile() {
       <View style={styles.separator} />
 
       {/* Logout */}
-      <View style={styles.row}>
-      <Text style={styles.text}>Logout</Text>
-        <TouchableOpacity>
-          <Icon name="logout" size={30} color="black" />
-        </TouchableOpacity>
-      </View>
+      <TouchableOpacity style={styles.row} onPress={handleLogout}>
+        <Text style={styles.text}>Logout</Text>
+        <Icon name="logout" size={30} color="black" />
+      </TouchableOpacity>
       <View style={styles.separator} />
     </ScrollView>
   );
@@ -81,5 +101,10 @@ const styles = StyleSheet.create({
     height: 1,
     backgroundColor: "#ddd",
     marginVertical: 5,
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
   },
 });
