@@ -1,4 +1,4 @@
-import { Text, View, Button, Dimensions, TouchableOpacity ,Linking,Image} from "react-native";
+import { Text, View, Button, Dimensions, TouchableOpacity ,Linking,Image, FlatList} from "react-native";
 import { StyleSheet } from "react-native";
 import { useRouter } from "expo-router"; 
 import * as React from "react";
@@ -15,6 +15,7 @@ export default function Index() {
   const router = useRouter();
   const [isLoggedIn, setIsLoggedIn] = useState<boolean | null>(null);
   const [showSearch, setShowSearch] = useState(false);
+
   useEffect(() => {
     const checkToken = async () => {
       try {
@@ -26,24 +27,21 @@ export default function Index() {
       }
     };
 
-
     checkToken();
   }, []); // Runs only when the component mounts
 
+  useEffect(() => {
+    const backAction = () => {
+      return true; // Prevent going back
+    };
 
-useEffect(() => {
-  const backAction = () => {
-    return true; // Prevent going back
-  };
+    const backHandler = BackHandler.addEventListener(
+      "hardwareBackPress",
+      backAction
+    );
 
-  const backHandler = BackHandler.addEventListener(
-    "hardwareBackPress",
-    backAction
-  );
-
-  return () => backHandler.remove();
-}, []);
-
+    return () => backHandler.remove();
+  }, []);
 
   // Show a loading screen while checking token
   if (isLoggedIn === null) {
@@ -54,27 +52,34 @@ useEffect(() => {
     );
   }
 
-const handleCall=async()=>{
-  const phoneNumber="tel:8681040528";
-  try{
-    const supported= await Linking.canOpenURL(phoneNumber);
-    if(supported){
-      Linking.openURL(phoneNumber);
+  const handleCall = async () => {
+    const phoneNumber = "tel:8681040528";
+    try {
+      const supported = await Linking.canOpenURL(phoneNumber);
+      if (supported) {
+        Linking.openURL(phoneNumber);
+      } else {
+        alert("Unable to make a call");
+      }
+    } catch (err) {
+      console.error("An error occurred", err);
+      alert("Error occurred while placing the call");
     }
-    else{
-      alert("Unable to make a call");
-    }
-  } catch(err){
-    console.error("An error occured",err);
-    alert("Error occured while placing the call");
-  }
-};
+  };
+
+  const templates = [
+    { id: "1", title: "Template 1" },
+    { id: "2", title: "Template 2" },
+    { id: "3", title: "Template 3" },
+  ];
+
   return (
     <View style={styles.container}>
       <View style={styles.container4}>
         <Image source={require("../assets/images/Logo.png")} style={styles.image} />
-        <Text style={styles.container4}>MedFam</Text>
+        <Text style={styles.container4Text}>MedFam</Text>
       </View>
+
       {/* Profile, Search & Cart Icons */}
       <View style={styles.profileContainer}>
         <TouchableOpacity onPress={() => setShowSearch(!showSearch)}>
@@ -98,17 +103,16 @@ const handleCall=async()=>{
           </View>
         </TouchableOpacity>
       </View>
+
       {/* Search Bar (Only visible when showSearch is true) */}
-{showSearch && (
-  <TextInput
-    style={styles.searchInput}
-    placeholder="Search your medicine..."
-    placeholderTextColor="gray"
-    onChangeText={(text) => console.log(text)}
-  />
-)}
-
-
+      {showSearch && (
+        <TextInput
+          style={styles.searchInput}
+          placeholder="Search your medicine..."
+          placeholderTextColor="gray"
+          onChangeText={(text) => console.log(text)}
+        />
+      )}
 
       {/* Grid Box */}
       <View style={styles.boxContainer}>
@@ -142,10 +146,10 @@ const handleCall=async()=>{
               <Icon name="account-plus-outline" size={30} color="black" />
               <Text style={styles.iconLabel}>Add User</Text>
             </View>
-          <TouchableOpacity style={styles.cell} onPress={()=>router.push("/templates")}> 
+            <TouchableOpacity style={styles.cell} onPress={() => router.push("/templates")}> 
               <Icon name="account-group-outline" size={30} color="black" />
               <Text style={styles.iconLabel}>Templates</Text>
-          </TouchableOpacity>
+            </TouchableOpacity>
 
             <View style={[styles.cell, styles.leftBorder]}>
               <Icon name="account-minus-outline" size={30} color="black" />
@@ -156,16 +160,25 @@ const handleCall=async()=>{
       </View>
 
       <View style={styles.container3}>
-  <View style={styles.offersContainer}>
-    <Icon name="account-group-outline" size={30} color="green" />
-    <Text style={styles.text}>Templates</Text>
-  </View>
-</View>
+        <View style={styles.offersContainer}>
+          <Icon name="account-group-outline" size={30} color="green" />
+          <Text style={styles.text}>Templates</Text>
+        </View>
+      </View>
 
       {/* Slider Component */}
-      <View style={styles.carouselContainer}>
-        <Slider />
-      </View>
+      <FlatList
+        data={templates}
+        renderItem={({ item }) => (
+          <View style={styles.templateItem}>
+            <Text style={styles.templateTitle}>{item.title}</Text>
+          </View>
+        )}
+        keyExtractor={(item) => item.id}
+        horizontal
+        showsHorizontalScrollIndicator={false}
+        contentContainerStyle={styles.carouselContainer}
+      />
     </View>
   );
 }
@@ -176,7 +189,8 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    paddingBottom:20,
+    paddingBottom: 10,
+    paddingTop: 85,
   },
   loadingContainer: {
     flex: 1,
@@ -193,12 +207,13 @@ const styles = StyleSheet.create({
     alignItems: "center",
     alignSelf: "flex-end",
     gap: 10,
-    margin: 20,
+    marginTop: 10,  // Adjust top margin for better positioning
+    marginRight: 20,  // Ensure it's aligned properly
   },
   iconWrapper: {
     alignItems: "center",
-    right:22,
-    top:-10,
+    right: 22,
+    top: 0,  // Reset vertical offset to center the icons
   },
   iconLabel2: {
     fontSize: 12,
@@ -245,21 +260,28 @@ const styles = StyleSheet.create({
     elevation: 5,
   },
   container3: {
-    padding: 10,
+    padding: 0, // Set padding to 0 to remove unnecessary space
     flexDirection: "row",
     alignItems: "center",
-    justifyContent: "flex-start", // Ensures left alignment
+    justifyContent: "flex-start",
+    marginBottom: 0, // Adjust margin to control space
   },
   offersContainer: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 8, // Adds spacing between icon & text
+    gap: 8,
+    marginBottom: 0, // Adjust margin to remove any extra space
   },
   text: {
     fontSize: 20,
     fontWeight: "bold",
     color: "white",
     marginLeft: 8, // Ensures space between icon & text
+  },
+  carouselContainer: {
+    alignItems: "center",
+    paddingHorizontal: 10,
+    marginTop: 0,  // Adjust margin to bring it closer
   },
   iconLabel: {
     fontSize: 10,
@@ -277,42 +299,56 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginBottom: 5,
   },
-  carouselContainer: {
-    height: height * 0.3,
-    width: "100%",
+  image: {
+    width: 100,
+    height: 100,
+    resizeMode: "contain",
+    alignItems: "flex-start",
+  },
+  container4: {
+    position: "absolute",
+    top: 40,
+    left: 20,
+    zIndex: 10,
+    flexDirection: "row",
+    alignItems: "center",
+    padding: 10,
+    color: "green",
+    fontWeight: "bold",
+    marginLeft: 0,
+    marginBottom: 0, // Adjust margin to control space
+  },
+  container4Text: {
+    fontSize: 24,
+    fontWeight: "bold",
+    color: "green",
+    padding:-20,
+  },
+  searchInput: {
+    height: 30,
+    width: "70%",
+    borderColor: "gray",
+    borderRadius: 10,
+    borderWidth: 1,
+    paddingHorizontal: 10,
+    marginHorizontal: 10,
+    marginBottom: 10,
+    backgroundColor: "white",
+    alignSelf: "center",
+  },
+  templateItem: {
+    width: 200, // Adjust the width based on your preference
+    height: 150, // Adjust the height based on your preference
+    backgroundColor: "white",
     justifyContent: "center",
     alignItems: "center",
-    marginTop: 20,
     borderRadius: 10,
+    marginHorizontal: 10,
+    elevation: 5, // Add some shadow to the box
   },
-  image:{
-    width:100,
-    height:100,
-    resizeMode:"contain",
-    alignItems:"flex-start", 
-     },
-     container4:{
-      position:"absolute",
-      top:80,
-      left:20,
-      zIndex:10,
-      flexDirection:"row",
-      alignItems:"center",
-      padding:10,
-      color:"green",
-      fontWeight:"bold",
-      marginLeft:0,
-     },
-     searchInput:{
-      height:30,
-      width:"70%",
-      borderColor: "gray",
-      borderRadius:10,
-      borderWidth:1,
-      paddingHorizontal:10,
-      marginHorizontal:10,
-      marginBottom:10,
-      backgroundColor:"white",
-      alignSelf:"center",
-     },
+  templateTitle: {
+    fontSize: 18,
+    fontWeight: "bold",
+    color: "#333",
+  },
 });
