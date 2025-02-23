@@ -1,6 +1,17 @@
 import React, { useState } from "react";
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, ScrollView, Alert } from "react-native";
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import {
+  View,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  StyleSheet,
+  ScrollView,
+  Alert,
+} from "react-native";
+import Icon from "react-native-vector-icons/MaterialCommunityIcons";
+// import DocumentPicker from "react-native-document-picker";
+import * as DocumentPicker from 'expo-document-picker';
+
 
 export default function Templates() {
   const [planName, setPlanName] = useState("");
@@ -9,7 +20,27 @@ export default function Templates() {
   const [phone, setPhone] = useState("");
   const [email, setEmail] = useState("");
   const [isFormVisible, setIsFormVisible] = useState(false);
+  // const [selectedFile, setSelectedFile] = useState<Awaited<ReturnType<typeof DocumentPicker.pickSingle>> | null>(null);
 
+
+
+
+
+  // const pickDocument = async () => {
+  //   try {
+  //     const res = await DocumentPicker.pickSingle({
+  //       type: [DocumentPicker.types.pdf],
+  //     });
+  //     setSelectedFile(res);
+  //     console.log("PDF Selected:", res);
+  //   } catch (err) {
+  //     if (DocumentPicker.isCancel(err)) {
+  //       console.log("User cancelled the picker");
+  //     } else {
+  //       console.error("Error picking document:", err);
+  //     }
+  //   }
+  // }  
   const handleSubmit = () => {
     if (!planName || !name || !address || !phone || !email) {
       Alert.alert("Please fill all fields");
@@ -172,7 +203,7 @@ const styles = StyleSheet.create({
   },
   formContainer: {
     padding: 20,
-    backgroundColor: "pink",
+    backgroundColor: "white",
     borderRadius: 8,
     elevation: 5,
     width: '100%', // Ensure the form takes the full width

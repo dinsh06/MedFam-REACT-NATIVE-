@@ -7489,6 +7489,13 @@ react-native-carousel@^0.12.0:
     "@react-native-community/viewpager" "^1.1.7"
     react-timer-mixin "^0.13.3"
 
+react-native-document-picker@^9.3.1:
+  version "9.3.1"
+  resolved "https://registry.npmjs.org/react-native-document-picker/-/react-native-document-picker-9.3.1.tgz"
+  integrity sha512-Vcofv9wfB0j67zawFjfq9WQPMMzXxOZL9kBmvWDpjVuEcVK73ndRmlXHlkeFl5ZHVsv4Zb6oZYhqm9u5omJOPA==
+  dependencies:
+    invariant "^2.2.4"
+
 react-native-gesture-handler@~2.20.2:
   version "2.20.2"
   resolved "https://registry.npmjs.org/react-native-gesture-handler/-/react-native-gesture-handler-2.20.2.tgz"
@@ -7507,6 +7514,11 @@ react-native-helmet-async@2.0.4:
     invariant "^2.2.4"
     react-fast-compare "^3.2.2"
     shallowequal "^1.1.0"
+
+react-native-image-picker@^8.1.0:
+  version "8.1.0"
+  resolved "https://registry.npmjs.org/react-native-image-picker/-/react-native-image-picker-8.1.0.tgz"
+  integrity sha512-qD0pivr2LkzdCNRl5CyawldZA2o0YWsK3f4gh3086WzRiwYFoe+ksa+ggub1QD4opz/oS7YpIRzWwfHSoLFEog==
 
 react-native-is-edge-to-edge@^1.1.6:
   version "1.1.6"

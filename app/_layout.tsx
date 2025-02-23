@@ -28,6 +28,10 @@ export default function RootLayout() {
         name="profile"
         options={{ headerTitle: "Profile" }}
       />
+       <Stack.Screen
+        name="templates"
+        options={{ headerTitle: "templates" }}
+      />
     </Stack>
   );
 }

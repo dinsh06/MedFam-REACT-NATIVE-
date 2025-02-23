@@ -260,17 +260,17 @@ const styles = StyleSheet.create({
     elevation: 5,
   },
   container3: {
-    padding: 0, // Set padding to 0 to remove unnecessary space
+    padding: 10, // Set padding to 0 to remove unnecessary space
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "flex-start",
-    marginBottom: 0, // Adjust margin to control space
+    marginBottom: -50, // Adjust margin to control space
   },
   offersContainer: {
     flexDirection: "row",
     alignItems: "center",
     gap: 8,
-    marginBottom: 0, // Adjust margin to remove any extra space
+    marginBottom: -300, // Adjust margin to remove any extra space
   },
   text: {
     fontSize: 20,
@@ -284,7 +284,7 @@ const styles = StyleSheet.create({
     marginTop: 0,  // Adjust margin to bring it closer
   },
   iconLabel: {
-    fontSize: 10,
+    fontSize: 9,
     color: "black",
     textAlign: "center",
     marginTop: 5,
