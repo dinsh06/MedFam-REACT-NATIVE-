@@ -9,7 +9,6 @@ import {
   Alert,
 } from "react-native";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
-//import * as DocumentPicker from "expo-document-picker";
 
 export default function Templates() {
   const [planName, setPlanName] = useState("");
@@ -62,9 +61,11 @@ export default function Templates() {
 
       {/* Add Template Button */}
       {!isFormVisible && (
-        <TouchableOpacity style={styles.addButton} onPress={() => setIsFormVisible(true)}>
-          <Icon name="plus" size={30} color="white" />
-        </TouchableOpacity>
+        <View style={styles.buttonWrapper}>
+          <TouchableOpacity style={styles.addButton} onPress={() => setIsFormVisible(true)}>
+            <Icon name="plus" size={30} color="white" />
+          </TouchableOpacity>
+        </View>
       )}
 
       {/* Template Form */}
@@ -127,33 +128,35 @@ export default function Templates() {
             />
           </View>
 
-          {/* Medicine List */}
-          <Text style={styles.label}>Medicines</Text>
-          {medicines.map((medicine, index) => (
-            <View key={index} style={styles.row}>
-              <TextInput
-                style={styles.input}
-                value={medicine}
-                onChangeText={(text) => updateMedicine(index, text)}
-                placeholder="Enter medicine name"
-              />
-              <View style={styles.buttonContainer}>
-                <TouchableOpacity onPress={addMedicine} style={styles.addButton}>
-                  <Icon name="plus" size={24} color="white" />
-                </TouchableOpacity>
-                {medicines.length > 1 && (
-                  <TouchableOpacity onPress={() => removeMedicine(index)} style={styles.removeButton}>
-                    <Icon name="minus" size={24} color="white" />
-                  </TouchableOpacity>
-                )}
-              </View>
-            </View>
-          ))}
+{/* Medicine List */}
+<Text style={styles.label}>Medicines</Text>
+{medicines.map((medicine, index) => (
+  <View key={index} style={styles.row}>
+    <TextInput
+      style={styles.medicineInput} // Updated style
+      value={medicine}
+      onChangeText={(text) => updateMedicine(index, text)}
+      placeholder="Enter medicine name"
+    />
+    <View style={styles.buttonContainer}>
+      <TouchableOpacity onPress={addMedicine} style={styles.addButton}>
+        <Icon name="plus" size={24} color="white" />
+      </TouchableOpacity>
+      {medicines.length > 1 && (
+        <TouchableOpacity onPress={() => removeMedicine(index)} style={styles.removeButton}>
+          <Icon name="minus" size={24} color="white" />
+        </TouchableOpacity>
+      )}
+    </View>
+  </View>
+))}
 
           {/* Submit Button */}
-          <TouchableOpacity style={styles.button} onPress={handleSubmit}>
-            <Text style={styles.buttonText}>Submit</Text>
-          </TouchableOpacity>
+          <View style={styles.buttonWrapper}>
+            <TouchableOpacity style={styles.button} onPress={handleSubmit}>
+              <Text style={styles.buttonText}>Submit</Text>
+            </TouchableOpacity>
+          </View>
         </View>
       )}
     </ScrollView>
@@ -167,8 +170,10 @@ const styles = StyleSheet.create({
     padding: 20,
   },
   scrollViewContent: {
+    flexGrow: 1,
     alignItems: "center",
     justifyContent: "center",
+    paddingBottom: 50, // Prevents button from getting clipped
   },
   header: {
     fontSize: 28,
@@ -199,6 +204,10 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     backgroundColor: "white",
   },
+  buttonWrapper: {
+    alignItems: "center", 
+    marginBottom: 20, // Space at the bottom to avoid screen overflow
+  },
   button: {
     backgroundColor: "#ff6347",
     paddingVertical: 15,
@@ -214,14 +223,14 @@ const styles = StyleSheet.create({
   },
   addButton: {
     backgroundColor: "#4CAF50",
-    padding: 8,
+    padding: 10,
     borderRadius: 5,
   },
   removeButton: {
     backgroundColor: "#F44336",
-    padding: 8,
+    padding: 10,
     borderRadius: 5,
-    marginLeft: 10,
+    marginLeft: 8,
   },
   buttonContainer: {
     flexDirection: "row",
@@ -239,7 +248,17 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
     borderRadius: 8,
     elevation: 5,
-    width: '100%',
+    width: "100%",
     maxWidth: 400,
   },
+  medicineInput: {
+    width: "70%",  // Reduced width
+    height: 50,
+    borderColor: "#ddd",
+    borderWidth: 1,
+    borderRadius: 8,
+    paddingHorizontal: 10,
+    backgroundColor: "white",
+  },
+  
 });

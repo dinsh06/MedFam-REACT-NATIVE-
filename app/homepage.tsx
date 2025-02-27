@@ -1,6 +1,6 @@
-import { Text, View, Button, Dimensions, TouchableOpacity ,Linking,Image, FlatList} from "react-native";
+import { Text, View, Button, Dimensions, TouchableOpacity, Linking, Image, FlatList } from "react-native";
 import { StyleSheet } from "react-native";
-import { useRouter } from "expo-router"; 
+import { useRouter } from "expo-router";
 import * as React from "react";
 import Slider from "@react-native-community/slider";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
@@ -9,6 +9,7 @@ import * as SecureStore from "expo-secure-store";
 import { BackHandler } from "react-native";
 import { TextInput } from "react-native-paper";
 import { useNavigation } from "@react-navigation/native";
+
 const { height } = Dimensions.get("window");
 
 export default function Index() {
@@ -16,6 +17,8 @@ export default function Index() {
   const [isLoggedIn, setIsLoggedIn] = useState<boolean | null>(null);
   const [showSearch, setShowSearch] = useState(false);
   const navigation = useNavigation();
+  const [searchQuery, setSearchQuery] = useState("");
+
   useEffect(() => {
     const checkToken = async () => {
       try {
@@ -35,10 +38,7 @@ export default function Index() {
       return true; // Prevent going back
     };
 
-    const backHandler = BackHandler.addEventListener(
-      "hardwareBackPress",
-      backAction
-    );
+    const backHandler = BackHandler.addEventListener("hardwareBackPress", backAction);
 
     return () => backHandler.remove();
   }, []);
@@ -72,11 +72,12 @@ export default function Index() {
     { id: "2", title: "Template 2" },
     { id: "3", title: "Template 3" },
   ];
-  const temp=[
-    { id: "4", source: require("../assets/images/accucheck.jpg")},
-    { id: "5", source: require("../assets/images/medicalkit.jpg")},
-    { id: "6", source: require("../assets/images/dettol.jpg")},
-  ]
+
+  const temp = [
+    { id: "4", source: require("../assets/images/accucheck.jpg") },
+    { id: "5", source: require("../assets/images/medicalkit.jpg") },
+    { id: "6", source: require("../assets/images/dettol.jpg") },
+  ];
 
   return (
     <View style={styles.container}>
@@ -115,7 +116,14 @@ export default function Index() {
           style={styles.searchInput}
           placeholder="Search your medicine..."
           placeholderTextColor="gray"
-          onChangeText={(text) => console.log(text)}
+          onChangeText={(text) => setSearchQuery(text)} // Store search text
+          value={searchQuery}
+          onSubmitEditing={() => {
+            if (searchQuery.trim() !== "") {
+              console.log("Navigating to Products page with query:", searchQuery);
+              router.push({ pathname: "/product", params: { query: searchQuery } });
+            }
+          }}
         />
       )}
 
@@ -151,7 +159,7 @@ export default function Index() {
               <Icon name="account-plus-outline" size={40} color="black" />
               <Text style={styles.iconLabel}>Add User</Text>
             </View>
-            <TouchableOpacity style={styles.cell} onPress={() => router.push("/templates")}> 
+            <TouchableOpacity style={styles.cell} onPress={() => router.push("/templates")}>
               <Icon name="account-group-outline" size={40} color="black" />
               <Text style={styles.iconLabel}>Templates</Text>
             </TouchableOpacity>
@@ -172,42 +180,45 @@ export default function Index() {
       </View>
 
       <FlatList
-  data={templates}
-  renderItem={({ item }) => (
-    <TouchableOpacity onPress={() => router.push({ pathname: "/templates", params: { templateId: item.id } })}>
-      <View style={styles.templateItem}>
-        <Text style={styles.templateTitle}>{item.title}</Text>
-      </View>
-    </TouchableOpacity>
-  )}
-  keyExtractor={(item) => item.id}
-  horizontal
-  showsHorizontalScrollIndicator={false}
-  contentContainerStyle={styles.carouselContainer}
-/>
+        data={templates}
+        renderItem={({ item }) => (
+          <TouchableOpacity onPress={() => router.push({ pathname: "/templates", params: { templateId: item.id } })}>
+            <View style={styles.templateItem}>
+              <Text style={styles.templateTitle}>{item.title}</Text>
+<TouchableOpacity onPress={() => router.push({ pathname: "/product" })}>
+  <Text style={styles.templateText}>View</Text>
+</TouchableOpacity>
+
+            </View>
+          </TouchableOpacity>
+        )}
+        keyExtractor={(item) => item.id}
+        horizontal
+        showsHorizontalScrollIndicator={false}
+        contentContainerStyle={styles.carouselContainer}
+      />
+
       <View style={styles.container3}>
         <View style={styles.offersContainer2}>
           <Icon name="medical-bag" size={30} color="yellow" />
           <Text style={styles.text}>Medical Kits</Text>
         </View>
       </View>
-      <FlatList  
-  data={temp}
-  renderItem={({ item }) => (
-    <View style={styles.templateItem}>
-      <Image source={item.source} style={styles.templateImage} />
-    </View>
-  )}
-  keyExtractor={(item) => item.id}
-  horizontal
-  pagingEnabled
-  showsHorizontalScrollIndicator={true}
-  ItemSeparatorComponent={() => <View style={{ width: 0 }} />}
-  contentContainerStyle={{ paddingLeft: 12.5 }} // Adds uniform left padding
-  snapToAlignment="start"
-/>
-
-
+      <FlatList
+        data={temp}
+        renderItem={({ item }) => (
+          <View style={styles.templateItem}>
+            <Image source={item.source} style={styles.templateImage} />
+          </View>
+        )}
+        keyExtractor={(item) => item.id}
+        horizontal
+        pagingEnabled
+        showsHorizontalScrollIndicator={true}
+        ItemSeparatorComponent={() => <View style={{ width: 0 }} />}
+        contentContainerStyle={{ paddingLeft: 12.5 }} // Adds uniform left padding
+        snapToAlignment="start"
+      />
     </View>
   );
 }
@@ -236,13 +247,13 @@ const styles = StyleSheet.create({
     alignItems: "center",
     alignSelf: "flex-end",
     gap: 10,
-    marginTop: 10,  // Adjust top margin for better positioning
-    marginRight: 5,  // Ensure it's aligned properly
+    marginTop: 10,
+    marginRight: 5,
   },
   iconWrapper: {
     alignItems: "center",
     right: 22,
-    top: -10,  // Reset vertical offset to center the icons
+    top: -10,
   },
   iconLabel2: {
     fontSize: 12,
@@ -287,38 +298,38 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.3,
     shadowRadius: 4,
     elevation: 5,
-    marginBottom:-15,
+    marginBottom: -15,
   },
   container3: {
-    padding: 10, // Set padding to 0 to remove unnecessary space
+    padding: 10,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "flex-start",
-    marginBottom: -50, // Adjust margin to control space
+    marginBottom: -50,
   },
   offersContainer: {
     flexDirection: "row",
     alignItems: "center",
     gap: 8,
     marginTop: -20,
-    marginBottom: -110, // Adjust margin to remove any extra space
+    marginBottom: -110,
   },
   offersContainer2: {
     flexDirection: "row",
     alignItems: "center",
     gap: 8,
-    marginBottom: 40, // 
+    marginBottom: 40,
   },
   text: {
     fontSize: 20,
     fontWeight: "bold",
     color: "white",
-    marginLeft: 8, // Ensures space between icon & text
+    marginLeft: 8,
   },
   carouselContainer: {
     alignItems: "center",
     paddingHorizontal: 17.5,
-    marginTop: 10,  // Adjust margin to bring it closer
+    marginTop: 10,
   },
   iconLabel: {
     fontSize: 12,
@@ -353,13 +364,13 @@ const styles = StyleSheet.create({
     color: "green",
     fontWeight: "bold",
     marginLeft: 0,
-    marginBottom: 0, // Adjust margin to control space
+    marginBottom: 0,
   },
   container4Text: {
     fontSize: 24,
     fontWeight: "bold",
     color: "green",
-    padding:-30,
+    padding: -30,
   },
   searchInput: {
     height: 30,
@@ -375,27 +386,34 @@ const styles = StyleSheet.create({
     alignSelf: "center",
   },
   templateItem: {
-    width: 200, // Adjust the width based on your preference
-    height: 150, // Adjust the height based on your preference
+    width: 200,
+    height: 150,
     backgroundColor: "white",
     justifyContent: "center",
     alignItems: "center",
     borderRadius: 10,
     marginHorizontal: 7,
     marginTop: 10,
-    marginBottom:-90,
+    marginBottom: -90,
     elevation: 5,
-    shadowOpacity:0.3, // Add some shadow to the box
-
+    shadowOpacity: 0.3,
   },
   templateTitle: {
     fontSize: 18,
     fontWeight: "bold",
     color: "#333",
   },
-  templateImage:{
+  templateImage: {
     width: "80%",
     height: 120,
     borderRadius: 10,
   },
+  templateText: {
+    fontSize: 14,
+    color: "blue",
+    textDecorationLine: "underline",
+    marginTop: 90,
+    marginLeft: 130,
+  },
+  
 });

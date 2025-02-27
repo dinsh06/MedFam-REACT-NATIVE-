@@ -10,7 +10,7 @@ export default function Index() {
     // Show loading screen for 2 seconds, then navigate to homepage
     const timer = setTimeout(() => {
       router.replace("/homepage"); // Redirect to homepage.tsx
-    }, 5000);
+    }, 3000);
 
     return () => clearTimeout(timer); // Cleanup on unmount
   }, []);
@@ -20,7 +20,7 @@ export default function Index() {
       <Text style={styles.loadingText}>Medfam</Text>
       <Image source={require("../assets/images/Logo.png")} style={{ width: 100, height: 100 }} />
       <Text style={{ fontStyle: "italic" }}>
-  "Live the life you are aspiring for"</Text>
+  "Live the life you are aspirin for"</Text>
 
     </View>
   );
