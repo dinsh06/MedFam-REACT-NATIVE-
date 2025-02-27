@@ -9,7 +9,7 @@ import {
   Alert,
 } from "react-native";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
-import * as DocumentPicker from "expo-document-picker";
+//import * as DocumentPicker from "expo-document-picker";
 
 export default function Templates() {
   const [planName, setPlanName] = useState("");

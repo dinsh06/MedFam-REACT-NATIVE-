@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { View, Text, StyleSheet } from "react-native";
+import { View, Text, StyleSheet ,Image} from "react-native";
 import { useRouter } from "expo-router";
 
 export default function Index() {
@@ -10,14 +10,18 @@ export default function Index() {
     // Show loading screen for 2 seconds, then navigate to homepage
     const timer = setTimeout(() => {
       router.replace("/homepage"); // Redirect to homepage.tsx
-    }, 2000);
+    }, 5000);
 
     return () => clearTimeout(timer); // Cleanup on unmount
   }, []);
 
   return (
     <View style={styles.loadingScreen}>
-      <Text style={styles.loadingText}>Loading...</Text>
+      <Text style={styles.loadingText}>Medfam</Text>
+      <Image source={require("../assets/images/Logo.png")} style={{ width: 100, height: 100 }} />
+      <Text style={{ fontStyle: "italic" }}>
+  "Live the life you are aspiring for"</Text>
+
     </View>
   );
 }
@@ -30,8 +34,14 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   loadingText: {
-    fontSize: 24,
+    fontSize: 30,
     fontWeight: "bold",
+    color: "green",
+  },
+  loadingText2:
+  {
+    fontSize: 20,
+    fontWeight: "200",
     color: "white",
   },
 });

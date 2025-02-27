@@ -8,14 +8,14 @@ import { useState, useEffect } from "react";
 import * as SecureStore from "expo-secure-store";
 import { BackHandler } from "react-native";
 import { TextInput } from "react-native-paper";
-
+import { useNavigation } from "@react-navigation/native";
 const { height } = Dimensions.get("window");
 
 export default function Index() {
   const router = useRouter();
   const [isLoggedIn, setIsLoggedIn] = useState<boolean | null>(null);
   const [showSearch, setShowSearch] = useState(false);
-
+  const navigation = useNavigation();
   useEffect(() => {
     const checkToken = async () => {
       try {
@@ -72,6 +72,11 @@ export default function Index() {
     { id: "2", title: "Template 2" },
     { id: "3", title: "Template 3" },
   ];
+  const temp=[
+    { id: "4", source: require("../assets/images/accucheck.jpg")},
+    { id: "5", source: require("../assets/images/medicalkit.jpg")},
+    { id: "6", source: require("../assets/images/dettol.jpg")},
+  ]
 
   return (
     <View style={styles.container}>
@@ -122,8 +127,8 @@ export default function Index() {
             <View style={[styles.cell, styles.rightBorder, styles.bottomBorder]}>
               <TouchableOpacity onPress={handleCall} style={styles.emergencyButton}>
                 <View style={styles.iconRow}>
-                  <Icon name="ambulance" size={30} color="red" />
-                  <Icon name="phone" size={30} color="red" />
+                  <Icon name="ambulance" size={40} color="red" />
+                  <Icon name="phone" size={40} color="red" />
                 </View>
                 <Text style={styles.iconLabel}>Emergency Call</Text>
               </TouchableOpacity>
@@ -134,7 +139,7 @@ export default function Index() {
 
             <View style={[styles.cell, styles.leftBorder, styles.bottomBorder]}>
               <TouchableOpacity onPress={() => alert("caps")}>
-                <Icon name="pill" size={30} color="green" />
+                <Icon name="pill" size={40} color="green" />
                 <Text style={styles.iconLabel}>Medicine</Text>
               </TouchableOpacity>
             </View>
@@ -143,16 +148,16 @@ export default function Index() {
           {/* Second Row */}
           <View style={styles.row}>
             <View style={[styles.cell, styles.rightBorder]}>
-              <Icon name="account-plus-outline" size={30} color="black" />
+              <Icon name="account-plus-outline" size={40} color="black" />
               <Text style={styles.iconLabel}>Add User</Text>
             </View>
             <TouchableOpacity style={styles.cell} onPress={() => router.push("/templates")}> 
-              <Icon name="account-group-outline" size={30} color="black" />
+              <Icon name="account-group-outline" size={40} color="black" />
               <Text style={styles.iconLabel}>Templates</Text>
             </TouchableOpacity>
 
             <View style={[styles.cell, styles.leftBorder]}>
-              <Icon name="account-minus-outline" size={30} color="black" />
+              <Icon name="account-minus-outline" size={40} color="black" />
               <Text style={styles.iconLabel}>Remove User</Text>
             </View>
           </View>
@@ -166,19 +171,43 @@ export default function Index() {
         </View>
       </View>
 
-      {/* Slider Component */}
       <FlatList
-        data={templates}
-        renderItem={({ item }) => (
-          <View style={styles.templateItem}>
-            <Text style={styles.templateTitle}>{item.title}</Text>
-          </View>
-        )}
-        keyExtractor={(item) => item.id}
-        horizontal
-        showsHorizontalScrollIndicator={false}
-        contentContainerStyle={styles.carouselContainer}
-      />
+  data={templates}
+  renderItem={({ item }) => (
+    <TouchableOpacity onPress={() => router.push({ pathname: "/templates", params: { templateId: item.id } })}>
+      <View style={styles.templateItem}>
+        <Text style={styles.templateTitle}>{item.title}</Text>
+      </View>
+    </TouchableOpacity>
+  )}
+  keyExtractor={(item) => item.id}
+  horizontal
+  showsHorizontalScrollIndicator={false}
+  contentContainerStyle={styles.carouselContainer}
+/>
+      <View style={styles.container3}>
+        <View style={styles.offersContainer2}>
+          <Icon name="medical-bag" size={30} color="yellow" />
+          <Text style={styles.text}>Medical Kits</Text>
+        </View>
+      </View>
+      <FlatList  
+  data={temp}
+  renderItem={({ item }) => (
+    <View style={styles.templateItem}>
+      <Image source={item.source} style={styles.templateImage} />
+    </View>
+  )}
+  keyExtractor={(item) => item.id}
+  horizontal
+  pagingEnabled
+  showsHorizontalScrollIndicator={true}
+  ItemSeparatorComponent={() => <View style={{ width: 0 }} />}
+  contentContainerStyle={{ paddingLeft: 12.5 }} // Adds uniform left padding
+  snapToAlignment="start"
+/>
+
+
     </View>
   );
 }
@@ -208,12 +237,12 @@ const styles = StyleSheet.create({
     alignSelf: "flex-end",
     gap: 10,
     marginTop: 10,  // Adjust top margin for better positioning
-    marginRight: 20,  // Ensure it's aligned properly
+    marginRight: 5,  // Ensure it's aligned properly
   },
   iconWrapper: {
     alignItems: "center",
     right: 22,
-    top: 0,  // Reset vertical offset to center the icons
+    top: -10,  // Reset vertical offset to center the icons
   },
   iconLabel2: {
     fontSize: 12,
@@ -228,11 +257,11 @@ const styles = StyleSheet.create({
   },
   cell: {
     flex: 1,
-    padding: 10,
-    margin: 2,
+    padding: 0,
+    margin: 1,
     alignItems: "center",
     justifyContent: "center",
-    height: 70,
+    height: 80,
   },
   rightBorder: {
     borderRightWidth: 1,
@@ -250,14 +279,15 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
     padding: 20,
     borderRadius: 10,
-    width: "80%",
+    width: "87.5%",
     alignItems: "center",
     justifyContent: "center",
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.2,
+    shadowOpacity: 0.3,
     shadowRadius: 4,
     elevation: 5,
+    marginBottom:-15,
   },
   container3: {
     padding: 10, // Set padding to 0 to remove unnecessary space
@@ -270,7 +300,14 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     gap: 8,
-    marginBottom: -300, // Adjust margin to remove any extra space
+    marginTop: -20,
+    marginBottom: -110, // Adjust margin to remove any extra space
+  },
+  offersContainer2: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+    marginBottom: 40, // 
   },
   text: {
     fontSize: 20,
@@ -280,11 +317,11 @@ const styles = StyleSheet.create({
   },
   carouselContainer: {
     alignItems: "center",
-    paddingHorizontal: 10,
-    marginTop: 0,  // Adjust margin to bring it closer
+    paddingHorizontal: 17.5,
+    marginTop: 10,  // Adjust margin to bring it closer
   },
   iconLabel: {
-    fontSize: 9,
+    fontSize: 12,
     color: "black",
     textAlign: "center",
     marginTop: 5,
@@ -308,7 +345,7 @@ const styles = StyleSheet.create({
   container4: {
     position: "absolute",
     top: 40,
-    left: 20,
+    left: -10,
     zIndex: 10,
     flexDirection: "row",
     alignItems: "center",
@@ -322,17 +359,18 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: "bold",
     color: "green",
-    padding:-20,
+    padding:-30,
   },
   searchInput: {
     height: 30,
-    width: "70%",
+    width: "87.5%",
     borderColor: "gray",
     borderRadius: 10,
     borderWidth: 1,
     paddingHorizontal: 10,
     marginHorizontal: 10,
-    marginBottom: 10,
+    marginTop: 10,
+    marginBottom: 20,
     backgroundColor: "white",
     alignSelf: "center",
   },
@@ -343,12 +381,21 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     borderRadius: 10,
-    marginHorizontal: 10,
-    elevation: 5, // Add some shadow to the box
+    marginHorizontal: 7,
+    marginTop: 10,
+    marginBottom:-90,
+    elevation: 5,
+    shadowOpacity:0.3, // Add some shadow to the box
+
   },
   templateTitle: {
     fontSize: 18,
     fontWeight: "bold",
     color: "#333",
+  },
+  templateImage:{
+    width: "80%",
+    height: 120,
+    borderRadius: 10,
   },
 });
