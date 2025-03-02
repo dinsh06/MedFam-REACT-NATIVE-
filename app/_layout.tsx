@@ -18,6 +18,7 @@ export default function RootLayout() {
           headerLeft: () => null, // Removes the back button
           gestureEnabled: false,  // Disables swipe back gesture (iOS)
           headerShown: false, // Optionally hide header entirely on homepage
+          headerTitle:"Homepage",
         }}
       />
       <Stack.Screen
@@ -31,6 +32,10 @@ export default function RootLayout() {
        <Stack.Screen
         name="templates"
         options={{ headerTitle: "Templates" }}
+      />
+      <Stack.Screen
+        name="product"
+        options={{ headerTitle: "Products" }}
       />
     </Stack>
   );
