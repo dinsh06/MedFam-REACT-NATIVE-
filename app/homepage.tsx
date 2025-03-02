@@ -414,6 +414,7 @@ const styles = StyleSheet.create({
     textDecorationLine: "underline",
     marginTop: 90,
     marginLeft: 130,
+
   },
   
 });

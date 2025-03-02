@@ -25,7 +25,7 @@ export default function Profile() {
 
   return (
     <ScrollView style={styles.container}>
-      
+      <View style={styles.formContainer}>
 
       {/* Address Form */}
       <Text style={styles.label}>Deliver To</Text>
@@ -51,6 +51,7 @@ export default function Profile() {
 
       <Text style={styles.label}>Locality</Text>
       <TextInput style={styles.input} placeholder="Locality" value={address.locality} onChangeText={(text) => setAddress({ ...address, locality: text })} />
+    </View>
     </ScrollView>
   );
 }
@@ -79,4 +80,14 @@ const styles = StyleSheet.create({
     marginBottom: 8,
     borderRadius: 4,
   },
+  formContainer:{
+    backgroundColor: "white",
+    width: "100%",
+    borderRadius: 8,
+    padding: 10,
+    marginBottom: 15,
+    elevation: 8,
+    opacity: 1.0,
+    shadowOpacity: 0.3,
+  }
 });

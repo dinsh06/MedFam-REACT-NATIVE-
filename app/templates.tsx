@@ -174,6 +174,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     paddingBottom: 50, // Prevents button from getting clipped
+    shadowOpacity: 0.3,
   },
   header: {
     fontSize: 28,

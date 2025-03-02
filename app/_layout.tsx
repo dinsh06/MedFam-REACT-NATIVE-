@@ -30,7 +30,7 @@ export default function RootLayout() {
       />
        <Stack.Screen
         name="templates"
-        options={{ headerTitle: "templates" }}
+        options={{ headerTitle: "Templates" }}
       />
     </Stack>
   );
