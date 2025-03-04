@@ -1,6 +1,6 @@
 # Welcome to MedFam app 👋
 
-An App to simplify your pharma orders(https://www.npmjs.com/package/create-expo-app).
+An App to simplify your pharma orders
 
 ## Get started
 
