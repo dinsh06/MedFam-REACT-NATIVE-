@@ -19,10 +19,19 @@ export default function Cart() {
     );
   };
 
+  // Calculate summary information
+  const totalQuantity = products.reduce(
+    (total, product) => total + product.quantity,
+    0
+  );
+  
   const totalPrice = products.reduce(
     (total, product) => total + product.price * product.quantity,
     0
   );
+  
+  // For now, discount is 0, but you can implement your discount logic here
+  const totalDiscount = 0;
 
   return (
     <View style={styles.container}>
@@ -54,19 +63,41 @@ export default function Cart() {
 
               {/* Display Item Cost, No. of Items, and Discount */}
               <View style={styles.detailsContainer}>
-                <Text style={styles.detailsText}>No. of Items: {item.quantity}</Text>
+                <Text style={styles.detailsText}>Quantity: {item.quantity}</Text>
                 <Text style={styles.detailsText}>Item Cost: ₹{item.price * item.quantity}</Text>
                 <Text style={styles.detailsText}>Discount: ₹0</Text>
               </View>
-              {/* Checkout Button */}
-      <TouchableOpacity style={styles.checkoutButton} onPress={() => alert('Proceeding to Checkout')}>
-        <Text style={styles.checkoutText}>Checkout ₹{totalPrice}</Text>
-      </TouchableOpacity>
             </View>
           </View>
         )}
+        // Add some padding at the bottom to make room for our summary panel
+        contentContainerStyle={{ paddingBottom: 140 }}
       />
       
+      {/* Summary Panel at Bottom */}
+      <View style={styles.summaryContainer}>
+        <View style={styles.summaryDetails}>
+          <View style={styles.summaryRow}>
+            <Text style={styles.summaryLabel}>Total Items:</Text>
+            <Text style={styles.summaryValue}>{totalQuantity}</Text>
+          </View>
+          <View style={styles.summaryRow}>
+            <Text style={styles.summaryLabel}>Total Discount:</Text>
+            <Text style={styles.summaryValue}>₹{totalDiscount}</Text>
+          </View>
+          <View style={styles.summaryRow}>
+            <Text style={styles.summaryLabel}>Total Amount:</Text>
+            <Text style={styles.summaryValue}>₹{totalPrice - totalDiscount}</Text>
+          </View>
+        </View>
+        
+        <TouchableOpacity 
+          style={styles.checkoutButton} 
+          onPress={() => alert('Proceeding to Checkout')}
+        >
+          <Text style={styles.checkoutText}>Checkout ₹{totalPrice - totalDiscount}</Text>
+        </TouchableOpacity>
+      </View>
     </View>
   );
 }
@@ -87,8 +118,8 @@ const styles = StyleSheet.create({
     elevation: 3,
   },
   imagePlaceholder: {
-    width: 60,
-    height: 60,
+    width: 120,
+    height: 170,
     backgroundColor: '#D3D3D3',
     borderRadius: 5,
     marginRight: 12,
@@ -124,7 +155,6 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   detailsContainer: {
-  
     padding: 8,
     backgroundColor: '#F1F1F1',
     borderRadius: 5,
@@ -134,6 +164,34 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: '#555',
     marginBottom: 4,
+  },
+  // New styles for the summary container
+  summaryContainer: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    backgroundColor: '#FFFFFF',
+    padding: 16,
+    borderTopLeftRadius: 15,
+    borderTopRightRadius: 15,
+    elevation: 8,
+  },
+  summaryDetails: {
+    marginBottom: 10,
+  },
+  summaryRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: 6,
+  },
+  summaryLabel: {
+    fontSize: 16,
+    color: '#555',
+  },
+  summaryValue: {
+    fontSize: 16,
+    fontWeight: 'bold',
   },
   checkoutButton: {
     backgroundColor: '#4CAF50',
