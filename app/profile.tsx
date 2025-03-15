@@ -39,7 +39,7 @@ export default function Profile() {
       {/* My Addresses */}
       <View style={styles.row}>
         <Link href="/addresses"><Text style={styles.text}>My Addresses</Text></Link>       
-        <TouchableOpacity>
+        <TouchableOpacity onPress={() => router.push("/addresses")}>
           <Icon name="map-marker" size={30} color="black" />
         </TouchableOpacity>
       </View>
@@ -47,8 +47,8 @@ export default function Profile() {
 
       {/* My Cart */}
       <View style={styles.row}>
-        <Text style={styles.text}>My Cart</Text>
-        <TouchableOpacity>
+        <Link href="/cart"><Text style={styles.text}>My Cart</Text></Link>
+        <TouchableOpacity onPress={() => router.push("/cart") }>
           <Icon name="cart" size={30} color="black" />
         </TouchableOpacity>
       </View>
@@ -57,7 +57,7 @@ export default function Profile() {
       {/* My Templates */}
       <View style={styles.row}>
         <Link href="/templates"><Text style={styles.text}>My Templates</Text></Link>       
-        <TouchableOpacity>
+        <TouchableOpacity onPress={() => router.push("/templates")}>
           <Icon name="file-outline" size={30} color="black" />
         </TouchableOpacity>
       </View>

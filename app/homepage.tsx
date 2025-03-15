@@ -95,7 +95,7 @@ export default function Index() {
           </View>
         </TouchableOpacity>
 
-        <TouchableOpacity onPress={() => alert("Cart clicked")}>
+        <TouchableOpacity onPress={() => router.push("/cart")}>
           <View style={styles.iconWrapper}>
             <Icon name="cart" size={30} color="white" />
             <Text style={styles.iconLabel2}>Cart</Text>
@@ -142,8 +142,14 @@ export default function Index() {
               </TouchableOpacity>
             </View>
             <View style={[styles.cell, styles.bottomBorder]}>
-              <Button title="Med+" color="gold" onPress={() => alert("Medicines pressed")} />
-            </View>
+  <Button
+    title="Med+"
+    color="gold"
+
+    onPress={() => router.push("/medfamplus")}
+  />
+</View>
+
 
             <View style={[styles.cell, styles.leftBorder, styles.bottomBorder]}>
               <TouchableOpacity onPress={() => alert("caps")}>
@@ -317,6 +323,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     gap: 8,
+    marginBottom: 30,
   },
   text: {
     fontSize: 20,
