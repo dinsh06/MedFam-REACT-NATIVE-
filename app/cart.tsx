@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Image, FlatList, Button } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, FlatList } from 'react-native';
 
 const initialProducts = [
   { id: '1', name: 'Paracetamol', price: 50, quantity: 1 },
@@ -51,15 +51,22 @@ export default function Cart() {
                   <Text style={styles.quantityText}>+</Text>
                 </TouchableOpacity>
               </View>
+
+              {/* Display Item Cost, No. of Items, and Discount */}
+              <View style={styles.detailsContainer}>
+                <Text style={styles.detailsText}>No. of Items: {item.quantity}</Text>
+                <Text style={styles.detailsText}>Item Cost: ₹{item.price * item.quantity}</Text>
+                <Text style={styles.detailsText}>Discount: ₹0</Text>
+              </View>
+              {/* Checkout Button */}
+      <TouchableOpacity style={styles.checkoutButton} onPress={() => alert('Proceeding to Checkout')}>
+        <Text style={styles.checkoutText}>Checkout ₹{totalPrice}</Text>
+      </TouchableOpacity>
             </View>
           </View>
         )}
       />
-
-      {/* Checkout Button */}
-      <TouchableOpacity style={styles.checkoutButton} onPress={() => alert('Proceeding to Checkout')}>
-        <Text style={styles.checkoutText}>Checkout ₹{totalPrice}</Text>
-      </TouchableOpacity>
+      
     </View>
   );
 }
@@ -68,7 +75,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 16,
-    backgroundColor: '#F8F8F8',
+    backgroundColor: '#F88B88',
   },
   productContainer: {
     flexDirection: 'row',
@@ -106,7 +113,7 @@ const styles = StyleSheet.create({
   quantityButton: {
     width: 30,
     height: 30,
-    backgroundColor: '#ddd',
+    backgroundColor: '#4CAF50',
     justifyContent: 'center',
     alignItems: 'center',
     borderRadius: 5,
@@ -116,8 +123,20 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: 'bold',
   },
+  detailsContainer: {
+  
+    padding: 8,
+    backgroundColor: '#F1F1F1',
+    borderRadius: 5,
+    marginTop: 12,
+  },
+  detailsText: {
+    fontSize: 14,
+    color: '#555',
+    marginBottom: 4,
+  },
   checkoutButton: {
-    backgroundColor: '#28a745',
+    backgroundColor: '#4CAF50',
     paddingVertical: 15,
     alignItems: 'center',
     borderRadius: 10,
