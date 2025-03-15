@@ -6,7 +6,7 @@ import Slider from "@react-native-community/slider";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import { useState, useEffect } from "react";
 import * as SecureStore from "expo-secure-store";
-import { BackHandler } from "react-native";
+import { BackHandler, Platform } from "react-native";
 import { TextInput } from "react-native-paper";
 import { useNavigation } from "@react-navigation/native";
 
@@ -230,7 +230,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     paddingBottom: 10,
-    paddingTop: 85,
+    paddingTop: Platform.OS === "android" ? 60 : 85, 
   },
   loadingContainer: {
     flex: 1,
@@ -298,27 +298,25 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.3,
     shadowRadius: 4,
     elevation: 5,
-    marginBottom: -15,
+    marginBottom: 0,
   },
   container3: {
-    padding: 10,
+    padding: 0,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "flex-start",
-    marginBottom: -50,
+    marginBottom: 0,
+    marginTop: 10,
   },
   offersContainer: {
     flexDirection: "row",
     alignItems: "center",
     gap: 8,
-    marginTop: -20,
-    marginBottom: -110,
   },
   offersContainer2: {
     flexDirection: "row",
     alignItems: "center",
     gap: 8,
-    marginBottom: 40,
   },
   text: {
     fontSize: 20,
@@ -329,7 +327,7 @@ const styles = StyleSheet.create({
   carouselContainer: {
     alignItems: "center",
     paddingHorizontal: 17.5,
-    marginTop: 10,
+    marginTop: 0,
   },
   iconLabel: {
     fontSize: 12,
@@ -355,7 +353,7 @@ const styles = StyleSheet.create({
   },
   container4: {
     position: "absolute",
-    top: 40,
+    top: 30,
     left: -10,
     zIndex: 10,
     flexDirection: "row",
@@ -393,8 +391,8 @@ const styles = StyleSheet.create({
     alignItems: "center",
     borderRadius: 10,
     marginHorizontal: 7,
-    marginTop: 10,
-    marginBottom: -90,
+    marginTop: 0,
+    marginBottom: 0,
     elevation: 5,
     shadowOpacity: 0.3,
   },
