@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, FlatList } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, FlatList} from 'react-native';
+import { useRouter } from 'expo-router';
 
 const initialProducts = [
   { id: '1', name: 'Paracetamol', price: 50, quantity: 1 },
@@ -8,6 +9,7 @@ const initialProducts = [
 
 export default function Cart() {
   const [products, setProducts] = useState(initialProducts);
+  const router = useRouter();
 
   const updateQuantity = (id: string, change: number) => {
     setProducts((prevProducts) =>
@@ -24,12 +26,12 @@ export default function Cart() {
     (total, product) => total + product.quantity,
     0
   );
-  
+
   const totalPrice = products.reduce(
     (total, product) => total + product.price * product.quantity,
     0
   );
-  
+
   // For now, discount is 0, but you can implement your discount logic here
   const totalDiscount = 0;
 
@@ -70,10 +72,9 @@ export default function Cart() {
             </View>
           </View>
         )}
-        // Add some padding at the bottom to make room for our summary panel
         contentContainerStyle={{ paddingBottom: 140 }}
       />
-      
+
       {/* Summary Panel at Bottom */}
       <View style={styles.summaryContainer}>
         <View style={styles.summaryDetails}>
@@ -90,10 +91,11 @@ export default function Cart() {
             <Text style={styles.summaryValue}>₹{totalPrice - totalDiscount}</Text>
           </View>
         </View>
-        
+
+        {/* ✅ FIXED checkoutButton */}
         <TouchableOpacity 
           style={styles.checkoutButton} 
-          onPress={() => alert('Proceeding to Checkout')}
+          onPress={() => router.push("/checkout")} // Navigate to checkout page
         >
           <Text style={styles.checkoutText}>Checkout ₹{totalPrice - totalDiscount}</Text>
         </TouchableOpacity>
@@ -165,7 +167,6 @@ const styles = StyleSheet.create({
     color: '#555',
     marginBottom: 4,
   },
-  // New styles for the summary container
   summaryContainer: {
     position: 'absolute',
     bottom: 0,
