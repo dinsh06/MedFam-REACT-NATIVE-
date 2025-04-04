@@ -140,7 +140,17 @@ export default function Index() {
               </TouchableOpacity>
             </View>
             <View style={[styles.cell, styles.bottomBorder]}>
-              <Button title="Med+" color="gold" onPress={() => router.push("/medfamplus")} />
+            
+            <TouchableOpacity onPress={() => router.push("/medfamplus")} style={{ alignItems: 'center' }}>
+  <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
+    <Icon name="account-star" size={40} color="lightblue" />
+    <Icon name="shield-plus" size={40} color="gold" style={{ marginLeft: 5 }} />
+  </View>
+  <Text style={styles.iconLabel}>MedFam +</Text>
+</TouchableOpacity>
+
+
+
             </View>
             <View style={[styles.cell, styles.leftBorder, styles.bottomBorder]}>
               <TouchableOpacity onPress={() => alert("caps")}>
