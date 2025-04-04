@@ -48,6 +48,10 @@ export default function RootLayout() {
         name="checkout"
         options={{ headerTitle: "Checkout" }}
       />
+      <Stack.Screen
+        name="login"
+        options={{ headerTitle: "Login" }}
+      />
     </Stack>
   );
 }
