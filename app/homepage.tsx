@@ -1,3 +1,4 @@
+// --- All Imports ---
 import { Text, View, Button, Dimensions, TouchableOpacity, Linking, Image, FlatList } from "react-native";
 import { StyleSheet } from "react-native";
 import { useRouter } from "expo-router";
@@ -24,7 +25,7 @@ export default function Index() {
     const checkToken = async () => {
       try {
         const token = await SecureStore.getItemAsync("jwt");
-        setIsLoggedIn(!!token); // Set true if token exists, false otherwise
+        setIsLoggedIn(!!token);
       } catch (error) {
         console.error("Error fetching token:", error);
         setIsLoggedIn(false);
@@ -32,19 +33,14 @@ export default function Index() {
     };
 
     checkToken();
-  }, []); // Runs only when the component mounts
+  }, []);
 
   useEffect(() => {
-    const backAction = () => {
-      return true; // Prevent going back
-    };
-
+    const backAction = () => true;
     const backHandler = BackHandler.addEventListener("hardwareBackPress", backAction);
-
     return () => backHandler.remove();
   }, []);
 
-  // Show a loading screen while checking token
   if (isLoggedIn === null) {
     return (
       <View style={styles.loadingContainer}>
@@ -82,56 +78,57 @@ export default function Index() {
 
   return (
     <View style={styles.container}>
-      <View style={styles.container4}>
-        <Image source={require("../assets/images/Logo.png")} style={styles.image} />
-        <Text style={styles.container4Text}>MedFam</Text>
+      {/* Top Bar Container */}
+      <View style={styles.topBarContainer}>
+        {/* Logo + MedFam text */}
+        <View style={styles.container4}>
+          <Image source={require("../assets/images/Logo.png")} style={styles.image} />
+          <Text style={styles.container4Text}>MedFam</Text>
+        </View>
+
+        {/* Right Side Icons */}
+        <View style={styles.profileContainer}>
+          <TouchableOpacity onPress={() => setShowSearch(!showSearch)}>
+            <View style={styles.iconWrapper}>
+              <Icon name="magnify" size={30} color="white" />
+              <Text style={styles.iconLabel2}>Search</Text>
+            </View>
+          </TouchableOpacity>
+
+          <TouchableOpacity onPress={() => router.push("/cart")}>
+            <View style={styles.iconWrapper}>
+              <Icon name="cart" size={30} color="white" />
+              <Text style={styles.iconLabel2}>Cart</Text>
+            </View>
+          </TouchableOpacity>
+
+          <TouchableOpacity onPress={() => router.push(isLoggedIn ? "/profile" : "/login")}>
+            <View style={styles.iconWrapper}>
+              <Icon name="account-circle" size={30} color="white" />
+              <Text style={styles.iconLabel2}>{isLoggedIn ? "Profile" : "Login"}</Text>
+            </View>
+          </TouchableOpacity>
+        </View>
       </View>
 
-      {/* Profile, Search & Cart Icons */}
-      <View style={styles.profileContainer}>
-        <TouchableOpacity onPress={() => setShowSearch(!showSearch)}>
-          <View style={styles.iconWrapper}>
-            <Icon name="magnify" size={30} color="white" />
-            <Text style={styles.iconLabel2}>Search</Text>
-          </View>
-        </TouchableOpacity>
-
-        <TouchableOpacity onPress={() => router.push("/cart")}>
-          <View style={styles.iconWrapper}>
-            <Icon name="cart" size={30} color="white" />
-            <Text style={styles.iconLabel2}>Cart</Text>
-          </View>
-        </TouchableOpacity>
-
-        <TouchableOpacity onPress={() => router.push(isLoggedIn ? "/profile" : "/login")}>
-          <View style={styles.iconWrapper}>
-            <Icon name="account-circle" size={30} color="white" />
-            <Text style={styles.iconLabel2}>{isLoggedIn ? "Profile" : "Login"}</Text>
-          </View>
-        </TouchableOpacity>
-      </View>
-
-      {/* Search Bar (Only visible when showSearch is true) */}
       {showSearch && (
         <TextInput
           style={styles.searchInput}
           placeholder="Search your medicine..."
           placeholderTextColor="gray"
-          onChangeText={(text) => setSearchQuery(text)} // Store search text
+          onChangeText={(text) => setSearchQuery(text)}
           value={searchQuery}
           onSubmitEditing={() => {
             if (searchQuery.trim() !== "") {
-              console.log("Navigating to Products page with query:", searchQuery);
               router.push({ pathname: "/product", params: { query: searchQuery } });
             }
           }}
         />
       )}
 
-      {/* Grid Box */}
+      {/* Grid UI */}
       <View style={styles.boxContainer}>
         <View style={styles.grid}>
-          {/* First Row */}
           <View style={styles.row}>
             <View style={[styles.cell, styles.rightBorder, styles.bottomBorder]}>
               <TouchableOpacity onPress={handleCall} style={styles.emergencyButton}>
@@ -143,15 +140,8 @@ export default function Index() {
               </TouchableOpacity>
             </View>
             <View style={[styles.cell, styles.bottomBorder]}>
-  <Button
-    title="Med+"
-    color="gold"
-
-    onPress={() => router.push("/medfamplus")}
-  />
-</View>
-
-
+              <Button title="Med+" color="gold" onPress={() => router.push("/medfamplus")} />
+            </View>
             <View style={[styles.cell, styles.leftBorder, styles.bottomBorder]}>
               <TouchableOpacity onPress={() => alert("caps")}>
                 <Icon name="pill" size={40} color="green" />
@@ -160,7 +150,6 @@ export default function Index() {
             </View>
           </View>
 
-          {/* Second Row */}
           <View style={styles.row}>
             <View style={[styles.cell, styles.rightBorder]}>
               <Icon name="account-plus-outline" size={40} color="black" />
@@ -170,7 +159,6 @@ export default function Index() {
               <Icon name="account-group-outline" size={40} color="black" />
               <Text style={styles.iconLabel}>Templates</Text>
             </TouchableOpacity>
-
             <View style={[styles.cell, styles.leftBorder]}>
               <Icon name="account-minus-outline" size={40} color="black" />
               <Text style={styles.iconLabel}>Remove User</Text>
@@ -192,10 +180,9 @@ export default function Index() {
           <TouchableOpacity onPress={() => router.push({ pathname: "/templates", params: { templateId: item.id } })}>
             <View style={styles.templateItem}>
               <Text style={styles.templateTitle}>{item.title}</Text>
-<TouchableOpacity onPress={() => router.push({ pathname: "/product" })}>
-  <Text style={styles.templateText}>View</Text>
-</TouchableOpacity>
-
+              <TouchableOpacity onPress={() => router.push({ pathname: "/product" })}>
+                <Text style={styles.templateText}>View</Text>
+              </TouchableOpacity>
             </View>
           </TouchableOpacity>
         )}
@@ -211,6 +198,7 @@ export default function Index() {
           <Text style={styles.text}>Medical Kits</Text>
         </View>
       </View>
+
       <FlatList
         data={temp}
         renderItem={({ item }) => (
@@ -223,21 +211,56 @@ export default function Index() {
         pagingEnabled
         showsHorizontalScrollIndicator={true}
         ItemSeparatorComponent={() => <View style={{ width: 0 }} />}
-        contentContainerStyle={{ paddingLeft: 12.5 }} // Adds uniform left padding
+        contentContainerStyle={{ paddingLeft: 12.5 }}
         snapToAlignment="start"
       />
     </View>
   );
 }
 
+// --- STYLES ---
 const styles = StyleSheet.create({
   container: {
     backgroundColor: "#F88B88",
     flex: 1,
-    justifyContent: "center",
     alignItems: "center",
-    paddingBottom: hp("1%"),
-    paddingTop: Platform.OS === "android" ? hp("7.5%") : hp("10%"),
+    paddingBottom: hp("0%"),
+    paddingTop: Platform.OS === "android" ? hp("0%") : hp("3%"),
+  },
+  topBarContainer: {
+    width: wp("87.5%"),
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: hp("2%"),
+  },
+  container4: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  image: {
+    width: wp("15%"),
+    height: hp("10%"),
+    resizeMode: "contain",
+  },
+  container4Text: {
+    fontSize: wp("6%"),
+    fontWeight: "bold",
+    color: "green",
+    marginLeft: wp("2%"),
+  },
+  profileContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: wp("2.5%"),
+  },
+  iconWrapper: {
+    alignItems: "center",
+  },
+  iconLabel2: {
+    fontSize: wp("3%"),
+    color: "white",
+    marginTop: hp("0.5%"),
   },
   loadingContainer: {
     flex: 1,
@@ -249,23 +272,16 @@ const styles = StyleSheet.create({
     fontSize: wp("5%"),
     color: "white",
   },
-  profileContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    alignSelf: "flex-end",
-    gap: wp("2.5%"),
-    marginTop: hp("1%"),
-    marginRight: wp("1.5%"),
-  },
-  iconWrapper: {
-    alignItems: "center",
-    right: wp("5%"),
-    top: -hp("1%"),
-  },
-  iconLabel2: {
-    fontSize: wp("3%"),
-    color: "white",
-    marginTop: hp("0.5%"),
+  searchInput: {
+    height: hp("4%"),
+    width: wp("87.5%"),
+    borderColor: "gray",
+    borderRadius: 10,
+    borderWidth: 1,
+    paddingHorizontal: wp("2.5%"),
+    marginTop: hp("1.5%"),
+    marginBottom: hp("2.5%"),
+    backgroundColor: "white",
   },
   grid: {
     width: wp("80%"),
@@ -275,7 +291,6 @@ const styles = StyleSheet.create({
   },
   cell: {
     flex: 1,
-    padding: 0,
     margin: 1,
     alignItems: "center",
     justifyContent: "center",
@@ -305,14 +320,26 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.3,
     shadowRadius: 4,
     elevation: 5,
-    marginBottom: 0,
+  },
+  iconLabel: {
+    fontSize: wp("3%"),
+    color: "black",
+    textAlign: "center",
+    marginTop: hp("0.5%"),
+  },
+  emergencyButton: {
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  iconRow: {
+    flexDirection: "row",
+    justifyContent: "space-around",
+    alignItems: "center",
   },
   container3: {
-    padding: 0,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "flex-start",
-    marginBottom: 0,
     marginTop: hp("1%"),
   },
   offersContainer: {
@@ -332,65 +359,6 @@ const styles = StyleSheet.create({
     color: "white",
     marginLeft: wp("2%"),
   },
-  carouselContainer: {
-    alignItems: "center",
-    paddingHorizontal: wp("4.5%"),
-    marginTop: 0,
-  },
-  iconLabel: {
-    fontSize: wp("3%"),
-    color: "black",
-    textAlign: "center",
-    marginTop: hp("0.5%"),
-  },
-  emergencyButton: {
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  iconRow: {
-    flexDirection: "row",
-    justifyContent: "space-around",
-    alignItems: "center",
-    marginBottom: hp("0.5%"),
-  },
-  image: {
-    width: wp("25%"),
-    height: hp("12.5%"),
-    resizeMode: "contain",
-    alignItems: "flex-start",
-  },
-  container4: {
-    position: "absolute",
-    top: hp("3.5%"),
-    left: wp("-2%"),
-    zIndex: 10,
-    flexDirection: "row",
-    alignItems: "center",
-    padding: wp("2.5%"),
-    color: "green",
-    fontWeight: "bold",
-    marginLeft: 0,
-    marginBottom: 0,
-  },
-  container4Text: {
-    fontSize: wp("6%"),
-    fontWeight: "bold",
-    color: "green",
-    padding: -30,
-  },
-  searchInput: {
-    height: hp("4%"),
-    width: wp("87.5%"),
-    borderColor: "gray",
-    borderRadius: 10,
-    borderWidth: 1,
-    paddingHorizontal: wp("2.5%"),
-    marginHorizontal: wp("2.5%"),
-    marginTop: hp("1.5%"),
-    marginBottom: hp("2.5%"),
-    backgroundColor: "white",
-    alignSelf: "center",
-  },
   templateItem: {
     width: wp("50%"),
     height: hp("20%"),
@@ -399,8 +367,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     borderRadius: 10,
     marginHorizontal: wp("2%"),
-    marginTop: 0,
-    marginBottom: 0,
     elevation: 5,
     shadowOpacity: 0.3,
   },
@@ -409,16 +375,20 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     color: "#333",
   },
-  templateImage: {
-    width: wp("40%"),
-    height: hp("15%"),
-    borderRadius: 10,
-  },
   templateText: {
     fontSize: wp("3.5%"),
     color: "blue",
     textDecorationLine: "underline",
     marginTop: hp("11.25%"),
     marginLeft: wp("32.5%"),
+  },
+  templateImage: {
+    width: wp("40%"),
+    height: hp("15%"),
+    borderRadius: 10,
+  },
+  carouselContainer: {
+    alignItems: "center",
+    paddingHorizontal: wp("4.5%"),
   },
 });
