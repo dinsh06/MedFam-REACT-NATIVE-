@@ -113,9 +113,9 @@ const Cart: React.FC = () => {
     <View style={styles.container}>
       <FlatList
         data={products}
-        keyExtractor={(item) => item.id}
+        keyExtractor={(item) => item.name}
         renderItem={({ item }) => (
-          <View key={item.id} style={styles.productContainer}>
+          <View key={item.name} style={styles.productContainer}>
             <View style={styles.imagePlaceholder} />
             <View style={styles.productDetails}>
               <Text style={styles.productName}>{item.name}</Text>

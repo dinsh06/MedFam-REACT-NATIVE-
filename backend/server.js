@@ -58,22 +58,27 @@ app.post("/login", async(req,res) =>{
     }
 });
 
-app.get("/templates", authenticateJWT, async(req,res) =>{
-    console.log("recieved req for templates fetching");
-    try{
-        const userID = req.user.userID;
+app.get("/templates", authenticateJWT, async (req, res) => {
+    console.log("Received request for templates fetching");
+
+    try {
+        const userID = req.user.userID;  // Get the user ID from the JWT token
         console.log(userID);
-        const user = await User.findById(userID);
+
+        const user = await User.findById(userID);  // Find the user in the database using the userID
+
         if (!user) {
-            console.log("User not found with ID:", userId);
+            console.log("User not found with ID:", userID);
             return res.status(404).json({ success: false, message: "User not found" });
-          }
-        console.log('user found');
-        return res.json({ success: true, templates: user.templates });   
+        }
+
+        console.log('User found');
+        console.log(user.templates);
+        return res.json({ success: true, templates: user.templates });  // Return the templates for the user
     } catch (error) {
         console.error("Error fetching templates data:", error);
         return res.status(500).json({ success: false, message: "Server error" });
-      }
+    }
 });
 
   app.get("/cart", authenticateJWT, async (req, res) => {

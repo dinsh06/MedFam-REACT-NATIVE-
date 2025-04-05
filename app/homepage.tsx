@@ -1,4 +1,3 @@
-// --- All Imports ---
 import { Text, View, Button, Dimensions, TouchableOpacity, Linking, Image, FlatList } from "react-native";
 import { StyleSheet } from "react-native";
 import { useRouter } from "expo-router";
@@ -10,6 +9,7 @@ import { BackHandler, Platform } from "react-native";
 import { TextInput } from "react-native-paper";
 import { useNavigation } from "@react-navigation/native";
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
+import axios from 'axios'; // Import Axios for API requests
 
 const { height } = Dimensions.get("window");
 
@@ -19,6 +19,7 @@ export default function Index() {
   const [showSearch, setShowSearch] = useState(false);
   const navigation = useNavigation();
   const [searchQuery, setSearchQuery] = useState("");
+  const [templates, setTemplates] = useState<any[]>([]); // State to store fetched templates
 
   useEffect(() => {
     const checkToken = async () => {
@@ -33,6 +34,29 @@ export default function Index() {
 
     checkToken();
   }, []);
+
+  useEffect(() => {
+    const fetchTemplates = async () => {
+      try {
+        const token = await SecureStore.getItemAsync("jwt");
+        const response = await fetch("http://192.168.29.174:5000/templates", {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        const data = await response.json();
+        if (data.success) {
+          setTemplates(data.templates);
+        } else {
+          console.error("Failed to fetch templates");
+        }
+      } catch (error) {
+        console.error("Error fetching templates:", error);
+      }
+    };
+
+    if (isLoggedIn) {
+      fetchTemplates(); // Fetch templates when the user is logged in
+    }
+  }, [isLoggedIn]);  // Re-run the effect when the login status changes
 
   useEffect(() => {
     const backAction = () => true;
@@ -63,11 +87,6 @@ export default function Index() {
     }
   };
 
-  const templates = [
-    { id: "1", title: "Template 1" },
-    { id: "2", title: "Template 2" },
-    { id: "3", title: "Template 3" },
-  ];
 
   const temp = [
     { id: "4", source: require("../assets/images/accucheck.jpg") },
@@ -79,13 +98,11 @@ export default function Index() {
     <View style={styles.container}>
       {/* Top Bar Container */}
       <View style={styles.topBarContainer}>
-        {/* Logo + MedFam text */}
         <View style={styles.container4}>
           <Image source={require("../assets/images/Logo.png")} style={styles.image} />
           <Text style={styles.container4Text}>MedFam</Text>
         </View>
 
-        {/* Right Side Icons */}
         <View style={styles.profileContainer}>
           <TouchableOpacity onPress={() => setShowSearch(!showSearch)}>
             <View style={styles.iconWrapper}>
@@ -139,17 +156,13 @@ export default function Index() {
               </TouchableOpacity>
             </View>
             <View style={[styles.cell, styles.bottomBorder]}>
-            
-            <TouchableOpacity onPress={() => router.push("/medfamplus")} style={{ alignItems: 'center' }}>
-  <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
-    <Icon name="account-star" size={40} color="lightblue" />
-    <Icon name="shield-plus" size={40} color="gold" style={{ marginLeft: 5 }} />
-  </View>
-  <Text style={styles.iconLabel}>MedFam +</Text>
-</TouchableOpacity>
-
-
-
+              <TouchableOpacity onPress={() => router.push("/medfamplus")} style={{ alignItems: 'center' }}>
+                <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
+                  <Icon name="account-star" size={40} color="lightblue" />
+                  <Icon name="shield-plus" size={40} color="gold" style={{ marginLeft: 5 }} />
+                </View>
+                <Text style={styles.iconLabel}>MedFam +</Text>
+              </TouchableOpacity>
             </View>
             <View style={[styles.cell, styles.leftBorder, styles.bottomBorder]}>
               <TouchableOpacity onPress={() => alert("caps")}>
@@ -183,16 +196,16 @@ export default function Index() {
         </View>
       </View>
 
+      {/* Dynamic Template List */}
       <FlatList
         data={templates}
         renderItem={({ item }) => (
-
-            <View style={styles.templateItem}>
-              <Text style={styles.templateTitle}>{item.title}</Text>
-              <TouchableOpacity onPress={() => router.push({ pathname: "/product" })}>
-                <Text style={styles.templateText}>View</Text>
-              </TouchableOpacity>
-            </View>
+          <View style={styles.templateItem}>
+            <Text style={styles.templateTitle}>{item.tempname}</Text> {/* Display template name dynamically */}
+            <TouchableOpacity onPress={() => router.push({ pathname: "/product" })}>
+              <Text style={styles.templateText}>View</Text>
+            </TouchableOpacity>
+          </View>
         )}
         keyExtractor={(item) => item.id}
         horizontal
@@ -207,6 +220,7 @@ export default function Index() {
         </View>
       </View>
 
+      {/* Medical Kit Images (Static Data) */}
       <FlatList
         data={temp}
         renderItem={({ item }) => (
