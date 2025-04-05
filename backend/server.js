@@ -60,26 +60,67 @@ app.post("/login", async(req,res) =>{
 
   app.get("/cart", authenticateJWT, async (req, res) => {
     console.log("Cart Route - Received GET request");
-  
     try {
       const userId = req.user.userID; 
       console.log("Cart request for user ID:", userId);
-  
       const user = await User.findById(userId);
       if (!user) {
         console.log("User not found with ID:", userId);
         return res.status(404).json({ success: false, message: "User not found" });
-      }
-  
+      } 
       console.log("User found, returning cart data:", user.cart);
-  
       return res.json({ success: true, cart: user.cart });
     } catch (error) {
       console.error("Error fetching cart data:", error);
       return res.status(500).json({ success: false, message: "Server error" });
     }
   });
+
+  app.post("/cart/update", authenticateJWT, async (req, res) => {
+    console.log("Cart Update Route - Received POST request");
+    
+    // Log the incoming data
+    console.log("Received body:", req.body);
+    
+    const { itemId, quantityChange } = req.body;
   
+    if (typeof quantityChange !== "number" || !itemId) {
+      return res.status(400).json({ success: false, message: "Invalid input" });
+    }
+  
+    try {
+        const userId = req.user.userID;  // Get the userId from the JWT token
+    
+        // Find the user and the item in the user's cart
+        const user = await User.findById(userId);
+        if (!user) {
+          return res.status(404).json({ success: false, message: "User not found" });
+        }
+    
+        const itemIndex = user.cart.findIndex((item) => item.name.toString() === itemId);
+        if (itemIndex === -1) {
+          return res.status(404).json({ success: false, message: "Item not found in cart" });
+        }
+    
+        const item = user.cart[itemIndex];
+    
+        // Update the quantity
+        if (item.quantity + quantityChange < 1) {
+          return res.status(400).json({ success: false, message: "Cannot have less than 1 item" });
+        }
+    
+        item.quantity += quantityChange;
+    
+        // Save the updated cart
+        await user.save();
+        console.log('updated the item quantity');
+        return res.json({ success: true, cart: user.cart });
+    } catch (err) {
+      console.error("Error updating cart:", err);
+      return res.status(500).json({ success: false, message: "Server error" });
+    }
+  });  
+
   app.listen(port, () => {
     console.log(`Server running on port ${port}`);
   });

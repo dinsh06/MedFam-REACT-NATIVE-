@@ -61,17 +61,32 @@ const Cart: React.FC = () => {
   };
 
   // Function to update quantity of an item
-  const updateQuantity = (id: string, change: number) => {
-    setProducts((prevProducts) =>
-      prevProducts.map((product) =>
-        product.id === id
-          ? { ...product, quantity: Math.max(0, product.quantity + change) }
-          : product
-      )
-    );
-  };
-
-  // Calculate summary information
+  const updateQuantity = async (name: string, change: number) => {
+    console.log("Updating item:", name, "Change:", change);  // Add this log to check values
+    
+    try {
+      const token = await SecureStore.getItemAsync("jwt"); // Get the JWT token
+      const response = await fetch("http://192.168.29.174:5000/cart/update", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`, // Add the JWT token to the request header
+        },
+        body: JSON.stringify({ itemId: name, quantityChange: change }), // Send item ID and quantity change
+      });
+    
+      const data = await response.json();
+    
+      if (response.ok) {
+        // Update the cart data with the new data from the server
+        setProducts(data.cart); // Assuming your API returns the updated cart in 'cart'
+      } else {
+        setError(data.message || "Failed to update cart");
+      }
+    } catch (err) {
+      setError("An error occurred while updating the cart");
+    }
+  };  
   const totalQuantity = products.reduce((total, product) => total + product.quantity, 0);
   const totalPrice = products.reduce(
     (total, product) => total + product.price * product.quantity,
@@ -110,14 +125,14 @@ const Cart: React.FC = () => {
               <Text style={styles.productPrice}>₹{item.price}</Text>
               <View style={styles.quantityContainer}>
                 <TouchableOpacity
-                  onPress={() => updateQuantity(item.id, -1)}
+                  onPress={() => updateQuantity(item.name, -1)}
                   style={styles.quantityButton}
                 >
                   <Text style={styles.quantityText}>-</Text>
                 </TouchableOpacity>
                 <Text style={styles.quantityText}>{item.quantity}</Text>
                 <TouchableOpacity
-                  onPress={() => updateQuantity(item.id, +1)}
+                  onPress={() => updateQuantity(item.name, +1)}
                   style={styles.quantityButton}
                 >
                   <Text style={styles.quantityText}>+</Text>
