@@ -9,7 +9,6 @@ import { BackHandler, Platform } from "react-native";
 import { TextInput } from "react-native-paper";
 import { useNavigation } from "@react-navigation/native";
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
-import axios from 'axios'; // Import Axios for API requests
 
 const { height } = Dimensions.get("window");
 
@@ -201,13 +200,13 @@ export default function Index() {
         data={templates}
         renderItem={({ item }) => (
           <View style={styles.templateItem}>
-            <Text style={styles.templateTitle}>{item.tempname}</Text> {/* Display template name dynamically */}
+            <Text style={styles.templateTitle}>{item.tempname}</Text> 
             <TouchableOpacity onPress={() => router.push({ pathname: "/product" })}>
               <Text style={styles.templateText}>View</Text>
             </TouchableOpacity>
           </View>
         )}
-        keyExtractor={(item) => item.id}
+        keyExtractor={(item) => item.tempname}
         horizontal
         showsHorizontalScrollIndicator={false}
         contentContainerStyle={styles.carouselContainer}
