@@ -9,6 +9,7 @@ import {
   Alert,
 } from "react-native";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
+import { Picker } from "@react-native-picker/picker"; // Import Picker component
 
 export default function Templates() {
   const [planName, setPlanName] = useState("");
@@ -16,12 +17,12 @@ export default function Templates() {
   const [address, setAddress] = useState("");
   const [phone, setPhone] = useState("");
   const [email, setEmail] = useState("");
-  const [medicines, setMedicines] = useState<string[]>([""]);
+  const [medicines, setMedicines] = useState([{ name: "", quantity: 1 }]); // Now an array of objects with name and quantity
   const [isFormVisible, setIsFormVisible] = useState(false);
 
   // Function to add a new medicine input
   const addMedicine = () => {
-    setMedicines([...medicines, ""]);
+    setMedicines([...medicines, { name: "", quantity: 1 }]); // Adding a new medicine with default quantity 1
   };
 
   // Function to remove a medicine input
@@ -33,15 +34,23 @@ export default function Templates() {
   };
 
   // Function to update the medicine name at a specific index
-  const updateMedicine = (index: number, value: string) => {
+  const updateMedicineName = (index: number, value: string) => {
     const updatedMedicines = medicines.map((medicine, i) =>
-      i === index ? value : medicine
+      i === index ? { ...medicine, name: value } : medicine
+    );
+    setMedicines(updatedMedicines);
+  };
+
+  // Function to update the medicine quantity at a specific index
+  const updateMedicineQuantity = (index: number, value: number) => {
+    const updatedMedicines = medicines.map((medicine, i) =>
+      i === index ? { ...medicine, quantity: value } : medicine
     );
     setMedicines(updatedMedicines);
   };
 
   const handleSubmit = () => {
-    if (!planName || !name || !address || !phone || !email || medicines.some(med => !med)) {
+    if (!planName || !name || !address || !phone || !email || medicines.some(med => !med.name)) {
       Alert.alert("Please fill all fields and medicine names");
       return;
     }
@@ -52,7 +61,7 @@ export default function Templates() {
     setAddress("");
     setPhone("");
     setEmail("");
-    setMedicines([""]);
+    setMedicines([{ name: "", quantity: 1 }]);
   };
 
   return (
@@ -128,28 +137,38 @@ export default function Templates() {
             />
           </View>
 
-{/* Medicine List */}
-<Text style={styles.label}>Medicines</Text>
-{medicines.map((medicine, index) => (
-  <View key={index} style={styles.row}>
-    <TextInput
-      style={styles.medicineInput} // Updated style
-      value={medicine}
-      onChangeText={(text) => updateMedicine(index, text)}
-      placeholder="Enter medicine name"
-    />
-    <View style={styles.buttonContainer}>
-      <TouchableOpacity onPress={addMedicine} style={styles.addButton}>
-        <Icon name="plus" size={24} color="white" />
-      </TouchableOpacity>
-      {medicines.length > 1 && (
-        <TouchableOpacity onPress={() => removeMedicine(index)} style={styles.removeButton}>
-          <Icon name="minus" size={24} color="white" />
-        </TouchableOpacity>
-      )}
-    </View>
-  </View>
-))}
+          {/* Medicine List */}
+          <Text style={styles.label}>Medicines</Text>
+          {medicines.map((medicine, index) => (
+            <View key={index} style={styles.row}>
+              <TextInput
+                style={styles.medicineInput} 
+                value={medicine.name}
+                onChangeText={(text) => updateMedicineName(index, text)}
+                placeholder="Enter medicine name"
+              />
+              <View style={styles.buttonContainer}>
+                <TouchableOpacity onPress={addMedicine} style={styles.addButton}>
+                  <Icon name="plus" size={24} color="white" />
+                </TouchableOpacity>
+                {medicines.length > 1 && (
+                  <TouchableOpacity onPress={() => removeMedicine(index)} style={styles.removeButton}>
+                    <Icon name="minus" size={24} color="white" />
+                  </TouchableOpacity>
+                )}
+              </View>
+              {/* Dropdown for Quantity */}
+              <Picker
+                selectedValue={medicine.quantity}
+                style={styles.picker}
+                onValueChange={(itemValue) => updateMedicineQuantity(index, itemValue)}
+              >
+                {[...Array(9).keys()].map((i) => (
+                  <Picker.Item key={i} label={`${i + 1}`} value={i + 1} />
+                ))}
+              </Picker>
+            </View>
+          ))}
 
           {/* Submit Button */}
           <View style={styles.buttonWrapper}>
@@ -173,7 +192,7 @@ const styles = StyleSheet.create({
     flexGrow: 1,
     alignItems: "center",
     justifyContent: "center",
-    paddingBottom: 50, // Prevents button from getting clipped
+    paddingBottom: 50,
     shadowOpacity: 0.3,
   },
   header: {
@@ -207,7 +226,7 @@ const styles = StyleSheet.create({
   },
   buttonWrapper: {
     alignItems: "center", 
-    marginBottom: 20, // Space at the bottom to avoid screen overflow
+    marginBottom: 20, 
   },
   button: {
     backgroundColor: "#ff6347",
@@ -224,25 +243,25 @@ const styles = StyleSheet.create({
   },
   addButton: {
     backgroundColor: "#4CAF50",
-    padding: 10,
+    padding: 4,
     borderRadius: 5,
   },
   removeButton: {
     backgroundColor: "#F44336",
-    padding: 10,
+    padding: 4,
     borderRadius: 5,
     marginLeft: 8,
   },
   buttonContainer: {
     flexDirection: "row",
     alignItems: "center",
-    marginLeft: 10, // Add space between buttons and text input
+    marginLeft: 10, 
   },
   row: {
     flexDirection: "row",
     alignItems: "center",
     marginBottom: 10,
-    justifyContent: "space-between", // Distribute buttons properly
+    justifyContent: "space-between",
   },
   formContainer: {
     padding: 20,
@@ -253,13 +272,21 @@ const styles = StyleSheet.create({
     maxWidth: 400,
   },
   medicineInput: {
-    width: "70%",  // Reduced width
+    width: "55%", 
     height: 50,
     borderColor: "#ddd",
     borderWidth: 1,
     borderRadius: 8,
     paddingHorizontal: 10,
     backgroundColor: "white",
+    marginRight: 0, // No margin to the right to reduce space
+    textAlign: "center",
   },
-  
+  picker: {
+    height: 60,
+    width: "27%",
+  },
+  dropdown: {
+    marginLeft: 1, // Small margin between the number and arrow
+  },
 });

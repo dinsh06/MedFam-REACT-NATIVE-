@@ -73,7 +73,7 @@ app.get("/templates", authenticateJWT, async (req, res) => {
         }
 
         console.log('User found');
-        console.log(user.templates);
+        console.log(user.templates.medicines);
         return res.json({ success: true, templates: user.templates });  // Return the templates for the user
     } catch (error) {
         console.error("Error fetching templates data:", error);
