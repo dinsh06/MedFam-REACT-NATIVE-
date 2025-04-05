@@ -1,7 +1,6 @@
 import { Stack } from "expo-router";
 
 export default function RootLayout() {
-
   return (
     <Stack>
       <Stack.Screen
@@ -16,9 +15,9 @@ export default function RootLayout() {
         name="homepage"
         options={{
           headerLeft: () => null, // Removes the back button
-          gestureEnabled: false,  // Disables swipe back gesture (iOS)
+          gestureEnabled: false, // Disables swipe back gesture (iOS)
           headerShown: false, // Optionally hide header entirely on homepage
-          headerTitle:"Homepage",
+          headerTitle: "Homepage",
         }}
       />
       <Stack.Screen
@@ -29,7 +28,7 @@ export default function RootLayout() {
         name="profile"
         options={{ headerTitle: "Profile" }}
       />
-       <Stack.Screen
+      <Stack.Screen
         name="templates"
         options={{ headerTitle: "Templates" }}
       />
@@ -37,7 +36,22 @@ export default function RootLayout() {
         name="product"
         options={{ headerTitle: "Products" }}
       />
+      <Stack.Screen
+        name="medfamplus"
+        options={{ headerTitle: "MedFam+" }}
+      />
+      <Stack.Screen
+        name="cart"
+        options={{ headerTitle: "Cart" }}
+      />
+      <Stack.Screen
+        name="checkout"
+        options={{ headerTitle: "Checkout" }}
+      />
+      <Stack.Screen
+        name="login"
+        options={{ headerTitle: "Login" }}
+      />
     </Stack>
   );
 }
-

@@ -1,3 +1,4 @@
+// --- All Imports ---
 import { Text, View, Button, Dimensions, TouchableOpacity, Linking, Image, FlatList } from "react-native";
 import { StyleSheet } from "react-native";
 import { useRouter } from "expo-router";
@@ -6,9 +7,10 @@ import Slider from "@react-native-community/slider";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import { useState, useEffect } from "react";
 import * as SecureStore from "expo-secure-store";
-import { BackHandler } from "react-native";
+import { BackHandler, Platform } from "react-native";
 import { TextInput } from "react-native-paper";
 import { useNavigation } from "@react-navigation/native";
+import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 
 const { height } = Dimensions.get("window");
 
@@ -23,7 +25,7 @@ export default function Index() {
     const checkToken = async () => {
       try {
         const token = await SecureStore.getItemAsync("jwt");
-        setIsLoggedIn(!!token); // Set true if token exists, false otherwise
+        setIsLoggedIn(!!token);
       } catch (error) {
         console.error("Error fetching token:", error);
         setIsLoggedIn(false);
@@ -31,19 +33,14 @@ export default function Index() {
     };
 
     checkToken();
-  }, []); // Runs only when the component mounts
+  }, []);
 
   useEffect(() => {
-    const backAction = () => {
-      return true; // Prevent going back
-    };
-
+    const backAction = () => true;
     const backHandler = BackHandler.addEventListener("hardwareBackPress", backAction);
-
     return () => backHandler.remove();
   }, []);
 
-  // Show a loading screen while checking token
   if (isLoggedIn === null) {
     return (
       <View style={styles.loadingContainer}>
@@ -81,56 +78,57 @@ export default function Index() {
 
   return (
     <View style={styles.container}>
-      <View style={styles.container4}>
-        <Image source={require("../assets/images/Logo.png")} style={styles.image} />
-        <Text style={styles.container4Text}>MedFam</Text>
+      {/* Top Bar Container */}
+      <View style={styles.topBarContainer}>
+        {/* Logo + MedFam text */}
+        <View style={styles.container4}>
+          <Image source={require("../assets/images/Logo.png")} style={styles.image} />
+          <Text style={styles.container4Text}>MedFam</Text>
+        </View>
+
+        {/* Right Side Icons */}
+        <View style={styles.profileContainer}>
+          <TouchableOpacity onPress={() => setShowSearch(!showSearch)}>
+            <View style={styles.iconWrapper}>
+              <Icon name="magnify" size={30} color="white" />
+              <Text style={styles.iconLabel2}>Search</Text>
+            </View>
+          </TouchableOpacity>
+
+          <TouchableOpacity onPress={() => router.push("/cart")}>
+            <View style={styles.iconWrapper}>
+              <Icon name="cart" size={30} color="white" />
+              <Text style={styles.iconLabel2}>Cart</Text>
+            </View>
+          </TouchableOpacity>
+
+          <TouchableOpacity onPress={() => router.push(isLoggedIn ? "/profile" : "/login")}>
+            <View style={styles.iconWrapper}>
+              <Icon name="account-circle" size={30} color="white" />
+              <Text style={styles.iconLabel2}>{isLoggedIn ? "Profile" : "Login"}</Text>
+            </View>
+          </TouchableOpacity>
+        </View>
       </View>
 
-      {/* Profile, Search & Cart Icons */}
-      <View style={styles.profileContainer}>
-        <TouchableOpacity onPress={() => setShowSearch(!showSearch)}>
-          <View style={styles.iconWrapper}>
-            <Icon name="magnify" size={30} color="white" />
-            <Text style={styles.iconLabel2}>Search</Text>
-          </View>
-        </TouchableOpacity>
-
-        <TouchableOpacity onPress={() => alert("Cart clicked")}>
-          <View style={styles.iconWrapper}>
-            <Icon name="cart" size={30} color="white" />
-            <Text style={styles.iconLabel2}>Cart</Text>
-          </View>
-        </TouchableOpacity>
-
-        <TouchableOpacity onPress={() => router.push(isLoggedIn ? "/profile" : "/login")}>
-          <View style={styles.iconWrapper}>
-            <Icon name="account-circle" size={30} color="white" />
-            <Text style={styles.iconLabel2}>{isLoggedIn ? "Profile" : "Login"}</Text>
-          </View>
-        </TouchableOpacity>
-      </View>
-
-      {/* Search Bar (Only visible when showSearch is true) */}
       {showSearch && (
         <TextInput
           style={styles.searchInput}
           placeholder="Search your medicine..."
           placeholderTextColor="gray"
-          onChangeText={(text) => setSearchQuery(text)} // Store search text
+          onChangeText={(text) => setSearchQuery(text)}
           value={searchQuery}
           onSubmitEditing={() => {
             if (searchQuery.trim() !== "") {
-              console.log("Navigating to Products page with query:", searchQuery);
               router.push({ pathname: "/product", params: { query: searchQuery } });
             }
           }}
         />
       )}
 
-      {/* Grid Box */}
+      {/* Grid UI */}
       <View style={styles.boxContainer}>
         <View style={styles.grid}>
-          {/* First Row */}
           <View style={styles.row}>
             <View style={[styles.cell, styles.rightBorder, styles.bottomBorder]}>
               <TouchableOpacity onPress={handleCall} style={styles.emergencyButton}>
@@ -142,9 +140,18 @@ export default function Index() {
               </TouchableOpacity>
             </View>
             <View style={[styles.cell, styles.bottomBorder]}>
-              <Button title="Med+" color="gold" onPress={() => alert("Medicines pressed")} />
-            </View>
+            
+            <TouchableOpacity onPress={() => router.push("/medfamplus")} style={{ alignItems: 'center' }}>
+  <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
+    <Icon name="account-star" size={40} color="lightblue" />
+    <Icon name="shield-plus" size={40} color="gold" style={{ marginLeft: 5 }} />
+  </View>
+  <Text style={styles.iconLabel}>MedFam +</Text>
+</TouchableOpacity>
 
+
+
+            </View>
             <View style={[styles.cell, styles.leftBorder, styles.bottomBorder]}>
               <TouchableOpacity onPress={() => alert("caps")}>
                 <Icon name="pill" size={40} color="green" />
@@ -153,7 +160,6 @@ export default function Index() {
             </View>
           </View>
 
-          {/* Second Row */}
           <View style={styles.row}>
             <View style={[styles.cell, styles.rightBorder]}>
               <Icon name="account-plus-outline" size={40} color="black" />
@@ -163,7 +169,6 @@ export default function Index() {
               <Icon name="account-group-outline" size={40} color="black" />
               <Text style={styles.iconLabel}>Templates</Text>
             </TouchableOpacity>
-
             <View style={[styles.cell, styles.leftBorder]}>
               <Icon name="account-minus-outline" size={40} color="black" />
               <Text style={styles.iconLabel}>Remove User</Text>
@@ -185,10 +190,9 @@ export default function Index() {
           <TouchableOpacity onPress={() => router.push({ pathname: "/templates", params: { templateId: item.id } })}>
             <View style={styles.templateItem}>
               <Text style={styles.templateTitle}>{item.title}</Text>
-<TouchableOpacity onPress={() => router.push({ pathname: "/product" })}>
-  <Text style={styles.templateText}>View</Text>
-</TouchableOpacity>
-
+              <TouchableOpacity onPress={() => router.push({ pathname: "/product" })}>
+                <Text style={styles.templateText}>View</Text>
+              </TouchableOpacity>
             </View>
           </TouchableOpacity>
         )}
@@ -204,6 +208,7 @@ export default function Index() {
           <Text style={styles.text}>Medical Kits</Text>
         </View>
       </View>
+
       <FlatList
         data={temp}
         renderItem={({ item }) => (
@@ -216,21 +221,56 @@ export default function Index() {
         pagingEnabled
         showsHorizontalScrollIndicator={true}
         ItemSeparatorComponent={() => <View style={{ width: 0 }} />}
-        contentContainerStyle={{ paddingLeft: 12.5 }} // Adds uniform left padding
+        contentContainerStyle={{ paddingLeft: 12.5 }}
         snapToAlignment="start"
       />
     </View>
   );
 }
 
+// --- STYLES ---
 const styles = StyleSheet.create({
   container: {
     backgroundColor: "#F88B88",
     flex: 1,
-    justifyContent: "center",
     alignItems: "center",
-    paddingBottom: 10,
-    paddingTop: 85,
+    paddingBottom: hp("0%"),
+    paddingTop: Platform.OS === "android" ? hp("0%") : hp("3%"),
+  },
+  topBarContainer: {
+    width: wp("87.5%"),
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: hp("2%"),
+  },
+  container4: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  image: {
+    width: wp("15%"),
+    height: hp("10%"),
+    resizeMode: "contain",
+  },
+  container4Text: {
+    fontSize: wp("6%"),
+    fontWeight: "bold",
+    color: "green",
+    marginLeft: wp("2%"),
+  },
+  profileContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: wp("2.5%"),
+  },
+  iconWrapper: {
+    alignItems: "center",
+  },
+  iconLabel2: {
+    fontSize: wp("3%"),
+    color: "white",
+    marginTop: hp("0.5%"),
   },
   loadingContainer: {
     flex: 1,
@@ -239,40 +279,32 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   loadingText: {
-    fontSize: 20,
+    fontSize: wp("5%"),
     color: "white",
   },
-  profileContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    alignSelf: "flex-end",
-    gap: 10,
-    marginTop: 10,
-    marginRight: 5,
-  },
-  iconWrapper: {
-    alignItems: "center",
-    right: 22,
-    top: -10,
-  },
-  iconLabel2: {
-    fontSize: 12,
-    color: "white",
-    marginTop: 4,
+  searchInput: {
+    height: hp("4%"),
+    width: wp("87.5%"),
+    borderColor: "gray",
+    borderRadius: 10,
+    borderWidth: 1,
+    paddingHorizontal: wp("2.5%"),
+    marginTop: hp("1.5%"),
+    marginBottom: hp("2.5%"),
+    backgroundColor: "white",
   },
   grid: {
-    width: "80%",
+    width: wp("80%"),
   },
   row: {
     flexDirection: "row",
   },
   cell: {
     flex: 1,
-    padding: 0,
     margin: 1,
     alignItems: "center",
     justifyContent: "center",
-    height: 80,
+    height: hp("10%"),
   },
   rightBorder: {
     borderRightWidth: 1,
@@ -288,9 +320,9 @@ const styles = StyleSheet.create({
   },
   boxContainer: {
     backgroundColor: "white",
-    padding: 20,
+    padding: wp("5%"),
     borderRadius: 10,
-    width: "87.5%",
+    width: wp("87.5%"),
     alignItems: "center",
     justifyContent: "center",
     shadowColor: "#000",
@@ -298,44 +330,12 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.3,
     shadowRadius: 4,
     elevation: 5,
-    marginBottom: -15,
-  },
-  container3: {
-    padding: 10,
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "flex-start",
-    marginBottom: -50,
-  },
-  offersContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 8,
-    marginTop: -20,
-    marginBottom: -110,
-  },
-  offersContainer2: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 8,
-    marginBottom: 40,
-  },
-  text: {
-    fontSize: 20,
-    fontWeight: "bold",
-    color: "white",
-    marginLeft: 8,
-  },
-  carouselContainer: {
-    alignItems: "center",
-    paddingHorizontal: 17.5,
-    marginTop: 10,
   },
   iconLabel: {
-    fontSize: 12,
+    fontSize: wp("3%"),
     color: "black",
     textAlign: "center",
-    marginTop: 5,
+    marginTop: hp("0.5%"),
   },
   emergencyButton: {
     alignItems: "center",
@@ -345,76 +345,60 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-around",
     alignItems: "center",
-    marginBottom: 5,
   },
-  image: {
-    width: 100,
-    height: 100,
-    resizeMode: "contain",
-    alignItems: "flex-start",
-  },
-  container4: {
-    position: "absolute",
-    top: 40,
-    left: -10,
-    zIndex: 10,
+  container3: {
     flexDirection: "row",
     alignItems: "center",
-    padding: 10,
-    color: "green",
-    fontWeight: "bold",
-    marginLeft: 0,
-    marginBottom: 0,
+    justifyContent: "flex-start",
+    marginTop: hp("1%"),
   },
-  container4Text: {
-    fontSize: 24,
-    fontWeight: "bold",
-    color: "green",
-    padding: -30,
+  offersContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: wp("2%"),
   },
-  searchInput: {
-    height: 30,
-    width: "87.5%",
-    borderColor: "gray",
-    borderRadius: 10,
-    borderWidth: 1,
-    paddingHorizontal: 10,
-    marginHorizontal: 10,
-    marginTop: 10,
-    marginBottom: 20,
-    backgroundColor: "white",
-    alignSelf: "center",
+  offersContainer2: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: wp("2%"),
+    marginBottom: hp("4%"),
+  },
+  text: {
+    fontSize: wp("5%"),
+    fontWeight: "bold",
+    color: "white",
+    marginLeft: wp("2%"),
   },
   templateItem: {
-    width: 200,
-    height: 150,
+    width: wp("50%"),
+    height: hp("20%"),
     backgroundColor: "white",
     justifyContent: "center",
     alignItems: "center",
     borderRadius: 10,
-    marginHorizontal: 7,
-    marginTop: 10,
-    marginBottom: -90,
+    marginHorizontal: wp("2%"),
     elevation: 5,
     shadowOpacity: 0.3,
   },
   templateTitle: {
-    fontSize: 18,
+    fontSize: wp("4.5%"),
     fontWeight: "bold",
     color: "#333",
   },
-  templateImage: {
-    width: "80%",
-    height: 120,
-    borderRadius: 10,
-  },
   templateText: {
-    fontSize: 14,
+    fontSize: wp("3.5%"),
     color: "blue",
     textDecorationLine: "underline",
-    marginTop: 90,
-    marginLeft: 130,
-
+    marginTop: hp("11.25%"),
+    marginLeft: wp("32.5%"),
   },
-  
+  templateImage: {
+    width: wp("40%"),
+    height: hp("15%"),
+    borderRadius: 10,
+  },
+  carouselContainer: {
+    alignItems: "center",
+    paddingHorizontal: wp("4.5%"),
+  },
 });
