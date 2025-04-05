@@ -197,20 +197,22 @@ export default function Index() {
 
       {/* Dynamic Template List */}
       <FlatList
-        data={templates}
-        renderItem={({ item }) => (
-          <View style={styles.templateItem}>
-            <Text style={styles.templateTitle}>{item.tempname}</Text> 
-            <TouchableOpacity onPress={() => router.push({ pathname: "/product" })}>
-              <Text style={styles.templateText}>View</Text>
-            </TouchableOpacity>
-          </View>
-        )}
-        keyExtractor={(item) => item.tempname}
-        horizontal
-        showsHorizontalScrollIndicator={false}
-        contentContainerStyle={styles.carouselContainer}
-      />
+  data={templates}
+  renderItem={({ item }) => (
+    <View style={styles.templateItem}>
+      <Text style={styles.templateTitle}>{item.tempname}</Text>
+      <TouchableOpacity
+        onPress={() => router.push({ pathname: "/template", params: { id: item.tempname } })}
+      >
+        <Text style={styles.templateText}>View</Text>
+      </TouchableOpacity>
+    </View>
+  )}
+  keyExtractor={(item) => item.tempname}
+  horizontal
+  showsHorizontalScrollIndicator={false}
+  contentContainerStyle={styles.carouselContainer}
+/>
 
       <View style={styles.container3}>
         <View style={styles.offersContainer2}>

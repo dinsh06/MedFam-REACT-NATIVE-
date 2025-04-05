@@ -8,6 +8,10 @@ export default function RootLayout() {
         options={{ headerTitle: "Medfam" }}
       />
       <Stack.Screen
+        name="template"
+        options={{ headerTitle: "Template" }}
+      />
+      <Stack.Screen
         name="about"
         options={{ headerTitle: "About" }}
       />
