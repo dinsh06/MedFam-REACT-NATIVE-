@@ -3,7 +3,6 @@ import { Text, View, Button, Dimensions, TouchableOpacity, Linking, Image, FlatL
 import { StyleSheet } from "react-native";
 import { useRouter } from "expo-router";
 import * as React from "react";
-import Slider from "@react-native-community/slider";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import { useState, useEffect } from "react";
 import * as SecureStore from "expo-secure-store";
@@ -187,14 +186,13 @@ export default function Index() {
       <FlatList
         data={templates}
         renderItem={({ item }) => (
-          <TouchableOpacity onPress={() => router.push({ pathname: "/templates", params: { templateId: item.id } })}>
+
             <View style={styles.templateItem}>
               <Text style={styles.templateTitle}>{item.title}</Text>
               <TouchableOpacity onPress={() => router.push({ pathname: "/product" })}>
                 <Text style={styles.templateText}>View</Text>
               </TouchableOpacity>
             </View>
-          </TouchableOpacity>
         )}
         keyExtractor={(item) => item.id}
         horizontal

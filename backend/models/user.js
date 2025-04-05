@@ -9,7 +9,7 @@ const cartSchema = new mongoose.Schema({
 
 // Template Schema: Contains the template data for the user's profile
 const templateSchema = new mongoose.Schema({
-  myself: {
+  tempname: {
     Address: { type: String, required: true },
     Name: { type: String, required: true },
     Phone: { type: String, required: true },

@@ -58,6 +58,24 @@ app.post("/login", async(req,res) =>{
     }
 });
 
+app.get("/templates", authenticateJWT, async(req,res) =>{
+    console.log("recieved req for templates fetching");
+    try{
+        const userID = req.user.userID;
+        console.log(userID);
+        const user = await User.findById(userID);
+        if (!user) {
+            console.log("User not found with ID:", userId);
+            return res.status(404).json({ success: false, message: "User not found" });
+          }
+        console.log('user found');
+        return res.json({ success: true, templates: user.templates });   
+    } catch (error) {
+        console.error("Error fetching templates data:", error);
+        return res.status(500).json({ success: false, message: "Server error" });
+      }
+});
+
   app.get("/cart", authenticateJWT, async (req, res) => {
     console.log("Cart Route - Received GET request");
     try {
@@ -78,40 +96,26 @@ app.post("/login", async(req,res) =>{
 
   app.post("/cart/update", authenticateJWT, async (req, res) => {
     console.log("Cart Update Route - Received POST request");
-    
-    // Log the incoming data
     console.log("Received body:", req.body);
-    
     const { itemId, quantityChange } = req.body;
-  
     if (typeof quantityChange !== "number" || !itemId) {
       return res.status(400).json({ success: false, message: "Invalid input" });
     }
-  
     try {
-        const userId = req.user.userID;  // Get the userId from the JWT token
-    
-        // Find the user and the item in the user's cart
+        const userId = req.user.userID; 
         const user = await User.findById(userId);
         if (!user) {
           return res.status(404).json({ success: false, message: "User not found" });
         }
-    
         const itemIndex = user.cart.findIndex((item) => item.name.toString() === itemId);
         if (itemIndex === -1) {
           return res.status(404).json({ success: false, message: "Item not found in cart" });
         }
-    
         const item = user.cart[itemIndex];
-    
-        // Update the quantity
         if (item.quantity + quantityChange < 1) {
           return res.status(400).json({ success: false, message: "Cannot have less than 1 item" });
         }
-    
         item.quantity += quantityChange;
-    
-        // Save the updated cart
         await user.save();
         console.log('updated the item quantity');
         return res.json({ success: true, cart: user.cart });
