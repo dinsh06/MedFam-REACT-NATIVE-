@@ -43,10 +43,7 @@ const Cart: React.FC = () => {
        "Authorization": `Bearer ${token}`,
   },
 });
-
-
       const data = await response.json();
-
       if (response.ok) {
         setProducts(data.cart); // Assuming your API returns cart data in 'cart' field
       } else {
