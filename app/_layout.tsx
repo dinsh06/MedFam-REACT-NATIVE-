@@ -1,6 +1,9 @@
 import { Stack } from "expo-router";
+import { usePathname } from "expo-router"; // Use usePathname to get the current path
 
 export default function RootLayout() {
+  const pathname = usePathname(); // This will give you the current pathname
+
   return (
     <Stack>
       <Stack.Screen
@@ -23,6 +26,7 @@ export default function RootLayout() {
           headerShown: false, // Optionally hide header entirely on homepage
           headerTitle: "Homepage",
         }}
+        key={pathname} // Use pathname to force remount the homepage
       />
       <Stack.Screen
         name="addresses"

@@ -36,7 +36,7 @@ const authenticateJWT = (req, res, next) => {
     jwt.verify(tokenWithoutBearer, process.env.JWT_SECRET, (err, user) => {
       if (err) {
         console.log("Error verifying token:", err);
-        return res.status(403).json({ success: false, message: "Token is not valid" });
+        return res.status(403).json({ success: false, message: "Please log in" });
       }
         req.user = user;
       next(); 

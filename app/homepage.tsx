@@ -25,6 +25,10 @@ export default function Index() {
       try {
         const token = await SecureStore.getItemAsync("jwt");
         setIsLoggedIn(!!token);
+
+        if (!token) {
+          setTemplates([]);  // Clear templates if no token is found
+        }
       } catch (error) {
         console.error("Error fetching token:", error);
         setIsLoggedIn(false);
@@ -32,7 +36,7 @@ export default function Index() {
     };
 
     checkToken();
-  }, []);
+  }, []); 
 
   useEffect(() => {
     const fetchTemplates = async () => {
