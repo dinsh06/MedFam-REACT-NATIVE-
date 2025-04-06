@@ -3,7 +3,8 @@ const mongoose = require("mongoose");
 const cors = require("cors");
 const jwt = require("jsonwebtoken");
 const dotenv = require("dotenv");
-const User = require("./models/user");  // Use require to import the User model
+const User = require("./models/user"); 
+const Product = require("./models/product"); 
 
 dotenv.config();
 
@@ -56,6 +57,90 @@ app.post("/login", async(req,res) =>{
     } catch(error) {
         console.error("Error logging in", error);
     }
+});
+
+app.post("/getMedicinesPrices", async (req, res) => {
+  console.log("req recieved to fetch the medicine prices");
+  const { medicines } = req.body; // Get the list of medicines from the request body
+  console.log("Received medicines:", medicines);  // Log received medicines
+
+  try {
+    const notFoundMedicines = [];
+    const prices = [];
+
+    for (let medicineName of medicines) {
+      console.log("Searching for medicine:", medicineName); // Log each medicine name being searched
+
+      const product = await Product.findOne({ brand: medicineName });
+      if (product) {
+        console.log(`Found product: ${medicineName} with price ${product.price}`); // Log found product and price
+        prices.push(product.price);
+      } else {
+        console.log(`Product not found for: ${medicineName}`); // Log if product is not found
+        prices.push(null); // No price if product is not found
+        notFoundMedicines.push(medicineName);
+      }
+    }
+
+    if (notFoundMedicines.length > 0) {
+      console.log("Medicines not found:", notFoundMedicines); // Log medicines not found
+      return res.json({
+        success: true,
+        notFoundMedicines, // Send list of medicines not found
+        prices, // Send the prices (null for not found medicines)
+      });
+    } else {
+      console.log("All medicines found, prices:", prices); // Log prices if all medicines were found
+      return res.json({
+        success: true,
+        prices, // Send all the prices for the found medicines
+        notFoundMedicines: [], // Empty array if all medicines were found
+      });
+    }
+  } catch (error) {
+    console.error("Error fetching medicine prices:", error);
+    return res.status(500).json({ success: false, message: "Server error" });
+  }
+});
+
+app.post("/saveTemplate", authenticateJWT, async (req, res) => {
+  try {
+    console.log("Saving template...");
+
+    const userId = req.user.userID; // Get the user ID from the JWT token
+    console.log("User ID:", userId); // Log the user ID
+
+    const { tempname, Name, Address, Phone, mail, medicines } = req.body;
+    console.log("Received template data:", { tempname, Name, Address, Phone, mail, medicines });
+
+    const user = await User.findById(userId);
+    if (!user) {
+      console.log("User not found"); // Log if user is not found
+      return res.status(404).json({ success: false, message: "User not found" });
+    }
+
+    // Save the new template to the user's templates
+    const newTemplate = {
+      tempname,
+      Name,
+      Address,
+      Phone,
+      mail,
+      medicines, // This will include the medicines with their prices
+    };
+
+    console.log("New template data:", newTemplate); // Log the new template data to be saved
+
+    user.templates.push(newTemplate);
+    await user.save();
+
+    console.log("Template saved successfully"); // Log after successful saving
+
+    return res.json({ success: true, message: "Template saved successfully" });
+  } catch (error) {
+    console.error("Error saving template:", error);
+    return res.status(500).json({ success: false, message: "Server error" });
+  }
 });
 
 app.get("/templates", authenticateJWT, async (req, res) => {

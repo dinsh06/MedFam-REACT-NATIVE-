@@ -8,21 +8,22 @@ import {
   ScrollView,
   Alert,
 } from "react-native";
+import * as SecureStore from "expo-secure-store";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
-import { Picker } from "@react-native-picker/picker"; // Import Picker component
+import { Picker } from "@react-native-picker/picker"; // Assuming you're using axios to make requests
 
 export default function Templates() {
-  const [planName, setPlanName] = useState("");
-  const [name, setName] = useState("");
-  const [address, setAddress] = useState("");
-  const [phone, setPhone] = useState("");
-  const [email, setEmail] = useState("");
-  const [medicines, setMedicines] = useState([{ name: "", quantity: 1 }]); // Now an array of objects with name and quantity
+  const [tempname, setTempname] = useState("");
+  const [Name, setName] = useState("");
+  const [Address, setAddress] = useState("");
+  const [Phone, setPhone] = useState("");
+  const [mail, setEmail] = useState("");
+  const [medicines, setMedicines] = useState([{ name: "", quantity: 1, price: null }]);
   const [isFormVisible, setIsFormVisible] = useState(false);
 
   // Function to add a new medicine input
   const addMedicine = () => {
-    setMedicines([...medicines, { name: "", quantity: 1 }]); // Adding a new medicine with default quantity 1
+    setMedicines([...medicines, { name: "", quantity: 1, price: null }]);
   };
 
   // Function to remove a medicine input
@@ -33,7 +34,7 @@ export default function Templates() {
     }
   };
 
-  // Function to update the medicine name at a specific index
+  // Function to update the medicine name
   const updateMedicineName = (index: number, value: string) => {
     const updatedMedicines = medicines.map((medicine, i) =>
       i === index ? { ...medicine, name: value } : medicine
@@ -41,7 +42,7 @@ export default function Templates() {
     setMedicines(updatedMedicines);
   };
 
-  // Function to update the medicine quantity at a specific index
+  // Function to update the medicine quantity
   const updateMedicineQuantity = (index: number, value: number) => {
     const updatedMedicines = medicines.map((medicine, i) =>
       i === index ? { ...medicine, quantity: value } : medicine
@@ -49,21 +50,88 @@ export default function Templates() {
     setMedicines(updatedMedicines);
   };
 
-  const handleSubmit = () => {
-    if (!planName || !name || !address || !phone || !email || medicines.some(med => !med.name)) {
-      Alert.alert("Please fill all fields and medicine names");
+  // Function to validate and submit the form
+  const handleSubmit = async () => {
+    if (!tempname || !Name || !Address || !Phone || !mail) {
+      Alert.alert("Please fill all fields.");
       return;
     }
-    Alert.alert("Template submitted successfully");
-    // Optionally, reset the form after submission
-    setPlanName("");
-    setName("");
-    setAddress("");
-    setPhone("");
-    setEmail("");
-    setMedicines([{ name: "", quantity: 1 }]);
-  };
 
+    // Check if all medicines have valid names
+    for (let medicine of medicines) {
+      if (!medicine.name.trim()) {
+        Alert.alert("Please make sure all medicine names are valid.");
+        return;
+      }
+    }
+
+    try {
+      // Step 1: Fetch prices for all medicines
+      const response = await fetch("http://192.168.29.174:5000/getMedicinesPrices", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ medicines: medicines.map(m => m.name) }),
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        // Step 2: Check if any medicines were not found
+        const notFoundMedicines = data.notFoundMedicines;
+        if (notFoundMedicines.length > 0) {
+          // Show a popup with medicines not found
+          Alert.alert("Medicines not found", notFoundMedicines.join(", "));
+          return;
+        }
+
+        // Step 3: Assign the fetched prices to medicines
+        const updatedMedicines = medicines.map((medicine, index) => ({
+          ...medicine,
+          price: data.prices[index],
+        }));
+        setMedicines(updatedMedicines);
+
+        // Step 4: Submit the template with the prices
+        const templateData = {
+          tempname,
+          Name,
+          Address,
+          Phone,
+          mail,
+          medicines: updatedMedicines,
+        };
+        const token = await SecureStore.getItemAsync("jwt");
+        // Call the endpoint to save the template
+        await fetch("http://192.168.29.174:5000/saveTemplate", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`,
+          },
+          body: JSON.stringify(templateData),
+        });
+
+        Alert.alert("Template submitted successfully");
+
+        // Reset form after successful submission
+        setTempname("");
+        setName("");
+        setAddress("");
+        setPhone("");
+        setEmail("");
+        setMedicines([{ name: "", quantity: 1, price: null }]);
+      } else {
+        // Handle any other errors
+        Alert.alert("Error fetching medicine prices");
+      }
+    } catch (error) {
+      console.error("Error during submission:", error);
+      Alert.alert("Something went wrong. Please try again.");
+    }
+  };
+  
   return (
     <ScrollView style={styles.container} contentContainerStyle={styles.scrollViewContent}>
       <Text style={styles.header}>Templates</Text>
@@ -86,8 +154,8 @@ export default function Templates() {
             <TextInput
               style={styles.input}
               placeholder="Enter Plan Name"
-              value={planName}
-              onChangeText={setPlanName}
+              value={tempname}
+              onChangeText={setTempname}
             />
           </View>
 
@@ -97,7 +165,7 @@ export default function Templates() {
             <TextInput
               style={styles.input}
               placeholder="Enter Name"
-              value={name}
+              value={Name}
               onChangeText={setName}
             />
           </View>
@@ -108,7 +176,7 @@ export default function Templates() {
             <TextInput
               style={styles.input}
               placeholder="Enter Address"
-              value={address}
+              value={Address}
               onChangeText={setAddress}
             />
           </View>
@@ -120,7 +188,7 @@ export default function Templates() {
               style={styles.input}
               placeholder="Enter Phone"
               keyboardType="phone-pad"
-              value={phone}
+              value={Phone}
               onChangeText={setPhone}
             />
           </View>
@@ -132,7 +200,7 @@ export default function Templates() {
               style={styles.input}
               placeholder="Enter Email"
               keyboardType="email-address"
-              value={email}
+              value={mail}
               onChangeText={setEmail}
             />
           </View>
@@ -142,7 +210,7 @@ export default function Templates() {
           {medicines.map((medicine, index) => (
             <View key={index} style={styles.row}>
               <TextInput
-                style={styles.medicineInput} 
+                style={styles.medicineInput}
                 value={medicine.name}
                 onChangeText={(text) => updateMedicineName(index, text)}
                 placeholder="Enter medicine name"
@@ -181,6 +249,8 @@ export default function Templates() {
     </ScrollView>
   );
 }
+
+// Add styles here (same as previous
 
 const styles = StyleSheet.create({
   container: {
@@ -284,7 +354,7 @@ const styles = StyleSheet.create({
   },
   picker: {
     height: 60,
-    width: "27%",
+    width: "28%",
   },
   dropdown: {
     marginLeft: 1, // Small margin between the number and arrow
