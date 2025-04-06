@@ -59,6 +59,27 @@ app.post("/login", async(req,res) =>{
     }
 });
 
+app.get("/user/address", authenticateJWT, async (req, res) => {
+  try {
+    const userID = req.user.userID; // Get the user ID from the JWT token
+    const user = await User.findById(userID); // Find the user in the database using the userID
+    if (!user) {
+      return res.status(404).json({ success: false, message: "User not found" });
+    }
+
+    // Construct formatted address
+    const formattedAddresses = user.addresses.map(address => ({
+      ...address,
+      formattedAddress: `${address.housenumber}, ${address.buildingname}, ${address.roadname}, ${address.area}, ${address.Locality}, ${address.pincode}`
+    }));
+
+    return res.json({ success: true, addresses: formattedAddresses });
+  } catch (error) {
+    return res.status(500).json({ success: false, message: "Server error" });
+  }
+});
+
+
 app.post("/getMedicinesPrices", async (req, res) => {
   console.log("req recieved to fetch the medicine prices");
   const { medicines } = req.body; // Get the list of medicines from the request body
@@ -149,14 +170,11 @@ app.get("/templates", authenticateJWT, async (req, res) => {
     try {
         const userID = req.user.userID;  // Get the user ID from the JWT token
         console.log(userID);
-
         const user = await User.findById(userID);  // Find the user in the database using the userID
-
         if (!user) {
             console.log("User not found with ID:", userID);
             return res.status(404).json({ success: false, message: "User not found" });
         }
-
         console.log('User found');
         console.log(user.templates.medicines);
         return res.json({ success: true, templates: user.templates });  // Return the templates for the user
