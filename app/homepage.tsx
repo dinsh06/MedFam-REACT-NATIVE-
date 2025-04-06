@@ -76,7 +76,7 @@ export default function Index() {
   }
 
   const handleCall = async () => {
-    const phoneNumber = "tel:8681040528";
+    const phoneNumber = "tel:9003276026";
     try {
       const supported = await Linking.canOpenURL(phoneNumber);
       if (supported) {
