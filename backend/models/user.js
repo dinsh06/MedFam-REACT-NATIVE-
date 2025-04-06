@@ -32,7 +32,7 @@ const addressSchema = new mongoose.Schema({
   buildingname: { type: String, required: true },
   roadname: { type: String, required: true },
   area: { type: String, required: true },
-  Locality: { type: String, required: true },
+  locality: { type: String, required: true },
 });
 
 // User Schema: Contains the user's credentials, cart, template, and addresses

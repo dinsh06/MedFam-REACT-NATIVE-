@@ -1,136 +1,199 @@
 import * as React from "react";
-import { useState } from "react";
-import { View, Text, TextInput, ScrollView, StyleSheet,TouchableOpacity,Alert} from "react-native";
+import { useState, useEffect } from "react";
+import { View, Text, TextInput, ScrollView, StyleSheet, TouchableOpacity, Alert, FlatList, ActivityIndicator } from "react-native";
 import { useNavigation } from "@react-navigation/native";
-import { RadioButton } from "react-native-paper";
+import * as SecureStore from 'expo-secure-store';
+
+interface Address {
+  id: string;
+  name: string;
+  phone: string;
+  pincode: string;
+  housenumber: string;
+  buildingname: string;
+  roadname: string;
+  area: string;
+  locality: string;
+}
 
 export default function Profile() {
   const navigation = useNavigation();
   const [address, setAddress] = useState({
-    deliverTo: "",
-    mobileNumber: "",
-    pinCode: "",
-    houseNumber: "",
-    buildingName: "",
-    roadName: "",
+    name: "",
+    phone: "",
+    pincode: "",
+    housenumber: "",
+    buildingname: "",
+    roadname: "",
     area: "",
     locality: "",
-    addressType: "home",
   });
+  const [addresses, setAddresses] = useState<Address[]>([]); // Stores the list of addresses
+  const [loading, setLoading] = useState<boolean>(false);
+  const [token, setToken] = useState<string>("");
 
-  const handleNumericInput = (text: string, field: keyof typeof address) => {
-    const numericText = text.replace(/[^0-9]/g, "");
-    setAddress({ ...address, [field]: numericText });
-  };
+  // Fetch token when component mounts
+  useEffect(() => {
+    const fetchToken = async () => {
+      const fetchedToken = await SecureStore.getItemAsync("jwt");
+      setToken(fetchedToken || "");
+    };
+    fetchToken();
+  }, []);
+
+  // Fetch addresses after token is retrieved
+  useEffect(() => {
+    if (token) {
+      const fetchAddresses = async () => {
+        setLoading(true);
+        try {
+          const addressResponse = await fetch("http://192.168.29.174:5000/user/address", {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+          });
+
+          if (!addressResponse.ok) {
+            throw new Error("Failed to fetch addresses");
+          }
+
+          const addressData = await addressResponse.json();
+          setAddresses(addressData.addresses);
+        } catch (error) {
+          Alert.alert("Failed to fetch addresses.");
+        } finally {
+          setLoading(false);
+        }
+      };
+
+      fetchAddresses();
+    }
+  }, [token]); // Fetch addresses when token changes
+
+  // Handle address form submission
   const handleSubmit = () => {
     if (
-      !address.deliverTo ||
-      !address.mobileNumber ||
-      !address.pinCode ||
-      !address.houseNumber ||
-      !address.roadName ||
+      !address.name ||
+      !address.phone ||
+      !address.pincode ||
+      !address.housenumber ||
+      !address.roadname ||
       !address.area ||
       !address.locality
     ) {
       Alert.alert("Please fill all the fields.");
-      return; // Stop further execution if any field is empty
+      return;
     }
-  
-    // If all fields are filled, show success message
+
+    // For now, adding address to the list (can later be saved to backend)
+    const newAddress = { ...address, id: `${addresses.length + 1}` };
+    setAddresses([...addresses, newAddress]);
     Alert.alert("Address submitted successfully");
-  
-    // Reset form fields after submission
+
+    // Reset the form
     setAddress({
-      deliverTo: "",
-      mobileNumber: "",
-      pinCode: "",
-      houseNumber: "",
-      buildingName: "",
-      roadName: "",
+      name: "",
+      phone: "",
+      pincode: "",
+      housenumber: "",
+      buildingname: "",
+      roadname: "",
       area: "",
       locality: "",
-      addressType: "home",
     });
   };
-  
 
   return (
     <ScrollView style={styles.container}>
       <Text style={styles.header}>Addresses</Text>
+
+      {/* List of Addresses */}
+      <View style={styles.addressListContainer}>
+        <Text style={styles.subHeader}>Your Addresses</Text>
+
+        {loading ? (
+          <ActivityIndicator size="large" color="#FF6347" />
+        ) : addresses.length > 0 ? (
+          <FlatList
+            data={addresses}
+            keyExtractor={(item) => item.id}
+            renderItem={({ item }) => (
+              <View style={styles.addressCard}>
+                <Text style={styles.addressTitle}>{item.name}</Text>
+                <Text>{item.housenumber}, {item.buildingname}</Text>
+                <Text>{item.roadname}, {item.area}, {item.locality}</Text>
+                <Text>Pin Code: {item.pincode}</Text>
+                <Text>Mobile: {item.phone}</Text>
+              </View>
+            )}
+          />
+        ) : (
+          <Text style={styles.noAddressesText}>No addresses added yet!</Text>
+        )}
+      </View>
+
+      {/* Add New Address Button */}
+      <Text style={styles.addAddressButtonText}>+ Add New Address</Text>
+
+      {/* Address Form */}
       <View style={styles.formContainer}>
-        {/* Address Form */}
-        <Text style={styles.label}>Deliver To</Text>
+        <Text style={styles.subHeader}>Add New Address</Text>
         <TextInput
           style={styles.input}
-          placeholder="Name"
-          value={address.deliverTo}
-          onChangeText={(text) => setAddress({ ...address, deliverTo: text })}
+          placeholder="Deliver To"
+          value={address.name}
+          onChangeText={(text) => setAddress({ ...address, name: text })}
         />
-
-        <Text style={styles.label}>Mobile Number</Text>
         <TextInput
           style={styles.input}
           placeholder="Mobile Number"
           keyboardType="phone-pad"
-          value={address.mobileNumber}
-          onChangeText={(text) => handleNumericInput(text, "mobileNumber")}
+          value={address.phone}
+          onChangeText={(text) => setAddress({ ...address, phone: text })}
         />
-
-        <Text style={styles.label}>Pin Code</Text>
         <TextInput
           style={styles.input}
           placeholder="Pin Code"
           keyboardType="numeric"
-          value={address.pinCode}
-          onChangeText={(text) => handleNumericInput(text, "pinCode")}
+          value={address.pincode}
+          onChangeText={(text) => setAddress({ ...address, pincode: text })}
         />
-
-        <Text style={styles.label}>House Number</Text>
         <TextInput
           style={styles.input}
           placeholder="House Number"
           keyboardType="numeric"
-          value={address.houseNumber}
-          onChangeText={(text) => handleNumericInput(text, "houseNumber")}
+          value={address.housenumber}
+          onChangeText={(text) => setAddress({ ...address, housenumber: text })}
         />
-
-        <Text style={styles.label}>Building Name</Text>
         <TextInput
           style={styles.input}
           placeholder="Building Name"
-          value={address.buildingName}
-          onChangeText={(text) => setAddress({ ...address, buildingName: text })}
+          value={address.buildingname}
+          onChangeText={(text) => setAddress({ ...address, buildingname: text })}
         />
-
-        <Text style={styles.label}>Road Name</Text>
         <TextInput
           style={styles.input}
           placeholder="Road Name"
-          value={address.roadName}
-          onChangeText={(text) => setAddress({ ...address, roadName: text })}
+          value={address.roadname}
+          onChangeText={(text) => setAddress({ ...address, roadname: text })}
         />
-
-        <Text style={styles.label}>Area</Text>
         <TextInput
           style={styles.input}
           placeholder="Area"
           value={address.area}
           onChangeText={(text) => setAddress({ ...address, area: text })}
         />
-
-        <Text style={styles.label}>Locality</Text>
         <TextInput
           style={styles.input}
           placeholder="Locality"
           value={address.locality}
           onChangeText={(text) => setAddress({ ...address, locality: text })}
         />
-                  {/* Submit Button */}
-                  <View style={styles.buttonWrapper}>
-                    <TouchableOpacity style={styles.button} onPress={handleSubmit}>
-                      <Text style={styles.buttonText}>Submit</Text>
-                    </TouchableOpacity>
-                  </View>
+        <TouchableOpacity style={styles.submitButton} onPress={handleSubmit}>
+          <Text style={styles.submitButtonText}>Submit</Text>
+        </TouchableOpacity>
       </View>
     </ScrollView>
   );
@@ -139,22 +202,64 @@ export default function Profile() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#F88B88",
+    backgroundColor: "#F8F8F8",
     padding: 20,
-
   },
-  header:{
+  header: {
     fontSize: 28,
     fontWeight: "bold",
-    color: "white",
+    color: "black",
     marginBottom: 20,
     alignSelf: "center",
-    shadowOpacity:0.3,
   },
-  label: {
-    fontSize: 16,
+  subHeader: {
+    fontSize: 22,
+    fontWeight: "bold",
     color: "#333",
-    marginVertical: 8,
+    marginBottom: 16,
+  },
+  addressListContainer: {
+    marginBottom: 20,
+  },
+  addressCard: {
+    backgroundColor: "white",
+    padding: 15,
+    marginBottom: 15,
+    borderRadius: 8,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 3,
+    elevation: 3,
+  },
+  addressTitle: {
+    fontSize: 18,
+    fontWeight: "bold",
+    marginBottom: 10,
+  },
+  noAddressesText: {
+    fontSize: 16,
+    color: "#777",
+    textAlign: "center",
+    marginTop: 20,
+  },
+  addAddressButtonText: {
+    fontSize: 18,
+    color: "#FF6347",
+    marginTop: 20,
+    textAlign: "center",
+    fontWeight: "bold",
+  },
+  formContainer: {
+    marginTop: 20,
+    backgroundColor: "white",
+    padding: 20,
+    borderRadius: 8,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 3,
+    elevation: 3,
   },
   input: {
     height: 50,
@@ -165,28 +270,15 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
     marginBottom: 20,
   },
-  formContainer: {
-    padding: 20,
-    backgroundColor: "white",
-    borderRadius: 8,
-    elevation: 5,
-    width: "100%",
-    maxWidth: 400,
-    shadowOpacity:0.3,
-  },
-  buttonWrapper: {
-    alignItems: "center", 
-    marginBottom: 20, // Space at the bottom to avoid screen overflow
-  },
-  button: {
-    backgroundColor: "#ff6347",
+  submitButton: {
+    backgroundColor: "#FF6347",
     paddingVertical: 15,
     paddingHorizontal: 40,
     borderRadius: 8,
     marginTop: 20,
     alignItems: "center",
   },
-  buttonText: {
+  submitButtonText: {
     color: "white",
     fontSize: 18,
     fontWeight: "bold",

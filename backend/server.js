@@ -62,23 +62,32 @@ app.post("/login", async(req,res) =>{
 app.get("/user/address", authenticateJWT, async (req, res) => {
   try {
     const userID = req.user.userID; // Get the user ID from the JWT token
+    if (!userID) {
+      return res.status(400).json({ success: false, message: "User ID not found in the token" });
+    }
+
     const user = await User.findById(userID); // Find the user in the database using the userID
     if (!user) {
       return res.status(404).json({ success: false, message: "User not found" });
     }
 
+    // If the user has no addresses, return an empty array
+    if (!user.addresses || user.addresses.length === 0) {
+      return res.json({ success: true, addresses: [] });
+    }
+
     // Construct formatted address
     const formattedAddresses = user.addresses.map(address => ({
-      ...address,
-      formattedAddress: `${address.housenumber}, ${address.buildingname}, ${address.roadname}, ${address.area}, ${address.Locality}, ${address.pincode}`
+      ...address.toObject(), // Convert Mongoose document to plain object to ensure proper formatting
+      formattedAddress: `${address.housenumber}, ${address.buildingname}, ${address.roadname}, ${address.area}, ${address.locality}, ${address.pincode}`
     }));
 
     return res.json({ success: true, addresses: formattedAddresses });
   } catch (error) {
+    console.error(error); // Log the error for debugging
     return res.status(500).json({ success: false, message: "Server error" });
   }
 });
-
 
 app.post("/getMedicinesPrices", async (req, res) => {
   console.log("req recieved to fetch the medicine prices");
