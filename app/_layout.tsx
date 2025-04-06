@@ -49,6 +49,10 @@ export default function RootLayout() {
         options={{ headerTitle: "MedFam+" }}
       />
       <Stack.Screen
+        name="products"
+        options={{ headerTitle: "Products" }}
+      />
+      <Stack.Screen
         name="cart"
         options={{ headerTitle: "Cart" }}
       />

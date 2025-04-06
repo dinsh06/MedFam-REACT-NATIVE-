@@ -168,7 +168,7 @@ export default function Index() {
               </TouchableOpacity>
             </View>
             <View style={[styles.cell, styles.leftBorder, styles.bottomBorder]}>
-              <TouchableOpacity onPress={() => alert("caps")}>
+              <TouchableOpacity onPress={() => router.push("/products")}>
                 <Icon name="pill" size={40} color="green" />
                 <Text style={styles.iconLabel}>Medicine</Text>
               </TouchableOpacity>

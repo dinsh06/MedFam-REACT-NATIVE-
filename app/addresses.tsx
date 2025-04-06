@@ -1,6 +1,6 @@
 import * as React from "react";
 import { useState, useEffect } from "react";
-import { View, Text, TextInput, ScrollView, StyleSheet, TouchableOpacity, Alert, FlatList, ActivityIndicator } from "react-native";
+import { View, Text, TextInput, StyleSheet, TouchableOpacity, Alert, FlatList, ActivityIndicator } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import * as SecureStore from 'expo-secure-store';
 
@@ -105,97 +105,104 @@ export default function Profile() {
     });
   };
 
+  // FlatList's renderItem for the address list
+  const renderAddressItem = ({ item }: { item: Address }) => (
+    <View style={styles.addressCard}>
+      <Text style={styles.addressTitle}>{item.name}</Text>
+      <Text>{item.housenumber}, {item.buildingname}</Text>
+      <Text>{item.roadname}, {item.area}, {item.locality}</Text>
+      <Text>Pin Code: {item.pincode}</Text>
+      <Text>Mobile: {item.phone}</Text>
+    </View>
+  );
+
   return (
-    <ScrollView style={styles.container}>
-      <Text style={styles.header}>Addresses</Text>
+    <FlatList
+      data={addresses}
+      keyExtractor={(item) => item.name}
+      ListHeaderComponent={
+        <>
+          <Text style={styles.header}>Addresses</Text>
 
-      {/* List of Addresses */}
-      <View style={styles.addressListContainer}>
-        <Text style={styles.subHeader}>Your Addresses</Text>
+          {/* List of Addresses */}
+          <View style={styles.addressListContainer}>
+            <Text style={styles.subHeader}>Your Addresses</Text>
 
-        {loading ? (
-          <ActivityIndicator size="large" color="#FF6347" />
-        ) : addresses.length > 0 ? (
-          <FlatList
-            data={addresses}
-            keyExtractor={(item) => item.id}
-            renderItem={({ item }) => (
-              <View style={styles.addressCard}>
-                <Text style={styles.addressTitle}>{item.name}</Text>
-                <Text>{item.housenumber}, {item.buildingname}</Text>
-                <Text>{item.roadname}, {item.area}, {item.locality}</Text>
-                <Text>Pin Code: {item.pincode}</Text>
-                <Text>Mobile: {item.phone}</Text>
-              </View>
+            {loading ? (
+              <ActivityIndicator size="large" color="#FF6347" />
+            ) : addresses.length > 0 ? (
+              addresses.map((item) => renderAddressItem({ item }))
+            ) : (
+              <Text style={styles.noAddressesText}>No addresses added yet!</Text>
             )}
-          />
-        ) : (
-          <Text style={styles.noAddressesText}>No addresses added yet!</Text>
-        )}
-      </View>
+          </View>
 
-      {/* Add New Address Button */}
-      <Text style={styles.addAddressButtonText}>+ Add New Address</Text>
+          {/* Add New Address Button */}
+          <Text style={styles.addAddressButtonText}>+ Add New Address</Text>
 
-      {/* Address Form */}
-      <View style={styles.formContainer}>
-        <Text style={styles.subHeader}>Add New Address</Text>
-        <TextInput
-          style={styles.input}
-          placeholder="Deliver To"
-          value={address.name}
-          onChangeText={(text) => setAddress({ ...address, name: text })}
-        />
-        <TextInput
-          style={styles.input}
-          placeholder="Mobile Number"
-          keyboardType="phone-pad"
-          value={address.phone}
-          onChangeText={(text) => setAddress({ ...address, phone: text })}
-        />
-        <TextInput
-          style={styles.input}
-          placeholder="Pin Code"
-          keyboardType="numeric"
-          value={address.pincode}
-          onChangeText={(text) => setAddress({ ...address, pincode: text })}
-        />
-        <TextInput
-          style={styles.input}
-          placeholder="House Number"
-          keyboardType="numeric"
-          value={address.housenumber}
-          onChangeText={(text) => setAddress({ ...address, housenumber: text })}
-        />
-        <TextInput
-          style={styles.input}
-          placeholder="Building Name"
-          value={address.buildingname}
-          onChangeText={(text) => setAddress({ ...address, buildingname: text })}
-        />
-        <TextInput
-          style={styles.input}
-          placeholder="Road Name"
-          value={address.roadname}
-          onChangeText={(text) => setAddress({ ...address, roadname: text })}
-        />
-        <TextInput
-          style={styles.input}
-          placeholder="Area"
-          value={address.area}
-          onChangeText={(text) => setAddress({ ...address, area: text })}
-        />
-        <TextInput
-          style={styles.input}
-          placeholder="Locality"
-          value={address.locality}
-          onChangeText={(text) => setAddress({ ...address, locality: text })}
-        />
-        <TouchableOpacity style={styles.submitButton} onPress={handleSubmit}>
-          <Text style={styles.submitButtonText}>Submit</Text>
-        </TouchableOpacity>
-      </View>
-    </ScrollView>
+          {/* Address Form */}
+          <View style={styles.formContainer}>
+            <Text style={styles.subHeader}>Add New Address</Text>
+            <TextInput
+              style={styles.input}
+              placeholder="Deliver To"
+              value={address.name}
+              onChangeText={(text) => setAddress({ ...address, name: text })}
+            />
+            <TextInput
+              style={styles.input}
+              placeholder="Mobile Number"
+              keyboardType="phone-pad"
+              value={address.phone}
+              onChangeText={(text) => setAddress({ ...address, phone: text })}
+            />
+            <TextInput
+              style={styles.input}
+              placeholder="Pin Code"
+              keyboardType="numeric"
+              value={address.pincode}
+              onChangeText={(text) => setAddress({ ...address, pincode: text })}
+            />
+            <TextInput
+              style={styles.input}
+              placeholder="House Number"
+              keyboardType="numeric"
+              value={address.housenumber}
+              onChangeText={(text) => setAddress({ ...address, housenumber: text })}
+            />
+            <TextInput
+              style={styles.input}
+              placeholder="Building Name"
+              value={address.buildingname}
+              onChangeText={(text) => setAddress({ ...address, buildingname: text })}
+            />
+            <TextInput
+              style={styles.input}
+              placeholder="Road Name"
+              value={address.roadname}
+              onChangeText={(text) => setAddress({ ...address, roadname: text })}
+            />
+            <TextInput
+              style={styles.input}
+              placeholder="Area"
+              value={address.area}
+              onChangeText={(text) => setAddress({ ...address, area: text })}
+            />
+            <TextInput
+              style={styles.input}
+              placeholder="Locality"
+              value={address.locality}
+              onChangeText={(text) => setAddress({ ...address, locality: text })}
+            />
+            <TouchableOpacity style={styles.submitButton} onPress={handleSubmit}>
+              <Text style={styles.submitButtonText}>Submit</Text>
+            </TouchableOpacity>
+          </View>
+        </>
+      }
+      ListFooterComponent={<View style={{ height: 20 }} />}
+      renderItem={renderAddressItem}
+    />
   );
 }
 

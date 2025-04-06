@@ -59,6 +59,16 @@ app.post("/login", async(req,res) =>{
     }
 });
 
+app.get("/product", async (req, res) => {
+  try {
+    const products = await Product.find(); // Only get 'name' field
+    return res.json({ success: true, products });
+  } catch (error) {
+    console.error("Error fetching product names:", error);
+    return res.status(500).json({ success: false, message: "Server error" });
+  }
+});
+
 app.get("/user/address", authenticateJWT, async (req, res) => {
   try {
     const userID = req.user.userID; // Get the user ID from the JWT token
