@@ -40,7 +40,7 @@ export default function Profile() {
       <View style={styles.row}>
         <Link href="/addresses"><Text style={styles.text}>My Addresses</Text></Link>       
         <TouchableOpacity onPress={() => router.push("/addresses")}>
-          <Icon name="map-marker" size={30} color="black" />
+          <Icon name="map-marker" size={30} color="white" />
         </TouchableOpacity>
       </View>
       <View style={styles.separator} />
@@ -49,7 +49,7 @@ export default function Profile() {
       <View style={styles.row}>
         <Link href="/cart"><Text style={styles.text}>My Cart</Text></Link>
         <TouchableOpacity onPress={() => router.push("/cart") }>
-          <Icon name="cart" size={30} color="black" />
+          <Icon name="cart" size={30} color="white" />
         </TouchableOpacity>
       </View>
       <View style={styles.separator} />
@@ -58,7 +58,7 @@ export default function Profile() {
       <View style={styles.row}>
         <Link href="/templates"><Text style={styles.text}>My Templates</Text></Link>       
         <TouchableOpacity onPress={() => router.push("/templates")}>
-          <Icon name="file-outline" size={30} color="black" />
+          <Icon name="file-account" size={30} color="white" />
         </TouchableOpacity>
       </View>
       <View style={styles.separator} />
@@ -67,7 +67,7 @@ export default function Profile() {
       <View style={styles.row}>
         <Text style={styles.text}>Settings</Text>
         <TouchableOpacity>
-          <Icon name="cog" size={30} color="black" />
+          <Icon name="cog" size={30} color="white" />
         </TouchableOpacity>
       </View>
       <View style={styles.separator} />
@@ -75,7 +75,7 @@ export default function Profile() {
       {/* Logout */}
       <TouchableOpacity style={styles.row} onPress={handleLogout}>
         <Text style={styles.text}>Logout</Text>
-        <Icon name="logout" size={30} color="black" />
+        <Icon name="logout" size={30} color="white" />
       </TouchableOpacity>
       <View style={styles.separator} />
     </ScrollView>
@@ -95,7 +95,8 @@ const styles = StyleSheet.create({
   },
   text: {
     fontSize: 18,
-    color: "black",
+    color: "white",
+    fontWeight: "bold",
   },
   separator: {
     height: 1,

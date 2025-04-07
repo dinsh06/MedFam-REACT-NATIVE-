@@ -42,7 +42,7 @@ export default function Index() {
     const fetchTemplates = async () => {
       try {
         const token = await SecureStore.getItemAsync("jwt");
-        const response = await fetch("http://192.168.29.174:5000/templates", {
+        const response = await fetch("http://192.168.0.102:5000/templates", {
           headers: { Authorization: `Bearer ${token}` },
         });
         const data = await response.json();
@@ -204,11 +204,18 @@ export default function Index() {
   data={templates}
   renderItem={({ item }) => (
     <View style={styles.templateItem}>
-      <Text style={styles.templateTitle}>{item.tempname}</Text>
+      <View style={styles.templateHeader}>
+        <Icon name="file-account" size={24} color="grey" style={{ marginRight: 8 }} />
+        <Text style={styles.templateTitle}>{item.tempname}</Text>
+      </View>
+
       <TouchableOpacity
         onPress={() => router.push({ pathname: "/template", params: { id: item.tempname } })}
+        style={styles.viewContainer}
       >
-        <Text style={styles.templateText}>View</Text>
+        
+        <Text style={styles.viewText}>View</Text>
+        <Icon name="eye" size={20} color="green" style={{ marginLeft: 5 }} />
       </TouchableOpacity>
     </View>
   )}
@@ -217,6 +224,7 @@ export default function Index() {
   showsHorizontalScrollIndicator={false}
   contentContainerStyle={styles.carouselContainer}
 />
+
 
       <View style={styles.container3}>
         <View style={styles.offersContainer2}>
@@ -245,7 +253,6 @@ export default function Index() {
   );
 }
 
-// --- STYLES ---
 const styles = StyleSheet.create({
   container: {
     backgroundColor: "#F88B88",
@@ -398,16 +405,18 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.3,
   },
   templateTitle: {
-    fontSize: wp("4.5%"),
+    
+    fontSize: wp("6%"),
     fontWeight: "bold",
     color: "#333",
   },
   templateText: {
-    fontSize: wp("3.5%"),
-    color: "blue",
+    fontSize: wp("10%"),
+    color: "brown",
     textDecorationLine: "underline",
     marginTop: hp("11.25%"),
     marginLeft: wp("32.5%"),
+    alignSelf: "center",
   },
   templateImage: {
     width: wp("40%"),
@@ -418,4 +427,39 @@ const styles = StyleSheet.create({
     alignItems: "center",
     paddingHorizontal: wp("4.5%"),
   },
+  eyeIconContainer: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: 10,
+  },
+  
+  eyeIcon: {
+    fontSize: wp("10%"),
+    color: "green",
+    textDecorationLine: "underline",
+  },
+  templateHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 10,
+  },
+  viewContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginTop: 10,
+    borderWidth: 1,
+    borderColor: 'green',
+    borderRadius: 8,
+    paddingVertical: 5,
+    paddingHorizontal: 10,
+  },
+  
+  viewText: {
+    fontSize: wp("4%"),
+    color: "green",
+    fontWeight: "700",
+  },
+
+  
 });
