@@ -108,7 +108,7 @@ const styles = StyleSheet.create({
   },
   image: {
     width: "100%",
-    height: 250,
+    height: 500,
     backgroundColor: "#ccc",
   },
   infoContainer: {
