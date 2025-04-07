@@ -240,14 +240,57 @@ app.get("/templates", authenticateJWT, async (req, res) => {
         }
         const item = user.cart[itemIndex];
         if (item.quantity + quantityChange < 1) {
-          return res.status(400).json({ success: false, message: "Cannot have less than 1 item" });
-        }
+          // If quantity is less than 1, remove the item from the cart
+          user.cart.splice(itemIndex, 1);
+          await user.save();
+          console.log("Item removed from cart because quantity is less than 1");
+          return res.json({ success: true, cart: user.cart });
+      }
         item.quantity += quantityChange;
         await user.save();
         console.log('updated the item quantity');
         return res.json({ success: true, cart: user.cart });
     } catch (err) {
       console.error("Error updating cart:", err);
+      return res.status(500).json({ success: false, message: "Server error" });
+    }
+  });  
+
+
+  app.post("/cart/add", authenticateJWT, async (req, res) => {
+    console.log("Received request for adding item to cart");
+  
+    const { name, price, quantity } = req.body;
+    console.log("Received item details:", name, price, quantity);
+  
+    if (!name || !price || !quantity) {
+      return res.status(400).json({ success: false, message: "One or more of the inputs are missing" });
+    }
+  
+    try {
+      const userId = req.user.userID;
+      const user = await User.findById(userId);
+  
+      if (!user) {
+        return res.status(404).json({ success: false, message: "User not found" });
+      }
+  
+      // Check if the product is already in the user's cart
+      const existingProduct = user.cart.find(item => item.name === name);
+  
+      if (existingProduct) {
+        // Product already in cart, update the quantity
+        existingProduct.quantity += quantity;
+      } else {
+        // Product not in cart, add it as a new item
+        user.cart.push({ name, price, quantity });
+      }
+  
+      await user.save(); // Save the updated user document
+  
+      return res.json({ success: true, cart: user.cart }); // Return the updated cart
+    } catch (err) {
+      console.error("Error adding to cart:", err);
       return res.status(500).json({ success: false, message: "Server error" });
     }
   });  

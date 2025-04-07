@@ -139,7 +139,7 @@ const CheckoutPage: React.FC = () => {
       <Text style={styles.sectionTitle}>Order Summary:</Text>
       <FlatList
         data={cartItems}
-        keyExtractor={(item) => item.id}
+        keyExtractor={(item) => item._id}
         renderItem={({ item }) => (
           <View style={styles.itemContainer}>
             <Text>{item.name}</Text>
