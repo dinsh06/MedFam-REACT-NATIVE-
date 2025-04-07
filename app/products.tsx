@@ -6,7 +6,22 @@ import {
   ScrollView,
   ActivityIndicator,
   TouchableOpacity,
+  Image,
 } from "react-native";
+
+// Explicit image map with correct filenames and casing
+const brandImages: Record<string, any> = {
+  "Nivea": require("../assets/images/Nivea.jpg"),
+  "Dolo": require("../assets/images/Dolo.jpg"),
+  "Dettol": require("../assets/images/dettol.jpg"),
+  "Celin": require("../assets/images/Celin.jpg"),
+  "Whisper": require("../assets/images/Whisper.jpg"), // Add if exists
+  "Zandu": require("../assets/images/Zandu.jpg"),     // Add if exists
+  "Accu-Chek": require("../assets/images/Accu-Chek.jpg"),
+  "Hansaplast": require("../assets/images/Hansaplast.jpg"), // Add if exists
+  "Benadryl": require("../assets/images/Benadryl.jpg"),
+  "Azithral": require("../assets/images/Azithral.jpg"),
+};
 
 export default function Products() {
   const [products, setProducts] = useState<any[]>([]);
@@ -15,7 +30,7 @@ export default function Products() {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const response = await fetch("http://192.168.29.174:5000/product");
+        const response = await fetch("http://192.168.0.102:5000/product");
         const data = await response.json();
 
         if (data.success) {
@@ -39,12 +54,17 @@ export default function Products() {
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
+      <Text style={styles.pageTitle}>Medicines</Text>
       {products.length === 0 ? (
         <Text style={{ color: "#fff", marginTop: 20 }}>No products found.</Text>
       ) : (
         products.map((product, index) => (
           <View key={index} style={styles.card}>
-            <View style={styles.imagePlaceholder} />
+            <Image
+              source={brandImages[product.brand] || require("../assets/images/adaptive-icon.png")}
+              style={styles.image}
+              resizeMode="cover"
+            />
             <View style={styles.infoContainer}>
               <Text style={styles.name}>{product.name}</Text>
               <Text style={styles.shortDesc}>{product.shortDesc}</Text>
@@ -86,9 +106,9 @@ const styles = StyleSheet.create({
     alignItems: "center",
     overflow: "hidden",
   },
-  imagePlaceholder: {
+  image: {
     width: "100%",
-    height: 150,
+    height: 250,
     backgroundColor: "#ccc",
   },
   infoContainer: {
@@ -137,7 +157,7 @@ const styles = StyleSheet.create({
     width: "20%",
   },
   cartButton: {
-    backgroundColor: "lightgreen",
+    backgroundColor: "#4CAF50",
     paddingVertical: 10,
     paddingHorizontal: 20,
     borderRadius: 10,
@@ -147,5 +167,13 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: "600",
     color: "#000",
+  },
+  pageTitle: {
+    fontSize: 24,
+    fontWeight: "bold",
+    marginBottom: 20,
+    color: "white",
+    textTransform: "none",
+    shadowOpacity: 0.3,
   },
 });

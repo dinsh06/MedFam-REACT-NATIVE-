@@ -1,8 +1,17 @@
 import * as React from "react";
 import { useState, useEffect } from "react";
-import { View, Text, TextInput, StyleSheet, TouchableOpacity, Alert, FlatList, ActivityIndicator } from "react-native";
+import {
+  View,
+  Text,
+  TextInput,
+  StyleSheet,
+  TouchableOpacity,
+  Alert,
+  FlatList,
+  ActivityIndicator,
+} from "react-native";
 import { useNavigation } from "@react-navigation/native";
-import * as SecureStore from 'expo-secure-store';
+import * as SecureStore from "expo-secure-store";
 
 interface Address {
   id: string;
@@ -28,11 +37,10 @@ export default function Profile() {
     area: "",
     locality: "",
   });
-  const [addresses, setAddresses] = useState<Address[]>([]); // Stores the list of addresses
+  const [addresses, setAddresses] = useState<Address[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [token, setToken] = useState<string>("");
 
-  // Fetch token when component mounts
   useEffect(() => {
     const fetchToken = async () => {
       const fetchedToken = await SecureStore.getItemAsync("jwt");
@@ -41,13 +49,12 @@ export default function Profile() {
     fetchToken();
   }, []);
 
-  // Fetch addresses after token is retrieved
   useEffect(() => {
     if (token) {
       const fetchAddresses = async () => {
         setLoading(true);
         try {
-          const addressResponse = await fetch("http://192.168.29.174:5000/user/address", {
+          const addressResponse = await fetch("http://192.168.0.102:5000/user/address", {
             method: "GET",
             headers: {
               "Content-Type": "application/json",
@@ -70,9 +77,8 @@ export default function Profile() {
 
       fetchAddresses();
     }
-  }, [token]); // Fetch addresses when token changes
+  }, [token]);
 
-  // Handle address form submission
   const handleSubmit = () => {
     if (
       !address.name ||
@@ -87,12 +93,10 @@ export default function Profile() {
       return;
     }
 
-    // For now, adding address to the list (can later be saved to backend)
     const newAddress = { ...address, id: `${addresses.length + 1}` };
     setAddresses([...addresses, newAddress]);
     Alert.alert("Address submitted successfully");
 
-    // Reset the form
     setAddress({
       name: "",
       phone: "",
@@ -105,12 +109,15 @@ export default function Profile() {
     });
   };
 
-  // FlatList's renderItem for the address list
   const renderAddressItem = ({ item }: { item: Address }) => (
     <View style={styles.addressCard}>
       <Text style={styles.addressTitle}>{item.name}</Text>
-      <Text>{item.housenumber}, {item.buildingname}</Text>
-      <Text>{item.roadname}, {item.area}, {item.locality}</Text>
+      <Text>
+        {item.housenumber}, {item.buildingname}
+      </Text>
+      <Text>
+        {item.roadname}, {item.area}, {item.locality}
+      </Text>
       <Text>Pin Code: {item.pincode}</Text>
       <Text>Mobile: {item.phone}</Text>
     </View>
@@ -118,31 +125,26 @@ export default function Profile() {
 
   return (
     <FlatList
+    contentContainerStyle={styles.container} 
       data={addresses}
-      keyExtractor={(item) => item.name}
+      keyExtractor={(item) => item.id}
+      renderItem={renderAddressItem}
       ListHeaderComponent={
         <>
           <Text style={styles.header}>Addresses</Text>
-
-          {/* List of Addresses */}
-          <View style={styles.addressListContainer}>
-            <Text style={styles.subHeader}>Your Addresses</Text>
-
-            {loading ? (
-              <ActivityIndicator size="large" color="#FF6347" />
-            ) : addresses.length > 0 ? (
-              addresses.map((item) => renderAddressItem({ item }))
-            ) : (
-              <Text style={styles.noAddressesText}>No addresses added yet!</Text>
-            )}
-          </View>
-
-          {/* Add New Address Button */}
-          <Text style={styles.addAddressButtonText}>+ Add New Address</Text>
-
-          {/* Address Form */}
+          <Text style={styles.subHeader}>Your Addresses</Text>
+          {loading && <ActivityIndicator size="large" color="#FF6347" />}
+          {!loading && addresses.length === 0 && (
+            <Text style={styles.noAddressesText}>No addresses added yet!</Text>
+          )}
+        </>
+      }
+      ListFooterComponent={
+        <>
+        
+          <Text style={styles.subHeader}>Add New Address</Text>
           <View style={styles.formContainer}>
-            <Text style={styles.subHeader}>Add New Address</Text>
+          
             <TextInput
               style={styles.input}
               placeholder="Deliver To"
@@ -200,37 +202,32 @@ export default function Profile() {
           </View>
         </>
       }
-      ListFooterComponent={<View style={{ height: 20 }} />}
-      renderItem={renderAddressItem}
     />
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#F8F8F8",
-    padding: 20,
-  },
   header: {
-    fontSize: 28,
+    fontSize: 24,
     fontWeight: "bold",
-    color: "black",
-    marginBottom: 20,
+    color: "white",
+    marginVertical: 20,
     alignSelf: "center",
+    shadowOpacity:0.3,
   },
   subHeader: {
-    fontSize: 22,
+    fontSize: 20,
     fontWeight: "bold",
-    color: "#333",
+    color: "white",
     marginBottom: 16,
-  },
-  addressListContainer: {
-    marginBottom: 20,
+    marginHorizontal: 20,
+    alignSelf: "center",
+    shadowOpacity:0.3,
   },
   addressCard: {
     backgroundColor: "white",
     padding: 15,
+    marginHorizontal: 20,
     marginBottom: 15,
     borderRadius: 8,
     shadowColor: "#000",
@@ -248,12 +245,12 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: "#777",
     textAlign: "center",
-    marginTop: 20,
+    marginTop: 10,
   },
   addAddressButtonText: {
     fontSize: 18,
     color: "#FF6347",
-    marginTop: 20,
+    marginTop: 30,
     textAlign: "center",
     fontWeight: "bold",
   },
@@ -261,6 +258,7 @@ const styles = StyleSheet.create({
     marginTop: 20,
     backgroundColor: "white",
     padding: 20,
+    marginHorizontal: 20,
     borderRadius: 8,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
@@ -289,5 +287,10 @@ const styles = StyleSheet.create({
     color: "white",
     fontSize: 18,
     fontWeight: "bold",
+  },
+  container:{
+    backgroundColor:"#F88888",
+    marginBottom: 10,
+    shadowOpacity : 0.3,
   },
 });

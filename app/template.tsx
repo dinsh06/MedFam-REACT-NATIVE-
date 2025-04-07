@@ -24,7 +24,7 @@ export default function TemplateDetail() {
       try {
         const token = await SecureStore.getItemAsync("jwt");
 
-        const response = await fetch("http://192.168.29.174:5000/templates", {
+        const response = await fetch("http://192.168.0.102:5000/templates", {
           method: "GET",
           headers: {
             Authorization: `Bearer ${token}`,
@@ -155,7 +155,7 @@ const styles = StyleSheet.create({
     marginBottom: 5,
   },
   buyButton: {
-    backgroundColor: "green",
+    backgroundColor: "#4CAF50",
     paddingVertical: 10,
     paddingHorizontal: 16,
     borderRadius: 8,
