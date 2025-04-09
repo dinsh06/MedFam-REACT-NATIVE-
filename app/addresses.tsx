@@ -54,7 +54,7 @@ export default function Profile() {
       const fetchAddresses = async () => {
         setLoading(true);
         try {
-          const addressResponse = await fetch("http://192.168.0.102:5000/user/address", {
+          const addressResponse = await fetch("http://192.168.29.174:5000/user/address", {
             method: "GET",
             headers: {
               "Content-Type": "application/json",

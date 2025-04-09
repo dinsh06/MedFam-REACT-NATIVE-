@@ -32,7 +32,7 @@ const CheckoutPage: React.FC = () => {
           return;
         }
 
-        const cartResponse = await fetch("http://192.168.0.102:5000/cart", {
+        const cartResponse = await fetch("http://192.168.29.174:5000/cart", {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
@@ -46,7 +46,7 @@ const CheckoutPage: React.FC = () => {
         const cartData = await cartResponse.json();
         setCartItems(cartData.cart);
 
-        const addressResponse = await fetch("http://192.168.0.102:5000/user/address", {
+        const addressResponse = await fetch("http://192.168.29.174:5000/user/address", {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
@@ -135,7 +135,7 @@ const CheckoutPage: React.FC = () => {
         <Text style={styles.sectionTitle}>Order Summary:</Text>
         <FlatList
           data={cartItems}
-          keyExtractor={(item) => item.id}
+          keyExtractor={(item) => item._id}
           scrollEnabled={false}
           renderItem={({ item }) => (
             <View style={styles.itemContainer}>
