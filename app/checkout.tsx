@@ -32,7 +32,7 @@ const CheckoutPage: React.FC = () => {
           return;
         }
 
-        const cartResponse = await fetch("http://192.168.29.174:5000/cart", {
+        const cartResponse = await fetch("http://192.168.0.102.174:5000/cart", {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
@@ -46,7 +46,7 @@ const CheckoutPage: React.FC = () => {
         const cartData = await cartResponse.json();
         setCartItems(cartData.cart);
 
-        const addressResponse = await fetch("http://192.168.29.174:5000/user/address", {
+        const addressResponse = await fetch("http://192.168.0.102:5000/user/address", {
           method: "GET",
           headers: {
             "Content-Type": "application/json",

@@ -59,7 +59,8 @@ const styles = StyleSheet.create({
     paddingBottom: hp("2%"),
     paddingHorizontal: wp("7.5%"),
     marginBottom: hp("2%"),
-    shadowOffset: { width: 0, height: 5 },
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.3,
   },
   topRow: {
     flexDirection: "row",
@@ -69,29 +70,35 @@ const styles = StyleSheet.create({
   logoRow: {
     flexDirection: "row",
     alignItems: "center",
+    
   },
   logo: {
     width: wp("12%"),
     height: hp("12%"),
     resizeMode: "contain",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.3,
   },
   logoText: {
     fontSize: wp("8%"),
     fontWeight: "bold",
     color: "#F79393",
     marginLeft: wp("1%"),
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.3,
   },
   iconRow: {
     flexDirection: "row",
     alignItems: "center",
     gap: wp("5%"),
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.3,
   },
   searchBar: {
     backgroundColor: "#dedebb",
     borderRadius: 12,
     height: hp("5.5%"),
     paddingHorizontal: wp("2%"),
-// 🔽 reduced from 2% to 0.5%
     elevation: 3,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 3 },

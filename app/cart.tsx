@@ -36,7 +36,7 @@ const Cart: React.FC = () => {
   const fetchCartData = async (token: string) => {
     try {
       const token = await SecureStore.getItemAsync('jwt');
-      const response = await fetch("http://192.168.29.174:5000/cart", {
+      const response = await fetch("http://192.168.0.102:5000/cart", {
       method: "GET",
       headers: {
        "Content-Type": "application/json",
@@ -63,7 +63,7 @@ const Cart: React.FC = () => {
     
     try {
       const token = await SecureStore.getItemAsync("jwt"); // Get the JWT token
-      const response = await fetch("http://192.168.29.174:5000/cart/update", {
+      const response = await fetch("http://192.168.0.102:5000/cart/update", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -178,16 +178,18 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 16,
-    backgroundColor: "#F88B88",
+    backgroundColor: "#dedebb",
   },
   productContainer: {
     flexDirection: "row",
     alignItems: "center",
     marginBottom: 16,
     padding: 10,
-    backgroundColor: "#FFFFFF",
+    backgroundColor: "#00B894",
     borderRadius: 10,
     elevation: 3,
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.2,
   },
   imagePlaceholder: {
     width: 120,
@@ -216,11 +218,13 @@ const styles = StyleSheet.create({
   quantityButton: {
     width: 30,
     height: 30,
-    backgroundColor: "#4CAF50",
+    backgroundColor: "#f4a261",
     justifyContent: "center",
     alignItems: "center",
     borderRadius: 5,
     marginHorizontal: 5,
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.2,
   },
   quantityText: {
     fontSize: 18,
@@ -228,9 +232,11 @@ const styles = StyleSheet.create({
   },
   detailsContainer: {
     padding: 8,
-    backgroundColor: "#F1F1F1",
+    backgroundColor: "#f4a261",
     borderRadius: 5,
     marginTop: 12,
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.2,
   },
   detailsText: {
     fontSize: 14,
@@ -242,11 +248,13 @@ const styles = StyleSheet.create({
     bottom: 0,
     left: 0,
     right: 0,
-    backgroundColor: "#FFFFFF",
+    backgroundColor: "#f4a261",
     padding: 16,
     borderTopLeftRadius: 15,
     borderTopRightRadius: 15,
     elevation: 8,
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.2,
   },
   summaryDetails: {
     marginBottom: 10,
@@ -265,14 +273,16 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
   checkoutButton: {
-    backgroundColor: "#4CAF50",
+    backgroundColor: "#00B894",
     paddingVertical: 15,
     alignItems: "center",
     borderRadius: 10,
     marginTop: 10,
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.2,
   },
   checkoutText: {
-    color: "#FFF",
+    color: "black",
     fontSize: 18,
     fontWeight: "bold",
   },

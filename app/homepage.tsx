@@ -10,6 +10,7 @@ import { TextInput } from "react-native-paper";
 import { useNavigation } from "@react-navigation/native";
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import TopHeader from "../components/TopHeader";
+import HomeGrid from "../components/HomeGrid";
 const { height } = Dimensions.get("window");
 
 export default function Index() {
@@ -42,7 +43,7 @@ export default function Index() {
     const fetchTemplates = async () => {
       try {
         const token = await SecureStore.getItemAsync("jwt");
-        const response = await fetch("http://192.168.29.174:5000/templates", {
+        const response = await fetch("http://192.168.0.102:5000/templates", {
           headers: { Authorization: `Bearer ${token}` },
         });
         const data = await response.json();
@@ -97,6 +98,8 @@ export default function Index() {
     { id: "6", source: require("../assets/images/dettol.jpg") },
   ];
 
+
+  
   return (
     <View style={styles.container}>
      
@@ -106,9 +109,11 @@ export default function Index() {
   setSearchQuery={setSearchQuery}
 />  
 
+  <HomeGrid handleCall={handleCall} />
 
+{/* 
       {/* Grid UI */}
-      <View style={styles.boxContainer}>
+      {/* <View style={styles.boxContainer}>
         <View style={styles.grid}>
           <View style={styles.row}>
             <View style={[styles.cell, styles.rightBorder, styles.bottomBorder]}>
@@ -152,14 +157,15 @@ export default function Index() {
             </View>
           </View>
         </View>
-      </View>
+      </View> */}
 
       <View style={styles.container3}>
         <View style={styles.offersContainer}>
           <Icon name="account-group-outline" size={30} color="green" />
           <Text style={styles.text}>Templates</Text>
         </View>
-      </View>
+      </View> 
+      
 
       {/* Dynamic Template List */}
       <FlatList
@@ -223,46 +229,15 @@ const styles = StyleSheet.create({
     paddingBottom: hp("0%"),
     paddingTop: Platform.OS === "android" ? hp("0%") : hp("3%"),
   },
-  topBarContainer: {
-    width: wp("87.5%"),
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    marginBottom: hp("2%"),
-  },
-  container4: {
-    flexDirection: "row",
-    alignItems: "center",
-  },
-  image: {
-    width: wp("15%"),
-    height: hp("10%"),
-    resizeMode: "contain",
-  },
-  container4Text: {
-    fontSize: wp("6%"),
-    fontWeight: "bold",
-    color: "#F88B88",
-    marginLeft: wp("2%"),
-  },
-  profileContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: wp("2.5%"),
-  },
-  iconWrapper: {
-    alignItems: "center",
-  },
-  iconLabel2: {
-    fontSize: wp("3%"),
-    color: "white",
-    marginTop: hp("0.5%"),
-  },
+  
+
   loadingContainer: {
     flex: 1,
     backgroundColor: "#F88B88",
     justifyContent: "center",
     alignItems: "center",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.3,
   },
   loadingText: {
     fontSize: wp("5%"),
@@ -289,31 +264,7 @@ const styles = StyleSheet.create({
       shadowRadius: 2,
     },
     
-  grid: {
-    width: wp("80%"),
-  },
-  row: {
-    flexDirection: "row",
-  },
-  cell: {
-    flex: 1,
-    margin: 1,
-    alignItems: "center",
-    justifyContent: "center",
-    height: hp("10%"),
-  },
-  rightBorder: {
-    borderRightWidth: 1,
-    borderColor: "black",
-  },
-  leftBorder: {
-    borderLeftWidth: 1,
-    borderColor: "black",
-  },
-  bottomBorder: {
-    borderBottomWidth: 1,
-    borderColor: "black",
-  },
+ 
   boxContainer: {
     backgroundColor: "#f4a261",
     padding: wp("5%"),
@@ -326,6 +277,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.3,
     shadowRadius: 4,
     elevation: 5,
+    
   },
   iconLabel: {
     fontSize: wp("3%"),
