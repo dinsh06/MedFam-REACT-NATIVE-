@@ -92,6 +92,8 @@ app.get("/user/address", authenticateJWT, async (req, res) => {
       formattedAddress: `${address.housenumber}, ${address.buildingname}, ${address.roadname}, ${address.area}, ${address.locality}, ${address.pincode}`
     }));
 
+    console.log(formattedAddresses);
+
     return res.json({ success: true, addresses: formattedAddresses });
   } catch (error) {
     console.error(error); // Log the error for debugging

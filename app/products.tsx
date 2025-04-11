@@ -32,7 +32,7 @@ export default function Products() {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const response = await fetch("http://192.168.0.102:5000/product");
+        const response = await fetch("http://192.168.29.174:5000/product");
         const data = await response.json();
         if (data.success) {
           setProducts(data.products);
@@ -53,7 +53,7 @@ export default function Products() {
   useEffect(() => {
     const fetchCart = async () => {
       const token = await SecureStore.getItemAsync("jwt");
-      const response = await fetch("http://192.168.0.102:5000/cart", {
+      const response = await fetch("http://192.168.29.174:5000/cart", {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -70,7 +70,7 @@ export default function Products() {
     const token = await SecureStore.getItemAsync("jwt");
 
     try {
-      const response = await fetch("http://192.168.0.102:5000/cart/add", {
+      const response = await fetch("http://192.168.29.174:5000/cart/add", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -95,11 +95,12 @@ export default function Products() {
     }
   };
 
-  const handleUpdateQuantity = async (product: any, quantityChange: number) => {
-    const token = await SecureStore.getItemAsync("jwt");
-
+  const updateQuantity = async (product: any, change: number) => {
+    console.log("Updating item:", product.name, "Change:", change);
+  
     try {
-      const response = await fetch("http://192.168.0.102:5000/cart/update", {
+      const token = await SecureStore.getItemAsync("jwt");
+      const response = await fetch("http://192.168.29.174:5000/cart/update", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -107,20 +108,15 @@ export default function Products() {
         },
         body: JSON.stringify({
           itemId: product.name,
-          quantityChange,
+          quantityChange: change,
         }),
       });
-
+  
       const data = await response.json();
-      if (data.success) {
-        // Update the cart state with the new quantity
-        setCart(
-          cart.map((item) =>
-            item.name === product.name
-              ? { ...item, quantity: item.quantity + quantityChange }
-              : item
-          )
-        );
+  
+      if (response.ok) {
+        // Update local cart with new data from server
+        setCart(data.cart); // Assuming API returns updated cart in `data.cart`
       } else {
         console.error("Failed to update cart:", data.message);
       }
@@ -128,6 +124,7 @@ export default function Products() {
       console.error("Error updating cart:", error);
     }
   };
+  
 
   if (loading) {
     return <ActivityIndicator size="large" color="#000" style={{ marginTop: 40 }} />;
@@ -165,14 +162,14 @@ export default function Products() {
                     <View style={styles.cartControls}>
                       <TouchableOpacity
                         style={styles.cartButton}
-                        onPress={() => handleUpdateQuantity(product, -1)}
+                        onPress={() => updateQuantity(product, -1)}
                       >
                         <Text style={styles.buttonText}>-</Text>
                       </TouchableOpacity>
                       <Text style={styles.quantityText}>{cartItem.quantity}</Text>
                       <TouchableOpacity
                         style={styles.cartButton}
-                        onPress={() => handleUpdateQuantity(product, 1)}
+                        onPress={() => updateQuantity(product, 1)}
                       >
                         <Text style={styles.buttonText}>+</Text>
                       </TouchableOpacity>

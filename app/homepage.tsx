@@ -43,7 +43,7 @@ export default function Index() {
     const fetchTemplates = async () => {
       try {
         const token = await SecureStore.getItemAsync("jwt");
-        const response = await fetch("http://192.168.0.102:5000/templates", {
+        const response = await fetch("http://192.168.29.174:5000/templates", {
           headers: { Authorization: `Bearer ${token}` },
         });
         const data = await response.json();
@@ -440,7 +440,7 @@ const styles = StyleSheet.create({
 //     const fetchTemplates = async () => {
 //       try {
 //         const token = await SecureStore.getItemAsync("jwt");
-//         const response = await fetch("http://192.168.0.102:5000/templates", {
+//         const response = await fetch("http://192.168.29.174:5000/templates", {
 //           headers: { Authorization: `Bearer ${token}` },
 //         });
 //         const data = await response.json();

@@ -67,7 +67,7 @@ export default function Templates() {
 
     try {
       // Step 1: Fetch prices for all medicines
-      const response = await fetch("http://192.168.0.102:5000/getMedicinesPrices", {
+      const response = await fetch("http://192.168.29.174:5000/getMedicinesPrices", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
