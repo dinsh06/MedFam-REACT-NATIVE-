@@ -5,6 +5,9 @@ import { useEffect, useState } from "react";
 export default function ProductDetail() {
   const { id } = useLocalSearchParams();
   const [product, setProduct] = useState<any>(null);
+export default function ProductDetail() {
+  const { id } = useLocalSearchParams();
+  const [product, setProduct] = useState<any>(null);
 
   useEffect(() => {
     const fetchProduct = async () => {

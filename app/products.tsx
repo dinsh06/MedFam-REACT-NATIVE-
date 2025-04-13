@@ -13,7 +13,7 @@ import * as SecureStore from "expo-secure-store";
 export default function Products() {
   const [products, setProducts] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-  const [cart, setCart] = useState<any[]>([]); // Local state for cart items
+  const [cart, setCart] = useState<any[]>([]);
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -35,7 +35,6 @@ export default function Products() {
     fetchProducts();
   }, []);
 
-  // Fetch cart data to check if items are already in the cart
   useEffect(() => {
     const fetchCart = async () => {
       const token = await SecureStore.getItemAsync("jwt");
@@ -71,7 +70,6 @@ export default function Products() {
 
       const data = await response.json();
       if (data.success) {
-        // Add the product to the cart state
         setCart([...cart, { ...product, quantity: 1 }]);
       } else {
         console.error("Failed to add product to cart:", data.message);
@@ -93,7 +91,7 @@ export default function Products() {
         },
         body: JSON.stringify({
           itemId: product.name,
-          quantityChange,
+          quantityChange: change,
         }),
       });
 
@@ -152,14 +150,14 @@ export default function Products() {
                     <View style={styles.cartControls}>
                       <TouchableOpacity
                         style={styles.cartButton}
-                        onPress={() => handleUpdateQuantity(product, -1)}
+                        onPress={() => updateQuantity(product, -1)}
                       >
                         <Text style={styles.buttonText}>-</Text>
                       </TouchableOpacity>
                       <Text style={styles.quantityText}>{cartItem.quantity}</Text>
                       <TouchableOpacity
                         style={styles.cartButton}
-                        onPress={() => handleUpdateQuantity(product, 1)}
+                        onPress={() => updateQuantity(product, 1)}
                       >
                         <Text style={styles.buttonText}>+</Text>
                       </TouchableOpacity>

@@ -37,6 +37,113 @@ const TemplateForm = () => {
     };
     console.log('Form Data:', formData);
     // You can add logic to save this form data
+    setMedicines([...medicines, { name: "", quantity: 1, price: null }]);
+  };
+
+  // Function to remove a medicine input
+  const removeMedicine = (index: number) => {
+    if (medicines.length > 1) {
+      const updatedMedicines = medicines.filter((_, i) => i !== index);
+      setMedicines(updatedMedicines);
+    }
+  };
+
+  // Function to update the medicine name
+  const updateMedicineName = (index: number, value: string) => {
+    const updatedMedicines = medicines.map((medicine, i) =>
+      i === index ? { ...medicine, name: value } : medicine
+    );
+    setMedicines(updatedMedicines);
+  };
+
+  // Function to update the medicine quantity
+  const updateMedicineQuantity = (index: number, value: number) => {
+    const updatedMedicines = medicines.map((medicine, i) =>
+      i === index ? { ...medicine, quantity: value } : medicine
+    );
+    setMedicines(updatedMedicines);
+  };
+
+  // Function to validate and submit the form
+  const handleSubmit = async () => {
+    if (!tempname || !Name || !Address || !Phone || !mail) {
+      Alert.alert("Please fill all fields.");
+      return;
+    }
+
+    // Check if all medicines have valid names
+    for (let medicine of medicines) {
+      if (!medicine.name.trim()) {
+        Alert.alert("Please make sure all medicine names are valid.");
+        return;
+      }
+    }
+
+    try {
+      // Step 1: Fetch prices for all medicines
+      const response = await fetch("http://192.168.29.174:5000/getMedicinesPrices", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ medicines: medicines.map(m => m.name) }),
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        // Step 2: Check if any medicines were not found
+        const notFoundMedicines = data.notFoundMedicines;
+        if (notFoundMedicines.length > 0) {
+          // Show a popup with medicines not found
+          Alert.alert("Medicines not found", notFoundMedicines.join(", "));
+          return;
+        }
+
+        // Step 3: Assign the fetched prices to medicines
+        const updatedMedicines = medicines.map((medicine, index) => ({
+          ...medicine,
+          price: data.prices[index],
+        }));
+        setMedicines(updatedMedicines);
+
+        // Step 4: Submit the template with the prices
+        const templateData = {
+          tempname,
+          Name,
+          Address,
+          Phone,
+          mail,
+          medicines: updatedMedicines,
+        };
+        const token = await SecureStore.getItemAsync("jwt");
+        // Call the endpoint to save the template
+        await fetch("http://192.168.0.102:5000/saveTemplate", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`,
+          },
+          body: JSON.stringify(templateData),
+        });
+
+        Alert.alert("Template submitted successfully");
+
+        // Reset form after successful submission
+        setTempname("");
+        setName("");
+        setAddress("");
+        setPhone("");
+        setEmail("");
+        setMedicines([{ name: "", quantity: 1, price: null }]);
+      } else {
+        // Handle any other errors
+        Alert.alert("Error fetching medicine prices");
+      }
+    } catch (error) {
+      console.error("Error during submission:", error);
+      Alert.alert("Something went wrong. Please try again.");
+    }
   };
 
   return (

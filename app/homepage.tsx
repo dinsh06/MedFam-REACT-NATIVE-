@@ -33,12 +33,14 @@ export default function Index() {
         const token = await SecureStore.getItemAsync("jwt");
         setIsLoggedIn(!!token);
         if (!token) setTemplates([]);
+        if (!token) setTemplates([]);
       } catch (error) {
         console.error("Error fetching token:", error);
         setIsLoggedIn(false);
       }
     };
     checkToken();
+  }, []);
   }, []);
 
   useEffect(() => {
@@ -76,6 +78,7 @@ export default function Index() {
     const backHandler = BackHandler.addEventListener("hardwareBackPress", backAction);
     return () => backHandler.remove();
   }, []);
+
   useEffect(() => {
     const itemWidth = wp("90%") + wp("4%");
     let scrollIndex = medicalImages.length;
@@ -151,6 +154,8 @@ export default function Index() {
         </View>
       </View>
 
+      </View>
+
       <FlatList
         data={templates}
         renderItem={({ item }) => <TemplateCard item={item} />}
@@ -178,6 +183,7 @@ export default function Index() {
         keyExtractor={(item, index) => `${item.id}-${index}`}
         horizontal
         pagingEnabled
+        showsHorizontalScrollIndicator={true}
         showsHorizontalScrollIndicator={false}
         contentContainerStyle={{ paddingLeft: 12.5 }}
         snapToAlignment="start"
@@ -238,6 +244,19 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.4,
     shadowRadius: 2,
+  searchInput: {
+    height: hp("5%"),
+    width: wp("87.5%"),
+    borderRadius: 10,
+    borderWidth: 1,
+    paddingHorizontal: wp("3%"),
+    backgroundColor: "#fff",
+    marginBottom: hp("2%"),
+    elevation: 3,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.4,
+    shadowRadius: 2,
   },
   container3: {
     flexDirection: "row",
@@ -275,6 +294,7 @@ const styles = StyleSheet.create({
   },
   templateTitle: {
     fontSize: wp("5%"),
+    fontSize: wp("5%"),
     fontWeight: "bold",
     color: "#333",
   },
@@ -285,6 +305,8 @@ const styles = StyleSheet.create({
   },
   templateHeader: {
     flexDirection: "row",
+  templateHeader: {
+    flexDirection: "row",
     alignItems: "center",
     marginBottom: 10,
   },
@@ -292,8 +314,12 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
     marginTop: 10,
     borderWidth: 1,
+    borderColor: "green",
     borderColor: "green",
     borderRadius: 8,
     paddingVertical: 5,
@@ -304,6 +330,11 @@ const styles = StyleSheet.create({
     color: "green",
     fontWeight: "700",
   },
+  carouselContainer: {
+    alignItems: "center",
+    paddingHorizontal: wp("4.5%"),
+  },
+});
   carouselContainer: {
     alignItems: "center",
     paddingHorizontal: wp("4%"),

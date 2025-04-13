@@ -18,6 +18,7 @@ import * as SecureStore from "expo-secure-store";
 
 interface Address {
   _id: string;
+  _id: string;
   name: string;
   phone: string;
   pincode: string;
