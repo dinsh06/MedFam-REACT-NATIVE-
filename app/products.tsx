@@ -10,20 +10,6 @@ import {
 } from "react-native";
 import * as SecureStore from "expo-secure-store";
 
-// Explicit image map with correct filenames and casing
-const brandImages: Record<string, any> = {
-  "Nivea": require("../assets/images/Nivea.jpg"),
-  "Dolo": require("../assets/images/Dolo.jpg"),
-  "Dettol": require("../assets/images/dettol.jpg"),
-  "Celin": require("../assets/images/Celin.jpg"),
-  "Whisper": require("../assets/images/Whisper.jpg"),
-  "Zandu": require("../assets/images/Zandu.jpg"),
-  "Accu-Chek": require("../assets/images/Accu-Chek.jpg"),
-  "Hansaplast": require("../assets/images/Hansaplast.jpg"),
-  "Benadryl": require("../assets/images/Benadryl.jpg"),
-  "Azithral": require("../assets/images/Azithral.jpg"),
-};
-
 export default function Products() {
   const [products, setProducts] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -32,7 +18,7 @@ export default function Products() {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const response = await fetch("http://192.168.0.102:5000/product");
+        const response = await fetch("http://192.168.0.103:5000/product");
         const data = await response.json();
         if (data.success) {
           setProducts(data.products);
@@ -53,7 +39,7 @@ export default function Products() {
   useEffect(() => {
     const fetchCart = async () => {
       const token = await SecureStore.getItemAsync("jwt");
-      const response = await fetch("http://192.168.0.102:5000/cart", {
+      const response = await fetch("http://192.168.0.103:5000/cart", {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -70,7 +56,7 @@ export default function Products() {
     const token = await SecureStore.getItemAsync("jwt");
 
     try {
-      const response = await fetch("http://192.168.0.102:5000/cart/add", {
+      const response = await fetch("http://192.168.0.103:5000/cart/add", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -99,7 +85,7 @@ export default function Products() {
     const token = await SecureStore.getItemAsync("jwt");
 
     try {
-      const response = await fetch("http://192.168.0.102:5000/cart/update", {
+      const response = await fetch("http://192.168.0.103:5000/cart/update", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -130,7 +116,7 @@ export default function Products() {
   };
 
   if (loading) {
-    return <ActivityIndicator size="large" color="#000" style={{ marginTop: 40 }} />;
+    return <ActivityIndicator size="large" color="#F79393" style={{ marginTop: 40 }} />;
   }
 
   return (
@@ -144,10 +130,11 @@ export default function Products() {
           return (
             <View key={index} style={styles.card}>
               <Image
-                source={brandImages[product.brand] || require("../assets/images/adaptive-icon.png")}
+                source={{ uri: product.image }}
                 style={styles.image}
                 resizeMode="cover"
               />
+
               <View style={styles.infoContainer}>
                 <Text style={styles.name}>{product.name}</Text>
                 <Text style={styles.shortDesc}>{product.shortDesc}</Text>
@@ -199,7 +186,7 @@ const styles = StyleSheet.create({
   container: {
     padding: 16,
     paddingBottom: 100,
-    backgroundColor: "#F88888",
+    backgroundColor: "#DEDEBB", // Light background color
     alignItems: "center",
   },
   card: {
@@ -210,10 +197,14 @@ const styles = StyleSheet.create({
     elevation: 4,
     alignItems: "center",
     overflow: "hidden",
+    borderColor: "#F79393", // Pink border
+    borderWidth: 1,
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.7,
   },
   image: {
     width: "100%",
-    height: 200,
+    height: 500,
     backgroundColor: "#ccc",
   },
   infoContainer: {
@@ -225,6 +216,7 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: "bold",
     textAlign: "center",
+    color: "#4ED2F0", // Blue color for name
   },
   shortDesc: {
     fontSize: 14,
@@ -252,7 +244,7 @@ const styles = StyleSheet.create({
     marginTop: 10,
   },
   priceBox: {
-    backgroundColor: "gold",
+    backgroundColor: "#F4A261", // Orange for price box
     paddingVertical: 10,
     paddingHorizontal: 20,
     borderRadius: 10,
@@ -262,7 +254,7 @@ const styles = StyleSheet.create({
     width: "20%",
   },
   cartButton: {
-    backgroundColor: "lightgreen",
+    backgroundColor: "#00B894", // Green for cart button
     paddingVertical: 10,
     paddingHorizontal: 20,
     borderRadius: 10,
@@ -271,7 +263,7 @@ const styles = StyleSheet.create({
   buttonText: {
     fontSize: 20,
     fontWeight: "600",
-    color: "#000",
+    color: "#fff", 
   },
   cartControls: {
     flexDirection: "row",
@@ -285,6 +277,7 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: "bold",
     marginBottom: 20,
-    color: "white",
+    color: "#F79393", 
+    shadowOpacity: 0.1,
   },
 });

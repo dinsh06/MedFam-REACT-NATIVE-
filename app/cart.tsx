@@ -36,7 +36,7 @@ const Cart: React.FC = () => {
   const fetchCartData = async (token: string) => {
     try {
       const token = await SecureStore.getItemAsync('jwt');
-      const response = await fetch("http://192.168.0.102:5000/cart", {
+      const response = await fetch("http://192.168.0.103:5000/cart", {
       method: "GET",
       headers: {
        "Content-Type": "application/json",
@@ -63,7 +63,7 @@ const Cart: React.FC = () => {
     
     try {
       const token = await SecureStore.getItemAsync("jwt"); // Get the JWT token
-      const response = await fetch("http://192.168.0.102:5000/cart/update", {
+      const response = await fetch("http://192.168.0.103:5000/cart/update", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

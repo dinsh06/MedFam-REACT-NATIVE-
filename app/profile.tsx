@@ -29,7 +29,7 @@ export default function Profile() {
   if (isAuthenticated === null) {
     return (
       <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color="#000" />
+        <ActivityIndicator size="large" color="#00B894" />
       </View>
     );
   }
@@ -38,27 +38,33 @@ export default function Profile() {
     <ScrollView style={styles.container}>
       {/* My Addresses */}
       <View style={styles.row}>
-        <Link href="/addresses"><Text style={styles.text}>My Addresses</Text></Link>       
+        <Link href="/addresses">
+          <Text style={styles.text}>My Addresses</Text>
+        </Link>
         <TouchableOpacity onPress={() => router.push("/addresses")}>
-          <Icon name="map-marker" size={30} color="white" />
+          <Icon name="map-marker" size={30} color="#00B894" />
         </TouchableOpacity>
       </View>
       <View style={styles.separator} />
 
       {/* My Cart */}
       <View style={styles.row}>
-        <Link href="/cart"><Text style={styles.text}>My Cart</Text></Link>
-        <TouchableOpacity onPress={() => router.push("/cart") }>
-          <Icon name="cart" size={30} color="white" />
+        <Link href="/cart">
+          <Text style={styles.text}>My Cart</Text>
+        </Link>
+        <TouchableOpacity onPress={() => router.push("/cart")}>
+          <Icon name="cart" size={30} color="#00B894" />
         </TouchableOpacity>
       </View>
       <View style={styles.separator} />
 
       {/* My Templates */}
       <View style={styles.row}>
-        <Link href="/templates"><Text style={styles.text}>My Templates</Text></Link>       
+        <Link href="/templates">
+          <Text style={styles.text}>My Templates</Text>
+        </Link>
         <TouchableOpacity onPress={() => router.push("/templates")}>
-          <Icon name="file-account" size={30} color="white" />
+          <Icon name="file-account" size={30} color="#00B894" />
         </TouchableOpacity>
       </View>
       <View style={styles.separator} />
@@ -67,7 +73,7 @@ export default function Profile() {
       <View style={styles.row}>
         <Text style={styles.text}>Settings</Text>
         <TouchableOpacity>
-          <Icon name="cog" size={30} color="white" />
+          <Icon name="cog" size={30} color="#00B894" />
         </TouchableOpacity>
       </View>
       <View style={styles.separator} />
@@ -75,7 +81,7 @@ export default function Profile() {
       {/* Logout */}
       <TouchableOpacity style={styles.row} onPress={handleLogout}>
         <Text style={styles.text}>Logout</Text>
-        <Icon name="logout" size={30} color="white" />
+        <Icon name="logout" size={30} color="#00B894" />
       </TouchableOpacity>
       <View style={styles.separator} />
     </ScrollView>
@@ -85,27 +91,34 @@ export default function Profile() {
 const styles = StyleSheet.create({
   container: {
     padding: 20,
-    backgroundColor: "#F88B88",
+    backgroundColor: "#DEDEBB", // Pale beige background
+    
   },
   row: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
     marginVertical: 10,
+    
   },
   text: {
     fontSize: 18,
-    color: "white",
+    color: "#F79393", // Light coral pink for text
     fontWeight: "bold",
+  
+    
   },
   separator: {
     height: 1,
     backgroundColor: "#ddd",
     marginVertical: 5,
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.2,
   },
   loadingContainer: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
+    backgroundColor: "#DEDEBB", // Ensure background color is consistent
   },
 });

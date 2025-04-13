@@ -98,7 +98,39 @@ app.get("/user/address", authenticateJWT, async (req, res) => {
     return res.status(500).json({ success: false, message: "Server error" });
   }
 });
+app.get("/product/:id", async (req, res) => {
+  try {
+    const product = await Product.findById(req.params.id);
+    if (!product) return res.status(404).json({ success: false, message: "Product not found" });
 
+    res.json({ success: true, product });
+  } catch (err) {
+    res.status(500).json({ success: false, message: "Server error" });
+  }
+});
+
+
+app.get("/search", async (req, res) => {
+  const searchQuery = req.query.q || ""; // Read the query param q
+
+  try {
+    const regex = new RegExp(searchQuery, "i"); // Case-insensitive match
+    const products = await Product.find({
+      $or: [
+        { name: regex },
+        { brand: regex },
+        { category: regex },
+        { shortDesc: regex },
+        { composition: regex },
+      ],
+    });
+
+    return res.json({ success: true, products });
+  } catch (error) {
+    console.error("Error fetching product names:", error);
+    return res.status(500).json({ success: false, message: "Server error" });
+  }
+});
 app.post("/getMedicinesPrices", async (req, res) => {
   console.log("req recieved to fetch the medicine prices");
   const { medicines } = req.body; // Get the list of medicines from the request body

@@ -11,7 +11,7 @@ import {
 } from "react-native";
 import * as SecureStore from "expo-secure-store";
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-import { scaleZetaToMatchClamps } from "react-native-reanimated/lib/typescript/animation/springUtils";
+
 
 export default function TemplateDetail() {
   const { id } = useLocalSearchParams(); // We're treating 'id' as 'tempname'
@@ -24,7 +24,7 @@ export default function TemplateDetail() {
       try {
         const token = await SecureStore.getItemAsync("jwt");
 
-        const response = await fetch("http://192.168.0.102:5000/templates", {
+        const response = await fetch("http://192.168.0.103:5000/templates", {
           method: "GET",
           headers: {
             Authorization: `Bearer ${token}`,
@@ -132,7 +132,7 @@ export default function TemplateDetail() {
 
 const styles = StyleSheet.create({
   container: {
-    padding: 20,
+    padding: 10,
     backgroundColor: "#F88B88",
     flex: 1,
   },

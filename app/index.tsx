@@ -1,47 +1,68 @@
-import React, { useEffect, useState } from "react";
-import { View, Text, StyleSheet ,Image} from "react-native";
+import React, { useEffect, useState } from "react"; 
+import { View, Text, StyleSheet, Image, Animated } from "react-native";
 import { useRouter } from "expo-router";
 
 export default function Index() {
-  const [loading, setLoading] = useState(true);
+  const [fadeAnim] = useState(new Animated.Value(0));
   const router = useRouter();
 
   useEffect(() => {
-    // Show loading screen for 2 seconds, then navigate to homepage
-    const timer = setTimeout(() => {
-      router.replace("/homepage"); // Redirect to homepage.tsx
-    }, 3000);
+    Animated.timing(fadeAnim, {
+      toValue: 1,
+      duration: 1200,
+      useNativeDriver: true,
+    }).start();
 
-    return () => clearTimeout(timer); // Cleanup on unmount
+    const timer = setTimeout(() => {
+      router.replace("/homepage");
+    }, 1800);
+
+    return () => clearTimeout(timer);
   }, []);
 
   return (
-    <View style={styles.loadingScreen}>
-      <Text style={styles.loadingText}>Medfam</Text>
-      <Image source={require("../assets/images/Logo.png")} style={{ width: 100, height: 100 }} />
-      <Text style={{ fontStyle: "italic" }}>
-  "Live the life you are aspirin for"</Text>
-
-    </View>
+    <Animated.View style={[styles.loadingScreen, { opacity: fadeAnim }]}>
+      <Text style={styles.title}>Medfam</Text>
+      <Image
+        source={require("../assets/images/Logo.png")}
+        style={styles.logo}
+      />
+      <Text style={styles.tagline}>
+        "Live the life you are aspiring for"
+      </Text>
+    </Animated.View>
   );
 }
 
 const styles = StyleSheet.create({
   loadingScreen: {
     flex: 1,
-    backgroundColor: "#F88B88", // Pink background
+    backgroundColor: "#00B894",
     justifyContent: "center",
     alignItems: "center",
+    padding: 20,
   },
-  loadingText: {
-    fontSize: 30,
+  title: {
+    fontSize: 36,
     fontWeight: "bold",
-    color: "green",
+    color: "#F79393",
+    marginBottom: 10,
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.3,
   },
-  loadingText2:
-  {
-    fontSize: 20,
-    fontWeight: "200",
-    color: "white",
+  logo: {
+    width: 120,
+    height: 120,
+    marginBottom: 20,
+    resizeMode: "contain",
+  },
+  tagline: {
+    fontSize: 18,
+    fontStyle: "italic",
+    color: "#DEDEBB",
+    textAlign: "center",
+    paddingHorizontal: 20,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
   },
 });

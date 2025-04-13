@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState } from 'react';
 import {
   View,
   Text,
@@ -6,357 +6,201 @@ import {
   TouchableOpacity,
   StyleSheet,
   ScrollView,
-  Alert,
-} from "react-native";
-import * as SecureStore from "expo-secure-store";
-import Icon from "react-native-vector-icons/MaterialCommunityIcons";
-import { Picker } from "@react-native-picker/picker"; // Assuming you're using axios to make requests
+} from 'react-native';
 
-export default function Templates() {
-  const [tempname, setTempname] = useState("");
-  const [Name, setName] = useState("");
-  const [Address, setAddress] = useState("");
-  const [Phone, setPhone] = useState("");
-  const [mail, setEmail] = useState("");
-  const [medicines, setMedicines] = useState([{ name: "", quantity: 1, price: null }]);
-  const [isFormVisible, setIsFormVisible] = useState(false);
+const TemplateForm = () => {
+  const [planName, setPlanName] = useState<string>('');
+  const [name, setName] = useState<string>('');
+  const [address, setAddress] = useState<string>('');
+  const [phone, setPhone] = useState<string>('');
+  const [email, setEmail] = useState<string>('');
+  const [medicine, setMedicine] = useState<string>('');
+  const [medicines, setMedicines] = useState<string[]>([]); // ✅ typed
 
-  // Function to add a new medicine input
+
+
   const addMedicine = () => {
-    setMedicines([...medicines, { name: "", quantity: 1, price: null }]);
-  };
-
-  // Function to remove a medicine input
-  const removeMedicine = (index: number) => {
-    if (medicines.length > 1) {
-      const updatedMedicines = medicines.filter((_, i) => i !== index);
-      setMedicines(updatedMedicines);
+    if (medicine.trim()) {
+      setMedicines([...medicines, medicine.trim()]);
+      setMedicine('');
     }
   };
 
-  // Function to update the medicine name
-  const updateMedicineName = (index: number, value: string) => {
-    const updatedMedicines = medicines.map((medicine, i) =>
-      i === index ? { ...medicine, name: value } : medicine
-    );
-    setMedicines(updatedMedicines);
+  const handleSubmit = () => {
+    const formData = {
+      planName,
+      name,
+      address,
+      phone,
+      email,
+      medicines,
+    };
+    console.log('Form Data:', formData);
+    // You can add logic to save this form data
   };
 
-  // Function to update the medicine quantity
-  const updateMedicineQuantity = (index: number, value: number) => {
-    const updatedMedicines = medicines.map((medicine, i) =>
-      i === index ? { ...medicine, quantity: value } : medicine
-    );
-    setMedicines(updatedMedicines);
-  };
-
-  // Function to validate and submit the form
-  const handleSubmit = async () => {
-    if (!tempname || !Name || !Address || !Phone || !mail) {
-      Alert.alert("Please fill all fields.");
-      return;
-    }
-
-    // Check if all medicines have valid names
-    for (let medicine of medicines) {
-      if (!medicine.name.trim()) {
-        Alert.alert("Please make sure all medicine names are valid.");
-        return;
-      }
-    }
-
-    try {
-      // Step 1: Fetch prices for all medicines
-      const response = await fetch("http://192.168.0.102:5000/getMedicinesPrices", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ medicines: medicines.map(m => m.name) }),
-      });
-
-      const data = await response.json();
-
-      if (data.success) {
-        // Step 2: Check if any medicines were not found
-        const notFoundMedicines = data.notFoundMedicines;
-        if (notFoundMedicines.length > 0) {
-          // Show a popup with medicines not found
-          Alert.alert("Medicines not found", notFoundMedicines.join(", "));
-          return;
-        }
-
-        // Step 3: Assign the fetched prices to medicines
-        const updatedMedicines = medicines.map((medicine, index) => ({
-          ...medicine,
-          price: data.prices[index],
-        }));
-        setMedicines(updatedMedicines);
-
-        // Step 4: Submit the template with the prices
-        const templateData = {
-          tempname,
-          Name,
-          Address,
-          Phone,
-          mail,
-          medicines: updatedMedicines,
-        };
-        const token = await SecureStore.getItemAsync("jwt");
-        // Call the endpoint to save the template
-        await fetch("http://192.168.0.102:5000/saveTemplate", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "Authorization": `Bearer ${token}`,
-          },
-          body: JSON.stringify(templateData),
-        });
-
-        Alert.alert("Template submitted successfully");
-
-        // Reset form after successful submission
-        setTempname("");
-        setName("");
-        setAddress("");
-        setPhone("");
-        setEmail("");
-        setMedicines([{ name: "", quantity: 1, price: null }]);
-      } else {
-        // Handle any other errors
-        Alert.alert("Error fetching medicine prices");
-      }
-    } catch (error) {
-      console.error("Error during submission:", error);
-      Alert.alert("Something went wrong. Please try again.");
-    }
-  };
-  
   return (
-    <ScrollView style={styles.container} contentContainerStyle={styles.scrollViewContent}>
-      <Text style={styles.header}>Templates</Text>
+    <ScrollView style={styles.container}>
+      <Text style={styles.heading}>Templates</Text>
 
-      {/* Add Template Button */}
-      {!isFormVisible && (
-        <View style={styles.buttonWrapper}>
-          <TouchableOpacity style={styles.addButton} onPress={() => setIsFormVisible(true)}>
-            <Icon name="plus" size={30} color="white" />
+      <View style={styles.card}>
+        <Text style={styles.label}>Plan Name</Text>
+        <TextInput
+          placeholder="Enter Plan Name"
+          style={styles.input}
+          value={planName}
+          onChangeText={setPlanName}
+        />
+
+        <Text style={styles.label}>Name</Text>
+        <TextInput
+          placeholder="Enter Name"
+          style={styles.input}
+          value={name}
+          onChangeText={setName}
+        />
+
+        <Text style={styles.label}>Address</Text>
+        <TextInput
+          placeholder="Enter Address"
+          style={styles.input}
+          value={address}
+          onChangeText={setAddress}
+        />
+
+        <Text style={styles.label}>Phone</Text>
+        <TextInput
+          placeholder="Enter Phone"
+          style={styles.input}
+          value={phone}
+          onChangeText={setPhone}
+          keyboardType="phone-pad"
+        />
+
+        <Text style={styles.label}>Email</Text>
+        <TextInput
+          placeholder="Enter Email"
+          style={styles.input}
+          value={email}
+          onChangeText={setEmail}
+          keyboardType="email-address"
+        />
+
+        <Text style={styles.label}>Medicines</Text>
+        <View style={styles.medicineRow}>
+          <TextInput
+            placeholder="Medicine"
+            style={[styles.input, { flex: 1, marginRight: 10 }]}
+            value={medicine}
+            onChangeText={setMedicine}
+          />
+          <TouchableOpacity style={styles.addButton} onPress={addMedicine}>
+            <Text style={styles.addButtonText}>+</Text>
           </TouchableOpacity>
         </View>
-      )}
 
-      {/* Template Form */}
-      {isFormVisible && (
-        <View style={styles.formContainer}>
-          {/* Plan Name */}
-          <Text style={styles.label}>Plan Name</Text>
-          <View style={styles.inputWrapper}>
-            <TextInput
-              style={styles.input}
-              placeholder="Enter Plan Name"
-              value={tempname}
-              onChangeText={setTempname}
-            />
-          </View>
-
-          {/* Name */}
-          <Text style={styles.label}>Name</Text>
-          <View style={styles.inputWrapper}>
-            <TextInput
-              style={styles.input}
-              placeholder="Enter Name"
-              value={Name}
-              onChangeText={setName}
-            />
-          </View>
-
-          {/* Address */}
-          <Text style={styles.label}>Address</Text>
-          <View style={styles.inputWrapper}>
-            <TextInput
-              style={styles.input}
-              placeholder="Enter Address"
-              value={Address}
-              onChangeText={setAddress}
-            />
-          </View>
-
-          {/* Phone */}
-          <Text style={styles.label}>Phone</Text>
-          <View style={styles.inputWrapper}>
-            <TextInput
-              style={styles.input}
-              placeholder="Enter Phone"
-              keyboardType="phone-pad"
-              value={Phone}
-              onChangeText={setPhone}
-            />
-          </View>
-
-          {/* Email */}
-          <Text style={styles.label}>Email</Text>
-          <View style={styles.inputWrapper}>
-            <TextInput
-              style={styles.input}
-              placeholder="Enter Email"
-              keyboardType="email-address"
-              value={mail}
-              onChangeText={setEmail}
-            />
-          </View>
-
-          {/* Medicine List */}
-          <Text style={styles.label}>Medicines</Text>
-          {medicines.map((medicine, index) => (
-            <View key={index} style={styles.row}>
-              <TextInput
-                style={styles.medicineInput}
-                value={medicine.name}
-                onChangeText={(text) => updateMedicineName(index, text)}
-                placeholder="Enter medicine name"
-              />
-              <View style={styles.buttonContainer}>
-                <TouchableOpacity onPress={addMedicine} style={styles.addButton}>
-                  <Icon name="plus" size={24} color="white" />
-                </TouchableOpacity>
-                {medicines.length > 1 && (
-                  <TouchableOpacity onPress={() => removeMedicine(index)} style={styles.removeButton}>
-                    <Icon name="minus" size={24} color="white" />
-                  </TouchableOpacity>
-                )}
-              </View>
-              {/* Dropdown for Quantity */}
-              <Picker
-                selectedValue={medicine.quantity}
-                style={styles.picker}
-                onValueChange={(itemValue) => updateMedicineQuantity(index, itemValue)}
-              >
-                {[...Array(9).keys()].map((i) => (
-                  <Picker.Item key={i} label={`${i + 1}`} value={i + 1} />
-                ))}
-              </Picker>
+        <View style={styles.medicineList}>
+          {medicines.map((item, index) => (
+            <View key={index} style={styles.medicineChip}>
+              <Text style={styles.medicineText}>{item}</Text>
             </View>
           ))}
-
-          {/* Submit Button */}
-          <View style={styles.buttonWrapper}>
-            <TouchableOpacity style={styles.button} onPress={handleSubmit}>
-              <Text style={styles.buttonText}>Submit</Text>
-            </TouchableOpacity>
-          </View>
         </View>
-      )}
+
+        <TouchableOpacity style={styles.submitButton} onPress={handleSubmit}>
+          <Text style={styles.submitButtonText}>Submit</Text>
+        </TouchableOpacity>
+      </View>
     </ScrollView>
   );
-}
-
-// Add styles here (same as previous
+};
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#F88B88",
-    padding: 20,
+    backgroundColor: '#dedebb',
+    paddingHorizontal: 20,
+    paddingTop: 20,
   },
-  scrollViewContent: {
-    flexGrow: 1,
-    alignItems: "center",
-    justifyContent: "center",
-    paddingBottom: 50,
-    shadowOpacity: 0.3,
-  },
-  header: {
-    fontSize: 24,
-    fontWeight: "bold",
-    color: "white",
+  heading: {
+    fontSize: 28,
+    fontWeight: 'bold',
+    color: '#F79393',
+    textAlign: 'center',
     marginBottom: 20,
-    textAlign: "center",
+  },
+  card: {
+    backgroundColor: '#fff',
+    borderRadius: 16,
+    padding: 20,
+    marginBottom: 20,
+    shadowColor: '#000',
+    shadowOpacity: 0.1,
+    shadowRadius: 5,
+    elevation: 3,
   },
   label: {
     fontSize: 16,
-    color: "#333",
-    marginVertical: 10,
-  },
-  inputWrapper: {
-    width: "100%",
-    backgroundColor: "white",
-    borderRadius: 8,
-    padding: 5,
-    marginBottom: 10,
-    elevation: 3,
+    fontWeight: '500',
+    marginBottom: 6,
+    color: '#000',
   },
   input: {
-    width: "100%",
-    height: 50,
-    borderColor: "#ddd",
+    backgroundColor: '#f9f9f9',
+    borderRadius: 10,
+    padding: 10,
+    fontSize: 16,
+    marginBottom: 15,
+    borderColor: '#ccc',
     borderWidth: 1,
-    borderRadius: 8,
-    paddingHorizontal: 10,
-    backgroundColor: "white",
   },
-  buttonWrapper: {
-    alignItems: "center", 
-    marginBottom: 20, 
-  },
-  button: {
-    backgroundColor: "#ff6347",
-    paddingVertical: 15,
-    paddingHorizontal: 40,
-    borderRadius: 8,
-    marginTop: 20,
-    alignItems: "center",
-  },
-  buttonText: {
-    color: "white",
-    fontSize: 18,
-    fontWeight: "bold",
+  medicineRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 10,
   },
   addButton: {
-    backgroundColor: "#4CAF50",
-    padding: 4,
-    borderRadius: 5,
+    backgroundColor: '#00B894',
+    padding: 10,
+    borderRadius: 10,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
-  removeButton: {
-    backgroundColor: "#F44336",
-    padding: 4,
-    borderRadius: 5,
-    marginLeft: 8,
+  addButtonText: {
+    color: '#fff',
+    fontSize: 18,
+    fontWeight: 'bold',
   },
-  buttonContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginLeft: 10, 
+  medicineList: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    marginBottom: 20,
   },
-  row: {
-    flexDirection: "row",
-    alignItems: "center",
+  medicineChip: {
+    backgroundColor: '#f1f1f1',
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 20,
+    marginRight: 10,
     marginBottom: 10,
-    justifyContent: "space-between",
-  },
-  formContainer: {
-    padding: 20,
-    backgroundColor: "white",
-    borderRadius: 8,
-    elevation: 5,
-    width: "100%",
-    maxWidth: 400,
-  },
-  medicineInput: {
-    width: "55%", 
-    height: 50,
-    borderColor: "#ddd",
+    borderColor: '#00B894',
     borderWidth: 1,
-    borderRadius: 8,
-    paddingHorizontal: 10,
-    backgroundColor: "white",
-    marginRight: 0, // No margin to the right to reduce space
-    textAlign: "center",
   },
-  picker: {
-    height: 60,
-    width: "28%",
+  medicineText: {
+    fontSize: 14,
+    color: '#333',
   },
-  dropdown: {
-    marginLeft: 1, // Small margin between the number and arrow
+  submitButton: {
+    backgroundColor: '#00B894',
+    paddingVertical: 14,
+    borderRadius: 12,
+    alignItems: 'center',
+  },
+  submitButtonText: {
+    color: '#fff',
+    fontSize: 18,
+    fontWeight: '600',
   },
 });
+
+export default TemplateForm;
