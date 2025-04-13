@@ -1,10 +1,14 @@
-import { View, Text, ScrollView, StyleSheet, ActivityIndicator, Image } from "react-native";
+import {
+  View,
+  Text,
+  ScrollView,
+  StyleSheet,
+  ActivityIndicator,
+  Image,
+} from "react-native";
 import { useLocalSearchParams } from "expo-router";
 import { useEffect, useState } from "react";
 
-export default function ProductDetail() {
-  const { id } = useLocalSearchParams();
-  const [product, setProduct] = useState<any>(null);
 export default function ProductDetail() {
   const { id } = useLocalSearchParams();
   const [product, setProduct] = useState<any>(null);
@@ -26,7 +30,13 @@ export default function ProductDetail() {
   }, [id]);
 
   if (!product) {
-    return <ActivityIndicator size="large" color="#F79393" style={{ marginTop: 40 }} />;
+    return (
+      <ActivityIndicator
+        size="large"
+        color="#F79393"
+        style={{ marginTop: 40 }}
+      />
+    );
   }
 
   return (
@@ -45,7 +55,11 @@ export default function ProductDetail() {
           <Text style={styles.category}>Category: {product.category}</Text>
           <Text style={styles.prescription}>
             Prescription:{" "}
-            <Text style={{ color: product.prescription ? "#F79393" : "#00B894" }}>
+            <Text
+              style={{
+                color: product.prescription ? "#F79393" : "#00B894",
+              }}
+            >
               {product.prescription ? "Required" : "Not Required"}
             </Text>
           </Text>
@@ -73,23 +87,35 @@ export default function ProductDetail() {
           <View style={styles.section}>
             <Text style={styles.sectionTitle}>Benefits</Text>
             {product.benefits.map((benefit: string, idx: number) => (
-              <Text key={idx} style={styles.bulletText}>• {benefit}</Text>
+              <Text key={idx} style={styles.bulletText}>
+                • {benefit}
+              </Text>
             ))}
           </View>
 
           <View style={styles.section}>
             <Text style={styles.sectionTitle}>Side Effects</Text>
             {product.sideEffects.map((effect: string, idx: number) => (
-              <Text key={idx} style={styles.bulletText}>• {effect}</Text>
+              <Text key={idx} style={styles.bulletText}>
+                • {effect}
+              </Text>
             ))}
           </View>
 
           <View style={styles.section}>
             <Text style={styles.sectionTitle}>Safety Advice</Text>
-            <Text style={styles.sectionText}>Alcohol: {product.safetyAdvice.alcohol}</Text>
-            <Text style={styles.sectionText}>Pregnancy: {product.safetyAdvice.pregnancy}</Text>
-            <Text style={styles.sectionText}>Breastfeeding: {product.safetyAdvice.breastfeeding}</Text>
-            <Text style={styles.sectionText}>Kidney/Liver: {product.safetyAdvice.kidneyLiverIssues}</Text>
+            <Text style={styles.sectionText}>
+              Alcohol: {product.safetyAdvice.alcohol}
+            </Text>
+            <Text style={styles.sectionText}>
+              Pregnancy: {product.safetyAdvice.pregnancy}
+            </Text>
+            <Text style={styles.sectionText}>
+              Breastfeeding: {product.safetyAdvice.breastfeeding}
+            </Text>
+            <Text style={styles.sectionText}>
+              Kidney/Liver: {product.safetyAdvice.kidneyLiverIssues}
+            </Text>
           </View>
         </View>
       </View>

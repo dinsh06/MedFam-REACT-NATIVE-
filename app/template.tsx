@@ -133,35 +133,43 @@ export default function TemplateDetail() {
 const styles = StyleSheet.create({
   container: {
     padding: 10,
-    backgroundColor: "#F88B88",
+    backgroundColor: "#DEDEBB", // Pale beige background
     flex: 1,
+    alignItems: "center",
   },
   formContainer: {
     padding: 20,
     backgroundColor: "white",
-    borderRadius: 8,
-    elevation: 5,
+    borderRadius: 12,
+    elevation: 6,
     width: "100%",
     maxWidth: 400,
+    shadowColor: "#000",
+    shadowOpacity: 0.1,
+    shadowRadius: 6,
+    shadowOffset: { width: 0, height: 3 },
   },
   title: {
-    fontSize: 24,
+    fontSize: 26,
     fontWeight: "bold",
-    marginBottom: 10,
+    marginBottom: 12,
     alignSelf: "center",
+    color: "#F79393", // Primary accent
   },
   text: {
-    fontSize: 18,
-    marginBottom: 5,
+    fontSize: 16,
+    marginBottom: 6,
+    color: "#333",
   },
   buyButton: {
-    backgroundColor: "#4CAF50",
-    paddingVertical: 10,
-    paddingHorizontal: 16,
-    borderRadius: 8,
+    backgroundColor: "#00B894", // Teal green
+    paddingVertical: 12,
+    paddingHorizontal: 20,
+    borderRadius: 10,
     alignItems: "center",
     alignSelf: "center",
-    marginTop: 20,
+    marginTop: 24,
+    flexDirection: "row",
   },
   buttonContent: {
     flexDirection: "row",

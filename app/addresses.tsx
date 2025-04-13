@@ -18,7 +18,6 @@ import * as SecureStore from "expo-secure-store";
 
 interface Address {
   _id: string;
-  _id: string;
   name: string;
   phone: string;
   pincode: string;
@@ -240,6 +239,8 @@ const styles = StyleSheet.create({
     color: "#F79393",
     alignSelf: "center",
     marginVertical: 20,
+    shadowOffset: { width: 0, height: 3 },
+    shadowRadius: 3,
   },
   subHeader: {
     fontSize: 20,

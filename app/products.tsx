@@ -91,13 +91,12 @@ export default function Products() {
         },
         body: JSON.stringify({
           itemId: product.name,
-          quantityChange: change,
+          quantityChange: quantityChange,
         }),
       });
 
       const data = await response.json();
       if (data.success) {
-        // Update the cart state with the new quantity
         setCart(
           cart.map((item) =>
             item.name === product.name
@@ -114,7 +113,9 @@ export default function Products() {
   };
 
   if (loading) {
-    return <ActivityIndicator size="large" color="#F79393" style={{ marginTop: 40 }} />;
+    return (
+      <ActivityIndicator size="large" color="#F79393" style={{ marginTop: 40 }} />
+    );
   }
 
   return (
@@ -150,14 +151,14 @@ export default function Products() {
                     <View style={styles.cartControls}>
                       <TouchableOpacity
                         style={styles.cartButton}
-                        onPress={() => updateQuantity(product, -1)}
+                        onPress={() => handleUpdateQuantity(product, -1)}
                       >
                         <Text style={styles.buttonText}>-</Text>
                       </TouchableOpacity>
                       <Text style={styles.quantityText}>{cartItem.quantity}</Text>
                       <TouchableOpacity
                         style={styles.cartButton}
-                        onPress={() => updateQuantity(product, 1)}
+                        onPress={() => handleUpdateQuantity(product, 1)}
                       >
                         <Text style={styles.buttonText}>+</Text>
                       </TouchableOpacity>
@@ -184,7 +185,7 @@ const styles = StyleSheet.create({
   container: {
     padding: 16,
     paddingBottom: 100,
-    backgroundColor: "#DEDEBB", // Light background color
+    backgroundColor: "#DEDEBB",
     alignItems: "center",
   },
   card: {
@@ -195,7 +196,7 @@ const styles = StyleSheet.create({
     elevation: 4,
     alignItems: "center",
     overflow: "hidden",
-    borderColor: "#F79393", // Pink border
+    borderColor: "#F79393",
     borderWidth: 1,
     shadowOffset: { width: 0, height: 3 },
     shadowOpacity: 0.7,
@@ -214,7 +215,7 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: "bold",
     textAlign: "center",
-    color: "#4ED2F0", // Blue color for name
+    color: "#4ED2F0",
   },
   shortDesc: {
     fontSize: 14,
@@ -242,7 +243,7 @@ const styles = StyleSheet.create({
     marginTop: 10,
   },
   priceBox: {
-    backgroundColor: "#F4A261", // Orange for price box
+    backgroundColor: "#F4A261",
     paddingVertical: 10,
     paddingHorizontal: 20,
     borderRadius: 10,
@@ -252,7 +253,7 @@ const styles = StyleSheet.create({
     width: "20%",
   },
   cartButton: {
-    backgroundColor: "#00B894", // Green for cart button
+    backgroundColor: "#00B894",
     paddingVertical: 10,
     paddingHorizontal: 20,
     borderRadius: 10,
@@ -261,7 +262,7 @@ const styles = StyleSheet.create({
   buttonText: {
     fontSize: 20,
     fontWeight: "600",
-    color: "#fff", 
+    color: "#fff",
   },
   cartControls: {
     flexDirection: "row",
@@ -275,7 +276,7 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: "bold",
     marginBottom: 20,
-    color: "#F79393", 
+    color: "#F79393",
     shadowOpacity: 0.1,
   },
 });

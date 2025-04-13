@@ -6,143 +6,121 @@ import {
   TouchableOpacity,
   StyleSheet,
   ScrollView,
+  Alert,
+  
 } from 'react-native';
+import * as SecureStore from 'expo-secure-store';
+import { Picker } from '@react-native-picker/picker';
+
+
+type Medicine = {
+  name: string;
+  quantity: number;
+  price: number | null;
+};
 
 const TemplateForm = () => {
-  const [planName, setPlanName] = useState<string>('');
-  const [name, setName] = useState<string>('');
-  const [address, setAddress] = useState<string>('');
-  const [phone, setPhone] = useState<string>('');
-  const [email, setEmail] = useState<string>('');
-  const [medicine, setMedicine] = useState<string>('');
-  const [medicines, setMedicines] = useState<string[]>([]); // ✅ typed
-
-
+  const [planName, setPlanName] = useState('');
+  const [name, setName] = useState('');
+  const [address, setAddress] = useState('');
+  const [phone, setPhone] = useState('');
+  const [email, setEmail] = useState('');
+  const [medicineInput, setMedicineInput] = useState('');
+  const [medicines, setMedicines] = useState<Medicine[]>([]);
 
   const addMedicine = () => {
-    if (medicine.trim()) {
-      setMedicines([...medicines, medicine.trim()]);
-      setMedicine('');
+    if (medicineInput.trim()) {
+      setMedicines([...medicines, { name: medicineInput.trim(), quantity: 1, price: null }]);
+      setMedicineInput('');
     }
   };
 
-  const handleSubmit = () => {
-    const formData = {
-      planName,
-      name,
-      address,
-      phone,
-      email,
-      medicines,
-    };
-    console.log('Form Data:', formData);
-    // You can add logic to save this form data
-    setMedicines([...medicines, { name: "", quantity: 1, price: null }]);
-  };
-
-  // Function to remove a medicine input
   const removeMedicine = (index: number) => {
-    if (medicines.length > 1) {
-      const updatedMedicines = medicines.filter((_, i) => i !== index);
-      setMedicines(updatedMedicines);
-    }
+    const updated = medicines.filter((_, i) => i !== index);
+    setMedicines(updated);
   };
 
-  // Function to update the medicine name
-  const updateMedicineName = (index: number, value: string) => {
-    const updatedMedicines = medicines.map((medicine, i) =>
-      i === index ? { ...medicine, name: value } : medicine
-    );
-    setMedicines(updatedMedicines);
-  };
-
-  // Function to update the medicine quantity
   const updateMedicineQuantity = (index: number, value: number) => {
-    const updatedMedicines = medicines.map((medicine, i) =>
-      i === index ? { ...medicine, quantity: value } : medicine
+    const updated = medicines.map((med, i) =>
+      i === index ? { ...med, quantity: value } : med
     );
-    setMedicines(updatedMedicines);
+    setMedicines(updated);
   };
 
-  // Function to validate and submit the form
+  const updateMedicineName = (index: number, value: string) => {
+    const updated = medicines.map((med, i) =>
+      i === index ? { ...med, name: value } : med
+    );
+    setMedicines(updated);
+  };
+
   const handleSubmit = async () => {
-    if (!tempname || !Name || !Address || !Phone || !mail) {
-      Alert.alert("Please fill all fields.");
+    if (!planName || !name || !address || !phone || !email) {
+      Alert.alert('Please fill all fields.');
       return;
     }
 
-    // Check if all medicines have valid names
-    for (let medicine of medicines) {
-      if (!medicine.name.trim()) {
-        Alert.alert("Please make sure all medicine names are valid.");
+    for (let med of medicines) {
+      if (!med.name.trim()) {
+        Alert.alert('Please make sure all medicine names are valid.');
         return;
       }
     }
 
     try {
-      // Step 1: Fetch prices for all medicines
-      const response = await fetch("http://192.168.29.174:5000/getMedicinesPrices", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+      const res = await fetch('http://192.168.29.174:5000/getMedicinesPrices', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ medicines: medicines.map(m => m.name) }),
       });
 
-      const data = await response.json();
+      const data = await res.json();
 
       if (data.success) {
-        // Step 2: Check if any medicines were not found
-        const notFoundMedicines = data.notFoundMedicines;
-        if (notFoundMedicines.length > 0) {
-          // Show a popup with medicines not found
-          Alert.alert("Medicines not found", notFoundMedicines.join(", "));
+        const notFound = data.notFoundMedicines;
+        if (notFound.length > 0) {
+          Alert.alert('Medicines not found', notFound.join(', '));
           return;
         }
 
-        // Step 3: Assign the fetched prices to medicines
-        const updatedMedicines = medicines.map((medicine, index) => ({
-          ...medicine,
+        const updatedMedicines = medicines.map((med, index) => ({
+          ...med,
           price: data.prices[index],
         }));
-        setMedicines(updatedMedicines);
 
-        // Step 4: Submit the template with the prices
+        const token = await SecureStore.getItemAsync('jwt');
+
         const templateData = {
-          tempname,
-          Name,
-          Address,
-          Phone,
-          mail,
+          planName,
+          name,
+          address,
+          phone,
+          email,
           medicines: updatedMedicines,
         };
-        const token = await SecureStore.getItemAsync("jwt");
-        // Call the endpoint to save the template
-        await fetch("http://192.168.0.102:5000/saveTemplate", {
-          method: "POST",
+
+        await fetch('http://192.168.0.102:5000/saveTemplate', {
+          method: 'POST',
           headers: {
-            "Content-Type": "application/json",
-            "Authorization": `Bearer ${token}`,
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
           },
           body: JSON.stringify(templateData),
         });
 
-        Alert.alert("Template submitted successfully");
-
-        // Reset form after successful submission
-        setTempname("");
-        setName("");
-        setAddress("");
-        setPhone("");
-        setEmail("");
-        setMedicines([{ name: "", quantity: 1, price: null }]);
+        Alert.alert('Template submitted successfully');
+        setPlanName('');
+        setName('');
+        setAddress('');
+        setPhone('');
+        setEmail('');
+        setMedicines([]);
       } else {
-        // Handle any other errors
-        Alert.alert("Error fetching medicine prices");
+        Alert.alert('Error fetching medicine prices');
       }
     } catch (error) {
-      console.error("Error during submission:", error);
-      Alert.alert("Something went wrong. Please try again.");
+      console.error('Error:', error);
+      Alert.alert('Something went wrong. Please try again.');
     }
   };
 
@@ -153,66 +131,87 @@ const TemplateForm = () => {
       <View style={styles.card}>
         <Text style={styles.label}>Plan Name</Text>
         <TextInput
-          placeholder="Enter Plan Name"
           style={styles.input}
           value={planName}
           onChangeText={setPlanName}
+          placeholder="Enter Plan Name"
         />
 
         <Text style={styles.label}>Name</Text>
         <TextInput
-          placeholder="Enter Name"
           style={styles.input}
           value={name}
           onChangeText={setName}
+          placeholder="Enter Name"
         />
 
         <Text style={styles.label}>Address</Text>
         <TextInput
-          placeholder="Enter Address"
           style={styles.input}
           value={address}
           onChangeText={setAddress}
+          placeholder="Enter Address"
         />
 
         <Text style={styles.label}>Phone</Text>
         <TextInput
-          placeholder="Enter Phone"
           style={styles.input}
           value={phone}
           onChangeText={setPhone}
+          placeholder="Enter Phone"
           keyboardType="phone-pad"
         />
 
         <Text style={styles.label}>Email</Text>
         <TextInput
-          placeholder="Enter Email"
           style={styles.input}
           value={email}
           onChangeText={setEmail}
+          placeholder="Enter Email"
           keyboardType="email-address"
         />
 
         <Text style={styles.label}>Medicines</Text>
         <View style={styles.medicineRow}>
           <TextInput
-            placeholder="Medicine"
-            style={[styles.input, { flex: 1, marginRight: 10 }]}
-            value={medicine}
-            onChangeText={setMedicine}
+            placeholder="Medicine name"
+            style={[styles.input, { flex: 2, marginRight: 8 }]}
+            value={medicineInput}
+            onChangeText={setMedicineInput}
           />
-          <TouchableOpacity style={styles.addButton} onPress={addMedicine}>
-            <Text style={styles.addButtonText}>+</Text>
+          <TouchableOpacity style={styles.iconButton} onPress={addMedicine}>
+            <Text style={styles.iconButtonText}>+</Text>
           </TouchableOpacity>
         </View>
 
-        <View style={styles.medicineList}>
-          {medicines.map((item, index) => (
-            <View key={index} style={styles.medicineChip}>
-              <Text style={styles.medicineText}>{item}</Text>
-            </View>
-          ))}
-        </View>
+        {medicines.map((med, index) => (
+          <View key={index} style={styles.medicineRow}>
+            <TextInput
+              placeholder="Medicine name"
+              style={[styles.input, { flex: 2, marginRight: 8 }]}
+              value={med.name}
+              onChangeText={(value) => updateMedicineName(index, value)}
+            />
+
+            <TouchableOpacity style={styles.iconButton} onPress={addMedicine}>
+              <Text style={styles.iconButtonText}>+</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity style={styles.iconButton} onPress={() => removeMedicine(index)}>
+              <Text style={styles.iconButtonText}>-</Text>
+            </TouchableOpacity>
+
+            <Picker
+              selectedValue={med.quantity}
+              onValueChange={(value) => updateMedicineQuantity(index, value)}
+              style={styles.picker}
+            >
+              {[1, 2, 3, 4, 5].map((qty) => (
+                <Picker.Item label={qty.toString()} value={qty} key={qty} />
+              ))}
+            </Picker>
+          </View>
+        ))}
 
         <TouchableOpacity style={styles.submitButton} onPress={handleSubmit}>
           <Text style={styles.submitButtonText}>Submit</Text>
@@ -225,32 +224,33 @@ const TemplateForm = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#dedebb',
+    backgroundColor: '#00B894', // Green background
     paddingHorizontal: 20,
     paddingTop: 20,
   },
   heading: {
     fontSize: 28,
     fontWeight: 'bold',
-    color: '#F79393',
+    color: '#F79393', // Coral pink
     textAlign: 'center',
     marginBottom: 20,
   },
   card: {
-    backgroundColor: '#fff',
+    backgroundColor: '#ffffff',
     borderRadius: 16,
     padding: 20,
     marginBottom: 20,
     shadowColor: '#000',
-    shadowOpacity: 0.1,
-    shadowRadius: 5,
-    elevation: 3,
+    shadowOpacity: 0.3,
+    shadowOffset: { width: 0, height: 3 },
+    shadowRadius: 6,
+    elevation: 4,
   },
   label: {
     fontSize: 16,
     fontWeight: '500',
     marginBottom: 6,
-    color: '#000',
+    color: '#333',
   },
   input: {
     backgroundColor: '#f9f9f9',
@@ -264,47 +264,38 @@ const styles = StyleSheet.create({
   medicineRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 10,
+    marginBottom: 12,
   },
-  addButton: {
-    backgroundColor: '#00B894',
-    padding: 10,
-    borderRadius: 10,
-    justifyContent: 'center',
-    alignItems: 'center',
+  iconButton: {
+    backgroundColor: '#F79393',
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    borderRadius: 8,
+    marginHorizontal: 4,
   },
-  addButtonText: {
+  iconButtonText: {
     color: '#fff',
     fontSize: 18,
-    fontWeight: 'bold',
+    fontWeight: '600',
   },
-  medicineList: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    marginBottom: 20,
-  },
-  medicineChip: {
-    backgroundColor: '#f1f1f1',
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    borderRadius: 20,
-    marginRight: 10,
-    marginBottom: 10,
-    borderColor: '#00B894',
-    borderWidth: 1,
-  },
-  medicineText: {
-    fontSize: 14,
-    color: '#333',
+  picker: {
+    flex: 1,
+    backgroundColor: '#fff',
+    borderRadius: 10,
   },
   submitButton: {
-    backgroundColor: '#00B894',
+    backgroundColor: '#F79393', // Coral pink
     paddingVertical: 14,
     borderRadius: 12,
     alignItems: 'center',
+    shadowColor: '#000',
+    shadowOpacity: 0.3,
+    shadowOffset: { width: 0, height: 2 },
+    shadowRadius: 4,
+    elevation: 4,
   },
   submitButtonText: {
-    color: '#fff',
+    color: '#ffffff',
     fontSize: 18,
     fontWeight: '600',
   },
