@@ -72,7 +72,7 @@ export default function Index() {
 
   const fetchProducts = async (query: string) => {
     try {
-      const res = await fetch(`http://192.168.0.103:5000/search?q=${query}`);
+      const res = await fetch(`http://192.168.29.174:5000/search?q=${query}`);
       const data = await res.json();
       if (data.success) {
         setProducts(data.products);

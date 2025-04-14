@@ -36,7 +36,7 @@ const TopHeader = ({ isLoggedIn }: { isLoggedIn: boolean }) => {
   const fetchProducts = async (query: string) => {
     try {
       setLoading(true);
-      const res = await axios.get(`http://192.168.0.103:5000/search?q=${query}`);
+      const res = await axios.get(`http://192.168.29.174:5000/search?q=${query}`);
 
       setProducts(res.data.products || []);
 

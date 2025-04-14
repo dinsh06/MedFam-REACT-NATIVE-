@@ -52,6 +52,10 @@ export default function RootLayout() {
         name="products"
         options={{ headerTitle: "Products" }}
       />
+       <Stack.Screen
+        name="removeuser"
+        options={{ headerTitle: "Remove user" }}
+      />
       <Stack.Screen
         name="cart"
         options={{ headerTitle: "Cart" }}

@@ -49,8 +49,10 @@ export default function HomeGrid({ handleCall }: { handleCall: () => void }) {
         {/* Second Row */}
         <View style={styles.row}>
           <View style={styles.cell}>
+          <TouchableOpacity onPress={() => router.push("/templates")}>
             <Icon name="account-plus-outline" size={40} color="black" />
             <Text style={styles.iconLabel}>Add User</Text>
+            </TouchableOpacity>
           </View>
 
           <View style={styles.dividerVertical} />
@@ -63,8 +65,10 @@ export default function HomeGrid({ handleCall }: { handleCall: () => void }) {
           <View style={styles.dividerVertical} />
 
           <View style={styles.cell}>
+          <TouchableOpacity style={styles.cell} onPress={() => router.push("/removeuser")}>
             <Icon name="account-minus-outline" size={40} color="black" />
             <Text style={styles.iconLabel}>Remove User</Text>
+            </TouchableOpacity>
           </View>
         </View>
       </View>

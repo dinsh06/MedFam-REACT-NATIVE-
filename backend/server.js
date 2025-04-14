@@ -146,6 +146,30 @@ app.get("/product/:id", async (req, res) => {
   }
 });
 
+app.delete("/template/:tempname", authenticateJWT, async (req, res) => {
+  try {
+    const userID = req.user.userID;
+    const { tempname } = req.params;
+
+    const user = await User.findById(userID);
+    if (!user) {
+      return res.status(404).json({ success: false, message: "User not found" });
+    }
+
+    const initialLength = user.templates.length;
+    user.templates = user.templates.filter(template => template.tempname !== tempname);
+
+    if (user.templates.length === initialLength) {
+      return res.status(404).json({ success: false, message: "Template not found" });
+    }
+
+    await user.save();
+    return res.json({ success: true, message: "Template removed successfully" });
+  } catch (error) {
+    console.error("Error removing template:", error);
+    return res.status(500).json({ success: false, message: "Server error" });
+  }
+});
 
 app.get("/search", async (req, res) => {
   const searchQuery = req.query.q || ""; // Read the query param q
