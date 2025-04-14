@@ -65,6 +65,7 @@ export default function Products() {
           name: product.name,
           price: product.price,
           quantity: 1,
+          image: product.image,
         }),
       });
 

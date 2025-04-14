@@ -60,10 +60,10 @@ export default function Profile() {
 
       {/* My Templates */}
       <View style={styles.row}>
-        <Link href="/templates">
+        <Link href="/removeuser">
           <Text style={styles.text}>My Templates</Text>
         </Link>
-        <TouchableOpacity onPress={() => router.push("/templates")}>
+        <TouchableOpacity onPress={() => router.push("/removeuser")}>
           <Icon name="file-account" size={30} color="#00B894" />
         </TouchableOpacity>
       </View>

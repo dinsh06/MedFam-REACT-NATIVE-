@@ -81,6 +81,8 @@ export default function RemoveUserTemplates() {
             </View>
             <Text style={styles.detail}>Name: {item.Name}</Text>
             <Text style={styles.detail}>Phone: {item.Phone}</Text>
+            <Text style={styles.detail}>Mail: {item.mail}</Text>
+            <Text style={styles.detail}>Address: {item.Address}</Text>
             <Text style={styles.detail}>
   Medicines:{" "}
   {item.medicines?.map((med: any) => `${med.name} (${med.price})`).join(", ")}

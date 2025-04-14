@@ -353,8 +353,8 @@ app.get("/templates", authenticateJWT, async (req, res) => {
   app.post("/cart/add", authenticateJWT, async (req, res) => {
     console.log("Received request for adding item to cart");
   
-    const { name, price, quantity } = req.body;
-    console.log("Received item details:", name, price, quantity);
+    const { name, price, quantity, image } = req.body;
+    console.log("Received item details:", name, price, quantity, image);
   
     if (!name || !price || !quantity) {
       return res.status(400).json({ success: false, message: "One or more of the inputs are missing" });
@@ -376,7 +376,7 @@ app.get("/templates", authenticateJWT, async (req, res) => {
         existingProduct.quantity += quantity;
       } else {
         // Product not in cart, add it as a new item
-        user.cart.push({ name, price, quantity });
+        user.cart.push({ name, price, quantity, image });
       }
   
       await user.save(); // Save the updated user document

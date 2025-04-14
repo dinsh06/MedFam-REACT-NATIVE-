@@ -1,5 +1,5 @@
 import * as React from "react";
-import { View, Text, TouchableOpacity, FlatList, StyleSheet, ActivityIndicator } from "react-native";
+import { View, Text, TouchableOpacity, FlatList, StyleSheet, ActivityIndicator, Image } from "react-native";
 import { useRouter } from "expo-router";
 import * as SecureStore from "expo-secure-store";
 
@@ -9,6 +9,7 @@ interface CartItem {
   name: string;
   price: number;
   quantity: number;
+  image: string;
 }
 
 const Cart: React.FC = () => {
@@ -116,7 +117,9 @@ const Cart: React.FC = () => {
         keyExtractor={(item) => item.name}
         renderItem={({ item }) => (
           <View key={item.name} style={styles.productContainer}>
-            <View style={styles.imagePlaceholder} />
+           <Image
+  source={{ uri: item.image }} style={styles.image} 
+/>
             <View style={styles.productDetails}>
               <Text style={styles.productName}>{item.name}</Text>
               <Text style={styles.productPrice}>₹{item.price}</Text>
@@ -280,6 +283,13 @@ const styles = StyleSheet.create({
     marginTop: 10,
     shadowOffset: { width: 0, height: 3 },
     shadowOpacity: 0.2,
+  },
+  image: {
+    width: 120,
+    height: 170,
+    borderRadius: 5,
+    marginRight: 12,
+    backgroundColor: "#D3D3D3", // optional fallback color while loading
   },
   checkoutText: {
     color: "black",
