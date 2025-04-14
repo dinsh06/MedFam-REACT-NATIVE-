@@ -16,8 +16,9 @@
       }
     },
     "android": {
+      "icon": "./assets/images/Logo.png",
       "adaptiveIcon": {
-        "foregroundImage": "./assets/images/adaptive-icon.png",
+        "foregroundImage": "./assets/images/Logo.png",
         "backgroundColor": "#ffffff"
       },
       "package": "com.dinesh06.MedFam"
