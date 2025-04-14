@@ -4,7 +4,7 @@
     "slug": "MedFam",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/images/Logo.png",
+    "icon": "./assets/images/play_store_512.png",
     "scheme": "myapp",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
@@ -16,9 +16,9 @@
       }
     },
     "android": {
-      "icon": "./assets/images/Logo.png",
+      "icon": "./assets/images/play_store_512.png",
       "adaptiveIcon": {
-        "foregroundImage": "./assets/images/Logo.png",
+        "foregroundImage": "./assets/images/play_store_512.png",
         "backgroundColor": "#ffffff"
       },
       "package": "com.dinesh06.MedFam"
@@ -26,7 +26,7 @@
     "web": {
       "bundler": "metro",
       "output": "static",
-      "favicon": "./assets/images/favicon.png"
+      "favicon": "./assets/images/play_store_512.png"
     },
     "plugins": [
       "expo-router",
