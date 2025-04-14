@@ -41,11 +41,11 @@ const CheckoutPage: React.FC = () => {
           return;
         }
 
-        const cartResponse = await fetch('http://192.168.0.103:5000/cart', {
+        const cartResponse = await fetch('http://192.168.29.174:5000/cart', {
           headers: { Authorization: `Bearer ${token}` },
         });
 
-        const addressResponse = await fetch('http://192.168.0.103:5000/user/address', {
+        const addressResponse = await fetch('http://192.168.29.174:5000/user/address', {
           headers: { Authorization: `Bearer ${token}` },
         });
 
@@ -80,7 +80,7 @@ const CheckoutPage: React.FC = () => {
       const token = await SecureStore.getItemAsync('jwt');
       if (!token) throw new Error('No token');
 
-      const response = await fetch('http://192.168.0.103:5000/order', {
+      const response = await fetch('http://192.168.29.174:5000/order', {
         method: 'POST',
         headers: {
           Authorization: `Bearer ${token}`,

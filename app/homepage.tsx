@@ -56,7 +56,7 @@ export default function Index() {
     const fetchTemplates = async () => {
       try {
         const token = await SecureStore.getItemAsync("jwt");
-        const response = await fetch("http://192.168.0.103:5000/templates", {
+        const response = await fetch("http://192.168.29.174:5000/templates", {
           headers: { Authorization: `Bearer ${token}` },
         });
         const data = await response.json();

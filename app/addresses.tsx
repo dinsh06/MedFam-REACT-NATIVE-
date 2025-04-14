@@ -52,7 +52,7 @@ export default function Profile() {
     try {
       setLoading(true);
       const token = await SecureStore.getItemAsync("jwt");
-      const res = await fetch("http://192.168.0.103:5000/user/address", {
+      const res = await fetch("http://192.168.29.174:5000/user/address", {
         headers: { Authorization: `Bearer ${token}` },
       });
       const data = await res.json();
