@@ -10,6 +10,7 @@ import {
   SafeAreaView,
 } from 'react-native';
 import * as SecureStore from 'expo-secure-store';
+import { WebView } from 'react-native-webview';
 import { useRouter } from 'expo-router';
 import { Picker } from '@react-native-picker/picker';
 
@@ -30,6 +31,8 @@ const CheckoutPage: React.FC = () => {
   const [selectedAddress, setSelectedAddress] = useState<AddressWithFormatted | undefined>(undefined);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+  const [razorpayOrder, setRazorpayOrder] = useState<any>(null);
+  const [showWebView, setShowWebView] = useState(false);
   const router = useRouter();
 
   useEffect(() => {
@@ -80,7 +83,9 @@ const CheckoutPage: React.FC = () => {
       const token = await SecureStore.getItemAsync('jwt');
       if (!token) throw new Error('No token');
 
-      const response = await fetch('http://192.168.29.174:5000/order', {
+      setLoading(true);
+
+      const response = await fetch('http://192.168.29.174:5000/create-order', {
         method: 'POST',
         headers: {
           Authorization: `Bearer ${token}`,
@@ -88,16 +93,18 @@ const CheckoutPage: React.FC = () => {
         },
         body: JSON.stringify({
           cartItems,
-          shippingAddress: selectedAddress,
           totalPrice,
         }),
       });
 
       const data = await response.json();
-      if (!response.ok) throw new Error(data.message || 'Order failed');
+      if (!response.ok) throw new Error(data.message || 'Failed to create order');
 
-      Alert.alert('Success', 'Order placed successfully');
+      setRazorpayOrder(data.order);
+      setLoading(false);
+      setShowWebView(true);
     } catch (err: any) {
+      setLoading(false);
       Alert.alert('Error', err.message || 'Order failed');
     }
   };
@@ -134,7 +141,6 @@ const CheckoutPage: React.FC = () => {
           ))}
         </ScrollView>
 
-        {/* Sticky Footer */}
         <View style={styles.bottomContainer}>
           <Text style={styles.sectionTitle}>Shipping Address</Text>
           <View style={styles.pickerWrapper}>
@@ -162,6 +168,82 @@ const CheckoutPage: React.FC = () => {
             <Text style={styles.buttonText}>Place Order</Text>
           </TouchableOpacity>
         </View>
+
+        {showWebView && razorpayOrder && (
+          <View style={{ flex: 1, position: 'absolute', top: 0, left: 0, right: 0, bottom: 0 }}>
+            <WebView
+              originWhitelist={['*']}
+              javaScriptEnabled
+              domStorageEnabled
+              startInLoadingState
+              source={{
+                html: `
+                <!DOCTYPE html>
+                <html>
+                  <head>
+                    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+                    <style>
+                      html, body {
+                        height: 100%;
+                        margin: 0;
+                        padding: 0;
+                        display: flex;
+                        justify-content: center;
+                        align-items: center;
+                        background: white;
+                      }
+                    </style>
+                  </head>
+                  <body>
+                    <script>
+                      setTimeout(function() {
+                        var options = {
+                          key: "rzp_test_RTT67mmolf8Qca",
+                          amount: "${razorpayOrder.amount}",
+                          currency: "INR",
+                          name: "MedFam",
+                          description: "Order Payment",
+                          order_id: "${razorpayOrder.id}",
+                          handler: function (response) {
+                            window.ReactNativeWebView.postMessage("success");
+                          },
+                          external: true,
+                          modal: {
+                            ondismiss: function () {
+                              window.ReactNativeWebView.postMessage("cancel");
+                            }
+                          },
+                          prefill: {
+                            name: "Dinesh",
+                            email: "dineshwaran236@gmail.com",
+                            contact: "8681040528"
+                          },
+                          theme: {
+                            color: "#3399cc"
+                          }
+                        };
+                        var rzp = new Razorpay(options);
+                        rzp.open();
+                      }, 300);
+                    </script>
+                  </body>
+                </html>
+              `,
+              }}
+              onMessage={(event) => {
+                if (event.nativeEvent.data === 'success') {
+                  Alert.alert('Success', 'Payment Successful!');
+                  setShowWebView(false);
+                  router.replace('/');
+                } else if (event.nativeEvent.data === 'cancel') {
+                  Alert.alert('Cancelled', 'Payment Cancelled.');
+                  setShowWebView(false);
+                }
+              }}
+            />
+          </View>
+        )}
       </View>
     </SafeAreaView>
   );
@@ -174,13 +256,12 @@ const styles = StyleSheet.create({
   },
   container: {
     flex: 1,
-    justifyContent: "space-evenly" 
   },
   scrollContent: {
     paddingHorizontal: 16,
     paddingTop: 16,
     paddingBottom: 0,
-    flexGrow: 1, 
+    flexGrow: 1,
   },
   title: {
     fontSize: 24,
@@ -188,15 +269,12 @@ const styles = StyleSheet.create({
     color: '#F79393',
     textAlign: 'center',
     marginBottom: 16,
-    shadowOpacity: 0.1,
   },
   itemContainer: {
     backgroundColor: '#00B894',
     padding: 12,
     borderRadius: 12,
     marginBottom: 10,
-    shadowOffset: { width: 0, height: 3 },
-    shadowOpacity: 0.3,
   },
   itemName: {
     fontSize: 16,
@@ -212,12 +290,8 @@ const styles = StyleSheet.create({
     padding: 15,
     borderTopLeftRadius: 16,
     borderTopRightRadius: 16,
-    bottom: -32,
-    marginTop: 'auto', 
-    shadowOffset: { width: 0, height: 3 },
-    shadowOpacity: 0.7,
+    marginTop: 'auto',
   },
-  
   pickerWrapper: {
     backgroundColor: '#fff',
     borderRadius: 12,
@@ -239,8 +313,6 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
     borderRadius: 10,
     marginTop: 12,
-    shadowOffset: { width: 0, height: 3 },
-    shadowOpacity: 0.3,
   },
   buttonText: {
     color: 'white',

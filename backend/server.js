@@ -4,7 +4,9 @@ const cors = require("cors");
 const jwt = require("jsonwebtoken");
 const dotenv = require("dotenv");
 const User = require("./models/user"); 
-const Product = require("./models/product"); 
+const Product = require("./models/product");
+const Razorpay = require('razorpay');
+const crypto = require('crypto'); 
 
 dotenv.config();
 
@@ -43,6 +45,31 @@ const authenticateJWT = (req, res, next) => {
       next(); 
     });
   };  
+  const razorpay = new Razorpay({
+    key_id: process.env.RAZORPAY_KEY_ID,
+    key_secret: process.env.RAZORPAY_KEY_SECRET,
+  });
+
+  app.post('/create-order', authenticateJWT, async (req, res) => {
+    const { cartItems, totalPrice } = req.body;
+  
+    try {
+      // Create an order on Razorpay
+      const options = {
+        amount: totalPrice * 100, // Amount in paise
+        currency: 'INR',
+        receipt: crypto.randomBytes(10).toString('hex'),
+        payment_capture: 1,
+      };
+  
+      const order = await razorpay.orders.create(options);
+      console.log(order);
+      return res.json({ success: true, order });
+    } catch (error) {
+      console.error("Error creating Razorpay order", error);
+      return res.status(500).json({ success: false, message: 'Failed to create Razorpay order' });
+    }
+  });
 
 app.post("/login", async(req,res) =>{
     try{
