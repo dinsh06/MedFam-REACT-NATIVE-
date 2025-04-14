@@ -44,11 +44,11 @@ const CheckoutPage: React.FC = () => {
           return;
         }
 
-        const cartResponse = await fetch('http://192.168.29.174:5000/cart', {
+        const cartResponse = await fetch('https://medfam-oyag.onrender.com/cart', {
           headers: { Authorization: `Bearer ${token}` },
         });
 
-        const addressResponse = await fetch('http://192.168.29.174:5000/user/address', {
+        const addressResponse = await fetch('https://medfam-oyag.onrender.com/user/address', {
           headers: { Authorization: `Bearer ${token}` },
         });
 
@@ -85,7 +85,7 @@ const CheckoutPage: React.FC = () => {
 
       setLoading(true);
 
-      const response = await fetch('http://192.168.29.174:5000/create-order', {
+      const response = await fetch('https://medfam-oyag.onrender.com/create-order', {
         method: 'POST',
         headers: {
           Authorization: `Bearer ${token}`,

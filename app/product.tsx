@@ -20,7 +20,7 @@ export default function ProductDetail() {
   useEffect(() => {
     const fetchProduct = async () => {
       try {
-        const res = await fetch(`http://192.168.29.174:5000/product/${id}`);
+        const res = await fetch(`https://medfam-oyag.onrender.com/product/${id}`);
         const data = await res.json();
         if (data.success) {
           setProduct(data.product);
@@ -38,7 +38,7 @@ export default function ProductDetail() {
     const fetchCart = async () => {
       try {
         const token = await SecureStore.getItemAsync("jwt");
-        const response = await fetch("http://192.168.29.174:5000/cart", {
+        const response = await fetch("https://medfam-oyag.onrender.com/cart", {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -59,7 +59,7 @@ export default function ProductDetail() {
     const token = await SecureStore.getItemAsync("jwt");
 
     try {
-      const response = await fetch("http://192.168.29.174:5000/cart/add", {
+      const response = await fetch("https://medfam-oyag.onrender.com/cart/add", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -87,7 +87,7 @@ export default function ProductDetail() {
     const token = await SecureStore.getItemAsync("jwt");
 
     try {
-      const response = await fetch("http://192.168.29.174:5000/cart/update", {
+      const response = await fetch("https://medfam-oyag.onrender.com/cart/update", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

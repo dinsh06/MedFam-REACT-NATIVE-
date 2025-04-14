@@ -17,7 +17,7 @@ export default function RemoveUserTemplates() {
   const fetchTemplates = async () => {
     try {
       const token = await SecureStore.getItemAsync("jwt");
-      const res = await fetch("http://192.168.29.174:5000/templates", {
+      const res = await fetch("https://medfam-oyag.onrender.com/templates", {
         headers: { Authorization: `Bearer ${token}` },
       });
       const data = await res.json();
@@ -35,7 +35,7 @@ export default function RemoveUserTemplates() {
     try {
       const token = await SecureStore.getItemAsync("jwt");
 
-      const res = await fetch(`http://192.168.29.174:5000/template/${tempname}`, {
+      const res = await fetch(`https://medfam-oyag.onrender.com/template/${tempname}`, {
         method: "DELETE",
         headers: { Authorization: `Bearer ${token}` },
       });

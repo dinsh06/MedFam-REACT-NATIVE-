@@ -6,7 +6,6 @@ import {
   Linking,
   Image,
   FlatList,
-  TextInput,
   BackHandler,
   Platform,
 } from "react-native";
@@ -15,7 +14,10 @@ import { useRouter } from "expo-router";
 import React, { useState, useEffect, useRef } from "react";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import * as SecureStore from "expo-secure-store";
-import { widthPercentageToDP as wp, heightPercentageToDP as hp } from "react-native-responsive-screen";
+import {
+  widthPercentageToDP as wp,
+  heightPercentageToDP as hp,
+} from "react-native-responsive-screen";
 import TopHeader from "../components/TopHeader";
 import HomeGrid from "../components/HomeGrid";
 import TemplateCard from "../components/TemplateCard";
@@ -28,14 +30,8 @@ export default function Index() {
   const [searchQuery, setSearchQuery] = useState("");
   const [templates, setTemplates] = useState<any[]>([]);
   const [products, setProducts] = useState<any[]>([]);
+  const [carouselProducts, setCarouselProducts] = useState<any[]>([]);
 
-  const medicalImages = [
-    { id: "4", source: require("../assets/images/accucheck.jpg") },
-    { id: "5", source: require("../assets/images/medicalkit.jpg") },
-    { id: "6", source: require("../assets/images/dettol.jpg") },
-  ];
-
-  const tripledMedicalImages = [...medicalImages, ...medicalImages, ...medicalImages];
   const kitListRef = useRef<FlatList>(null);
 
   useEffect(() => {
@@ -56,7 +52,7 @@ export default function Index() {
     const fetchTemplates = async () => {
       try {
         const token = await SecureStore.getItemAsync("jwt");
-        const response = await fetch("http://192.168.29.174:5000/templates", {
+        const response = await fetch("https://medfam-oyag.onrender.com/templates", {
           headers: { Authorization: `Bearer ${token}` },
         });
         const data = await response.json();
@@ -72,7 +68,7 @@ export default function Index() {
 
   const fetchProducts = async (query: string) => {
     try {
-      const res = await fetch(`http://192.168.29.174:5000/search?q=${query}`);
+      const res = await fetch(`https://medfam-oyag.onrender.com/search?q=${query}`);
       const data = await res.json();
       if (data.success) {
         setProducts(data.products);
@@ -83,19 +79,32 @@ export default function Index() {
   };
 
   useEffect(() => {
-    const backHandler = BackHandler.addEventListener("hardwareBackPress", () => true);
-    return () => backHandler.remove();
+    const fetchCarouselProducts = async () => {
+      try {
+        const response = await fetch("https://medfam-oyag.onrender.com/product");
+        const data = await response.json();
+        if (data.success) {
+          const shuffled = data.products.sort(() => 0.5 - Math.random());
+          const selected = shuffled.slice(0, 4);
+          const tripled = [...selected, ...selected, ...selected];
+          setCarouselProducts(tripled);
+        }
+      } catch (error) {
+        console.error("Error fetching product images:", error);
+      }
+    };
+
+    fetchCarouselProducts();
   }, []);
 
   useEffect(() => {
     const itemWidth = wp("90%") + wp("4%");
-    let scrollIndex = medicalImages.length;
+    let scrollIndex = Math.floor(carouselProducts.length / 3);
 
     const interval = setInterval(() => {
       scrollIndex += 1;
-
-      if (scrollIndex >= tripledMedicalImages.length - 1) {
-        scrollIndex = medicalImages.length;
+      if (scrollIndex >= carouselProducts.length - 1) {
+        scrollIndex = Math.floor(carouselProducts.length / 3);
         kitListRef.current?.scrollToOffset({ offset: scrollIndex * itemWidth, animated: false });
       } else {
         kitListRef.current?.scrollToOffset({ offset: scrollIndex * itemWidth, animated: true });
@@ -103,6 +112,11 @@ export default function Index() {
     }, 3000);
 
     return () => clearInterval(interval);
+  }, [carouselProducts]);
+
+  useEffect(() => {
+    const backHandler = BackHandler.addEventListener("hardwareBackPress", () => true);
+    return () => backHandler.remove();
   }, []);
 
   const handleCall = async () => {
@@ -164,7 +178,7 @@ export default function Index() {
       <FlatList
         data={templates}
         renderItem={({ item }) => <TemplateCard item={item} />}
-        keyExtractor={(item) => item.tempname}
+        keyExtractor={(item) => item.tempname || item._id}
         horizontal
         showsHorizontalScrollIndicator={false}
         contentContainerStyle={styles.carouselContainer}
@@ -172,20 +186,23 @@ export default function Index() {
 
       <View style={styles.container3}>
         <View style={styles.offersContainer2}>
-          <Icon name="medical-bag" size={30} color="yellow" />
-          <Text style={styles.text}>Medical Kits</Text>
+          <Icon name="fire" size={30} color="orange" />
+          <Text style={styles.text}>Top Favourites</Text>
         </View>
       </View>
 
       <FlatList
         ref={kitListRef}
-        data={tripledMedicalImages}
+        data={carouselProducts}
         renderItem={({ item }) => (
-          <View style={styles.templateItem}>
-            <Image source={item.source} style={styles.templateImage} />
-          </View>
+          <TouchableOpacity
+            onPress={() => router.push({ pathname: "/product", params: { id: item._id } })}
+            style={styles.templateItem}
+          >
+            <Image source={{ uri: item.image }} style={styles.templateImage} />
+          </TouchableOpacity>
         )}
-        keyExtractor={(item, index) => `${item.id}-${index}`}
+        keyExtractor={(item, index) => `${item._id}-${index}`}
         horizontal
         pagingEnabled
         showsHorizontalScrollIndicator={false}
@@ -199,13 +216,16 @@ export default function Index() {
             index,
           };
         }}
-        initialScrollIndex={medicalImages.length}
+        initialScrollIndex={Math.floor(carouselProducts.length / 3)}
         onMomentumScrollEnd={(e) => {
           const offset = e.nativeEvent.contentOffset.x;
           const itemWidth = wp("90%") + wp("4%");
           const currentIndex = Math.round(offset / itemWidth);
-          if (currentIndex === 0 || currentIndex === tripledMedicalImages.length - 1) {
-            const middleIndex = medicalImages.length;
+          if (
+            currentIndex === 0 ||
+            currentIndex === carouselProducts.length - 1
+          ) {
+            const middleIndex = Math.floor(carouselProducts.length / 3);
             kitListRef.current?.scrollToOffset({
               offset: middleIndex * itemWidth,
               animated: false,
@@ -235,20 +255,6 @@ const styles = StyleSheet.create({
     fontSize: wp("5%"),
     color: "white",
   },
-  searchInput: {
-    height: hp("5%"),
-    width: wp("87.5%"),
-    borderRadius: 10,
-    borderWidth: 1,
-    paddingHorizontal: wp("3%"),
-    backgroundColor: "#fff",
-    marginBottom: hp("2%"),
-    elevation: 3,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.4,
-    shadowRadius: 2,
-  },
   container3: {
     flexDirection: "row",
     alignItems: "center",
@@ -273,9 +279,9 @@ const styles = StyleSheet.create({
     marginLeft: wp("2%"),
   },
   templateItem: {
-    width: wp("90%"),
+    width: wp("50%"),
     height: hp("20%"),
-    backgroundColor: "#b9d6f2",
+    backgroundColor: "white",
     justifyContent: "center",
     alignItems: "center",
     borderRadius: 10,
@@ -289,25 +295,10 @@ const styles = StyleSheet.create({
     color: "#333",
   },
   templateImage: {
-    width: wp("90%"),
+    width: wp("50%"),
     height: hp("20%"),
+    resizeMode: "contain",
     borderRadius: 10,
-  },
-  viewContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    marginTop: 10,
-    borderWidth: 1,
-    borderColor: "green",
-    borderRadius: 8,
-    paddingVertical: 5,
-    paddingHorizontal: 10,
-  },
-  viewText: {
-    fontSize: wp("4%"),
-    color: "green",
-    fontWeight: "700",
   },
   carouselContainer: {
     alignItems: "center",

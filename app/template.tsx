@@ -24,7 +24,7 @@ export default function TemplateDetail() {
       try {
         const token = await SecureStore.getItemAsync("jwt");
 
-        const response = await fetch("http://192.168.29.174:5000/templates", {
+        const response = await fetch("https://medfam-oyag.onrender.com/templates", {
           method: "GET",
           headers: {
             Authorization: `Bearer ${token}`,
